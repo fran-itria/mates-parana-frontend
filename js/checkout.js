@@ -99,15 +99,13 @@ async function calculateShipping() {
   }
 
   try {
-    const response = await fetch(SHIPPING_API + postalCode);
+    const response = await fetch(`${API_BASE}/orders/delivered-price/${postalCode}`);
 
     if (!response.ok) {
       throw new Error();
     }
 
     const data = await response.json();
-
-    console.log(data);
 
     renderShipping(data, postalCode);
   } catch (error) {
@@ -445,99 +443,108 @@ function renderPreShippingOptions() {
         </div>
 
       </div>
+      
+      </div>
 
-    </div>
-
-
-    <!-- ==========================================
-         ENVÍO POR CADETE
-    =========================================== -->
-
-    <div class="shipping-card">
-
-      <label class="shipping-option">
-
-        <input
-          type="radio"
-          name="shippingType"
-          value="cadete"
-        >
-
-        <div class="cadete-info">
-
-          <strong>🛵 Envío por cadete</strong>
-
-          <p>
-            Seleccioná tu ciudad para consultar el costo de envío.
-          </p>
-
-          <div id="cadetePreOptions"></div>
-
-          <div id="cadeteExtraFields"></div>
-
-        </div>
-
-      </label>
-
-    </div>
-
-  `;
+      
+      <!-- ==========================================
+           ENVÍO POR CADETE
+      =========================================== -->
+  
+      <div class="shipping-card">
+  
+        <label class="shipping-option">
+  
+          <input
+            type="radio"
+            name="shippingType"
+            value="cadete"
+          >
+  
+          <div class="cadete-info">
+  
+            <strong>🛵 Envío por cadete</strong>
+  
+            <p>
+              Seleccioná tu ciudad para consultar el costo de envío.
+            </p>
+  
+            <div id="cadetePreOptions"></div>
+  
+            <div id="cadeteExtraFields"></div>
+  
+          </div>
+  
+        </label>
+  
+      </div>
+  
+      `;
 
   // ==========================================
   // SUCURSALES
   // ==========================================
 
-  const localBranches = document.querySelectorAll('input[name="localBranch"]');
+  const localBranches = document.querySelectorAll(
+    'input[name="localBranch"]'
+  );
+
+  const cadeteRadio = document.querySelector(
+    'input[name="shippingType"][value="cadete"]'
+  );
 
   localBranches.forEach((branch) => {
     branch.addEventListener("change", () => {
+
       if (!branch.checked) return;
 
+      // DESMARCAR CADETE
+      if (cadeteRadio) {
+        cadeteRadio.checked = false;
+      }
+
+      // LIMPIAR CADETE
+      const cadeteOptions = document.getElementById("cadetePreOptions");
+      const cadeteFields = document.getElementById("cadeteExtraFields");
+
+      if (cadeteOptions) {
+        cadeteOptions.innerHTML = "";
+      }
+
+      if (cadeteFields) {
+        cadeteFields.innerHTML = "";
+      }
+
       setSelectedShipping({
-        postalCode,
-        province,
-        type: "agency",
-        price: data.price,
-        agency: selectedPoint.agency_id,
-        agencyName: selectedPoint.agency,
+        type: branch.value
       });
 
       console.log("SUCURSAL SELECCIONADA:", branch.value);
     });
   });
 
+
   // ==========================================
   // CADETE
   // ==========================================
 
-  const shippingOptions = document.querySelectorAll(
-    'input[name="shippingType"]'
-  );
+  if (cadeteRadio) {
 
-  shippingOptions.forEach((option) => {
-    option.addEventListener("change", () => {
-      if (option.value === "cadete") {
-        loadCadeteOptions();
-      }
+    cadeteRadio.addEventListener("change", () => {
 
-      // Limpiar opciones de cadete
-      // cuando no estamos seleccionando cadete
+      if (!cadeteRadio.checked) return;
 
-      if (option.value !== "cadete") {
-        const cadeteOptions = document.getElementById("cadetePreOptions");
+      // DESMARCAR TODAS LAS SUCURSALES
+      localBranches.forEach((branch) => {
+        branch.checked = false;
+      });
 
-        const cadeteFields = document.getElementById("cadeteExtraFields");
+      loadCadeteOptions();
 
-        if (cadeteOptions) {
-          cadeteOptions.innerHTML = "";
-        }
-
-        if (cadeteFields) {
-          cadeteFields.innerHTML = "";
-        }
-      }
+      console.log("CADETE SELECCIONADO");
     });
-  });
+
+  }
 }
 
 async function loadCadeteOptions() {
@@ -587,8 +594,8 @@ async function loadCadeteOptions() {
           </option>
 
           ${data.cadete
-            .map(
-              (option) => `
+        .map(
+          (option) => `
                 <option
                   value="${option.ciudad}"
                   data-price="${option.price}"
@@ -597,8 +604,8 @@ async function loadCadeteOptions() {
                   $${Number(option.price).toLocaleString("es-AR")}
                 </option>
               `
-            )
-            .join("")}
+        )
+        .join("")}
 
         </select>
 
@@ -672,12 +679,11 @@ function renderShipping(data, postalCode) {
 
         <label class="shipping-option">
 
-          <input
+        <input
             type="radio"
             name="shippingType"
             value="home"
-            checked
-          >
+            >
 
           <div>
 
@@ -702,30 +708,41 @@ function renderShipping(data, postalCode) {
 
       <div class="shipping-card">
 
-        <label class="shipping-option">
+  <div class="shipping-option">
+    <div>
 
-          <input
-            type="radio"
-            name="shippingType"
-            value="agency"
-          >
+      <strong>🏤 Retiro en Correo Argentino</strong>
 
-          <div>
+      <p>
+        ${data.retirePoints.length}
+        sucursales disponibles
+      </p>
 
-            <strong>🏤 Retiro en Correo Argentino</strong>
+      <div class="agency-list">
+        ${data.retirePoints.map((sucursal) => `
+          
+          <label class="agency-option" for="agency-${sucursal.agency_id}">
+            
+            <input
+              name="shippingType"
+              id="agency-${sucursal.agency_id}"
+              type="radio"
+              value="${sucursal.agency_id}"
+            >
 
-            <p>
-              ${data.retirePoints.length}
-              sucursales disponibles
-            </p>
+            <span>${sucursal.agency}</span>
 
-          </div>
+          </label>
 
-        </label>
-
-        <div id="agencyContainer"></div>
-
+        `).join("")}
       </div>
+
+    </div>
+  </div>
+
+  <div id="agencyContainer"></div>
+
+</div>
 
     </div>
   `;
@@ -752,7 +769,7 @@ function renderShipping(data, postalCode) {
         homeFields.innerHTML = "";
       }
 
-      clearCadeteOptions();
+      // clearCadeteOptions();
 
       // =====================================
       // DOMICILIO
@@ -775,14 +792,12 @@ function renderShipping(data, postalCode) {
       // AGENCIA
       // =====================================
 
-      if (option.value === "agency") {
-        renderAgencyOptions(
-          agencyContainer,
-          data.retirePoints,
-          postalCode,
-          data.province,
-          Number(data.price)
-        );
+      if (option.value != "home" && option.value != "cadete") {
+        setSelectedShipping({
+          agency: option.value,
+          type: "agency",
+          price: Number(data.price),
+        });
 
         return;
       }
@@ -829,11 +844,10 @@ function renderProducts() {
 
           <p>
             Cantidad: ${item.qty}
-            ${
-              item.varity
-                ? `• ${item.varity.color || ""} ${item.varity.type || ""}`
-                : ""
-            }
+            ${item.varity
+        ? `• ${item.varity.color || ""} ${item.varity.type || ""}`
+        : ""
+      }
           </p>
         </div>
 
@@ -993,7 +1007,6 @@ console.log("ANTES DEL ADDEVENT");
 console.log(confirmOrderBtn);
 
 confirmOrderBtn.addEventListener("click", async () => {
-  console.log("PASO 1");
   try {
     loadingOverlay.classList.remove("hidden");
 
@@ -1011,19 +1024,15 @@ confirmOrderBtn.addEventListener("click", async () => {
     const dni = document.getElementById("customerDni").value;
 
     if (!name || !surname || !email || !phone) {
-      console.log("PASO 2");
       alert("Completá todos los campos");
       loadingOverlay.classList.add("hidden");
       return;
     }
 
     const subtotal = getSubtotal();
-    console.log("PASO 3");
     const shipping = selectedShipping;
-    console.log("PASO 4");
 
-    console.log(deliveryMethod);
-    if (deliveryMethod === "shipping") {
+    if (deliveryMethod === "shipping" && !shipping) {
       alert("Seleccioná un método de envío.");
       return;
     }
@@ -1142,97 +1151,81 @@ confirmOrderBtn.addEventListener("click", async () => {
 
     let delivered;
 
-    if (deliveryMethod === "pickup") {
-      delivered = {
-        method: "Sucursal Casa Central",
-        price: 0,
+    switch (selectedShipping.type) {
+      case "home":
+        delivered = {
+          method:
+            "Correo Argentino Shipping - Correo Argentino Clasico - Envío a domicilio",
 
-        recipient,
+          price: shippingPrice,
 
-        shipping: {
-          deliveryType: "agency",
-        },
+          recipient,
 
-        otherRecipient: null,
-      };
-    } else {
-      switch (selectedShipping.type) {
-        case "home":
-          delivered = {
-            method:
-              "Correo Argentino Shipping - Correo Argentino Clasico - Envío a domicilio",
+          shipping: {
+            deliveryType: "homeDelivery",
 
-            price: shippingPrice,
+            address,
+          },
 
-            recipient,
+          otherRecipient: null,
+        };
 
-            shipping: {
-              deliveryType: "homeDelivery",
+        break;
 
-              address,
-            },
+      case "agency":
+        delivered = {
+          method:
+            "Correo Argentino Shipping - Correo Argentino Clasico - Envío a sucursal",
 
-            otherRecipient: null,
-          };
+          price: shippingPrice,
 
-          break;
+          recipient,
 
-        case "agency":
-          delivered = {
-            method:
-              "Correo Argentino Shipping - Correo Argentino Clasico - Envío a sucursal",
+          shipping: {
+            deliveryType: "agency",
+            agency: selectedShipping.agency,
+          },
 
-            price: shippingPrice,
+          otherRecipient: null,
+        };
 
-            recipient,
+        break;
 
-            shipping: {
-              deliveryType: "agency",
+      case "cadete":
+        delivered = {
+          method: "Cadete",
 
-              agency: selectedShipping.agency,
+          price: shippingPrice,
 
-              address,
-            },
+          recipient,
 
-            otherRecipient: null,
-          };
+          shipping: {
+            address,
+          },
 
-          break;
+          otherRecipient: null,
+        };
 
-        case "cadete":
-          delivered = {
-            method: "Cadete",
+        break;
 
-            price: shippingPrice,
+      case "Casa Central":
+        delivered = {
+          method: "Sucursal Casa Central",
+          price: 0,
+          recipient,
+          otherRecipient: null,
+        };
+        break;
 
-            recipient,
+      case "Sucursal Urquiza":
+        delivered = {
+          method: "Sucursal Urquiza",
+          price: 0,
+          recipient,
+          otherRecipient: null,
+        };
 
-            shipping: {
-              address,
-            },
-
-            otherRecipient: null,
-          };
-
-          break;
-
-        case "local":
-          delivered = {
-            method: "Sucursal Casa Central",
-
-            price: 0,
-
-            recipient,
-
-            shipping: {
-              deliveryType: "agency",
-            },
-
-            otherRecipient: null,
-          };
-
-          break;
-      }
+        break;
     }
 
     console.log("DELIVERED:");
@@ -1268,6 +1261,11 @@ confirmOrderBtn.addEventListener("click", async () => {
 
     console.log("PRODUCTS QUE SE ENVIAN:", JSON.stringify(products, null, 2));
     console.log("ORDER BODY:", JSON.stringify(orderBody, null, 2));
+
+    if (delivered.method == "Cadete" && !delivered.shipping.address.streetName) {
+      alert("Colocar dirección de envío")
+    }
+
     const res = await fetch(`${API_BASE}/orders`, {
       method: "POST",
 
@@ -1334,8 +1332,8 @@ confirmOrderBtn.addEventListener("click", async () => {
 
         throw new Error(
           paymentResult.message ||
-            paymentResult.error ||
-            JSON.stringify(paymentResult)
+          paymentResult.error ||
+          JSON.stringify(paymentResult)
         );
       }
 
