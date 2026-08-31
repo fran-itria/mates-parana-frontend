@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Editor de Diseño</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Fuente -->
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/fuentes.css" />
+  </head>
+
+  <body>
+    <!--==========HEADER=========================================-->
+    <header class="header-img">
+      <a href="index.html">
+        <img src="./css/img/header.webp" alt="Logo" />
+      </a>
+    </header>
+    <!--==================================================================-->
+
+    <!-- ================= APP ================= -->
+
+    <div class="app app-3cols">
+      <div class="editor-header">
+        <h2>Personalizá tu mate</h2>
+      </div>
+
+      <div class="workspace">
+        <!-- ========== SIDEBAR IZQUIERDA ========== -->
+        <aside class="sidebar">
+          <div class="sidebar-top">
+            <button onclick="showIcons()" class="active">ICONOS</button>
+            <button onclick="showText()">TEXTOS</button>
+            <button class="upload-btn" onclick="showUpload()">
+              AGREGAR IMAGENES
+            </button>
+          </div>
+
+          <div id="assetsPanel" class="assets-panel cards-mode"></div>
+        </aside>
+
+        <!-- ========== EDITOR CENTRAL ========== -->
+        <main class="editor">
+          <!-- Input texto flotante -->
+          <input
+            id="textInputFloating"
+            class="hidden"
+            type="text"
+            placeholder="Escribí tu texto..."
+          />
+
+          <!-- ✅ PANEL DERECHO (MOVIDO CORRECTAMENTE) -->
+          <div id="floatingControls" class="floating-panel hidden">
+            <div class="control-group">
+              <div class="control-row">
+                <button id="btnScaleUp">➕</button>
+                <button id="btnScaleDown">➖</button>
+              </div>
+            </div>
+
+            <div class="control-group text-controls">
+              <div class="control-row">
+                <button id="btnCurveLess">(Izquierda)</button>
+                <button id="btnCurveMore">(Derecha)</button>
+              </div>
+              <button id="btnInvertCurve">Invertir texto</button>
+            </div>
+
+            <div class="control-group danger">
+              <button id="btnDelete">🗑 Eliminar</button>
+            </div>
+          </div>
+
+          <div class="editor-canvas">
+            <svg
+              data-ui="true"
+              id="designArea"
+              viewBox="12.5 12.5 95 95"
+              width="450"
+              height="450"
+              style="touch-action: none"
+            >
+              <!-- círculo exterior 95mm -->
+              <circle
+                cx="60"
+                cy="60"
+                r="46.5"
+                fill="#f2f2f2"
+                stroke="#999"
+                stroke-width="0.5"
+              />
+
+              <!-- interior 67mm -->
+              <circle
+                cx="60"
+                cy="60"
+                r="33.5"
+                fill="#5C3C27"
+                stroke="#382315"
+                stroke-width="0.5"
+              />
+
+              <!-- GUÍAS -->
+              <g id="guideLayer" data-ui="true" pointer-events="none">
+                <!-- guía horizontal -->
+                <line
+                  x1="13.5"
+                  y1="60"
+                  x2="106.5"
+                  y2="60"
+                  class="editor-guide"
+                />
+
+                <!-- guía vertical -->
+                <line
+                  x1="60"
+                  y1="13.5"
+                  x2="60"
+                  y2="106.5"
+                  class="editor-guide"
+                />
+              </g>
+
+              <!-- diseños -->
+              <g id="designGroup" data-ui="true"></g>
+
+              <!-- gizmos -->
+              <g id="gizmoLayer" data-ui="true"></g>
+            </svg>
+          </div>
+
+          <!-- Botones de abajo -->
+          <div class="editor-actions"></div>
+        </main>
+      </div>
+      <!-- workspace -->
+    </div>
+    <!-- app -->
+
+    <div class="topbar">
+      <button type="button" onclick="handleListo()">Confirmar diseño</button>
+    </div>
+
+    <div id="exportModal" class="export-modal hidden">
+      <div class="export-modal-content">
+        <!-- PREVISUALIZACIÓN -->
+        <div class="preview-container">
+          <p class="preview-title">Así se enviará tu diseño:</p>
+
+          <img
+            id="designPreview"
+            class="design-preview"
+            src=""
+            alt="Vista previa del diseño"
+          />
+        </div>
+
+        <div class="form-group">
+          <p class="required-fields">Campo obligatorio</p>
+          <label for="clientOrderNumber">Número de orden sin #</label>
+          <input
+            type="text"
+            id="clientOrderNumber"
+            placeholder="Ingresá el número de orden (Sin #)"
+          />
+        </div>
+
+        <p class="required-fields">Campo obligatorio</p>
+        <select id="clientDelivered" class="modal-select">
+          <option value="">Seleccioná dónde retirar</option>
+          <option value="Padre Kentenich 825">Padre Kentenich 825</option>
+          <option value="Urquiza 785">Urquiza 785</option>
+          <option value="No soy de Paraná">No soy de Paraná</option>
+        </select>
+
+        <textarea
+          id="clientObservations"
+          placeholder="Aclaraciones sobre tu pedido (opcional o si tenés más de un diseño)"
+        ></textarea>
+
+        <div class="modal-buttons">
+          <button id="cancelExport">Cancelar</button>
+          <button id="confirmExport">Enviar diseño</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= JS ================= -->
+
+    <script>
+      function goTo(page) {
+        window.location.href = page;
+      }
+
+      async function handleListo() {
+        await generateDesignPreview();
+        const modal = document.getElementById("exportModal");
+
+        modal.classList.remove("hidden");
+      }
+
+      const exportModal = document.getElementById("exportModal");
+
+      const cancelExport = document.getElementById("cancelExport");
+
+      const confirmExport = document.getElementById("confirmExport");
+
+      cancelExport.addEventListener("click", () => {
+        exportModal.classList.add("hidden");
+      });
+
+      confirmExport.addEventListener("click", async () => {
+        const orderNumber = document
+          .getElementById("clientOrderNumber")
+          .value.trim();
+
+        const delivered = document
+          .getElementById("clientDelivered")
+          .value.trim();
+
+        const observations = document
+          .getElementById("clientObservations")
+          .value.trim();
+
+        // Validación
+        if (!orderNumber || !delivered) {
+          alert("Completá todos los campos");
+          return;
+        }
+
+        // Deshabilitar botón
+        confirmExport.disabled = true;
+        confirmExport.textContent = "Enviando Diseño por favor espere";
+
+        exportModal.classList.add("hidden");
+
+        try {
+          await exportDesignToBackend(orderNumber, {
+            delivered,
+            observations,
+          });
+        } finally {
+          confirmExport.disabled = false;
+          confirmExport.textContent = "Enviar diseño";
+        }
+      });
+    </script>
+    <div id="toastSuccess" class="toast-success hidden">
+      ✅ El diseño fue enviado con éxito
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/opentype.js/1.3.4/opentype.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="./js/app.js" defer></script>
+    <script src="./js/carrito.js" defer></script>
+
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="loader"></div>
+      <p>Enviando diseño... por favor espere</p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,844 @@
+.header {
+  width: 100%;
+  background: #12110d;
+  padding-bottom: 10px;
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  transition: box-shadow 0.3s ease;
+}
+
+.header.scrolled {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.header-top {
+  display: grid;
+
+  grid-template-columns: 220px minmax(300px, 800px) 300px;
+
+  width: 100%;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 6px 15px; /* antes 40px */
+  box-sizing: border-box;
+}
+
+.logo img {
+  width: 200px;
+  margin: 10px 0;
+}
+
+.logo {
+  position: static;
+}
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+
+.help-wrapper,
+.account-btn,
+.cart-button {
+  width: 55px;
+
+  display: flex;
+  justify-content: center;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.icon-btn svg {
+  width: 28px;
+  height: 28px;
+  fill: white;
+}
+
+.account-btn {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 2px;
+
+  text-decoration: none;
+  color: white;
+  font-size: 11px;
+
+  transition: opacity 0.2s ease;
+}
+
+.account-btn:hover {
+  opacity: 0.7;
+}
+
+.account-btn img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* =========================
+   AYUDA
+========================= */
+
+.help-wrapper {
+  position: relative;
+}
+
+.help-btn {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 2px;
+
+  background: none;
+  border: none;
+
+  color: white;
+  cursor: pointer;
+
+  font-size: 11px;
+
+  transition: opacity 0.2s ease;
+}
+
+.help-btn:hover {
+  opacity: 0.7;
+}
+
+.help-btn img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* POPUP */
+
+.help-popup {
+  position: absolute;
+
+  top: 115%;
+  right: 0;
+
+  background: #1d1b15;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 10px;
+
+  padding: 12px 14px;
+
+  min-width: 220px;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(10px);
+
+  transition: all 0.25s ease;
+
+  z-index: 9999;
+}
+
+.help-popup p {
+  margin: 0;
+  color: white;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* HOVER */
+
+.help-wrapper:hover .help-popup {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/*=======SLIDER 2===================*/
+.topbar-slider {
+  width: 100%;
+  height: 15px;
+  background: #070707;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topbar-item {
+  position: absolute;
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(100%); /* arranca a la derecha */
+  transition: transform 0.8s ease, opacity 0.5s ease;
+}
+
+/* visible en el centro */
+.topbar-item.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* sale hacia la izquierda */
+.topbar-item.exit {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+/*====================================*/
+
+/* BUSCADOR */
+.search-container {
+  flex: 1;
+  max-width: 700px;
+
+  position: relative;
+  display: flex;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  background: #2f4132;
+  color: white;
+  font-size: 14px;
+}
+
+.search-container input::placeholder {
+  color: #ddd;
+}
+
+.search-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* RESULTADOS BUSQUEDA */
+.search-results {
+  position: absolute;
+  top: 110%;
+  width: 100%;
+  background: #5c6243;
+  border-radius: 10px;
+  overflow: hidden;
+  display: none;
+  z-index: 1000;
+}
+
+.search-results.active {
+  display: block;
+}
+
+/* NAV NUEVO */
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  border-top: 1px solid white;
+  padding-top: 5px;
+  padding-bottom: 2px;
+  align-items: center;
+}
+.nav a {
+  text-decoration: none;
+  color: white;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: none;
+  position: relative;
+}
+
+/* Hover simple */
+.nav a:hover {
+  opacity: 0.7;
+}
+
+/*============== DROPDOWN =========================*/
+/* CONTENEDOR PRINCIPAL */
+.dropdown {
+  position: relative;
+}
+/*==================== MEGA MENU ====================*/
+
+.mega-menu {
+  position: fixed;
+
+  top: 150px;
+  left: 0;
+  right: 0;
+
+  width: auto;
+
+  background: #12110d;
+
+  display: none;
+
+  grid-template-columns: repeat(3, auto);
+  justify-content: start;
+  padding-left: 180px;
+
+  column-gap: 170px;
+
+  padding: 18px 60px;
+
+  z-index: 9999;
+}
+
+.dropdown:hover .mega-menu {
+  display: grid;
+}
+
+.menu-title {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  color: #fff;
+
+  margin: 0 0 6px;
+}
+
+/*==================== COLUMNAS ====================*/
+
+.mega-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/*==================== TITULOS ====================*/
+
+.mega-column h4 {
+  margin: 0 0 6px;
+
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+
+  text-transform: uppercase;
+  border: none;
+  padding: 0;
+  letter-spacing: 0;
+}
+
+/*==================== ENLACES ====================*/
+
+.mega-column a {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.mega-column a:hover {
+  opacity: 0.7;
+  transform: none;
+}
+
+/*==================== ELIMINAR EFECTOS ====================*/
+
+.mega-column {
+  overflow: visible;
+  max-height: none;
+}
+
+.mega-column::-webkit-scrollbar {
+  display: none;
+}
+
+.dropdown {
+  position: relative;
+}
+
+/* PUENTE INVISIBLE */
+.dropdown::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 20px;
+}
+
+@media (max-width: 768px) {
+  .dropdown::after {
+    display: none;
+  }
+}
+/* ====================================================*/
+/* ITEM RESULTADO */
+.search-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  text-decoration: none;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.search-item img {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.search-item:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.search-info {
+  flex: 1;
+}
+
+.search-name {
+  font-size: 13px;
+}
+
+.search-price {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.search-arrow {
+  font-size: 18px;
+  opacity: 0.6;
+}
+
+/* sin resultados */
+.no-results {
+  padding: 15px;
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/*=CARRITO==*/
+
+.cart-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.cart-button:hover {
+  opacity: 0.7;
+}
+
+.cart-button img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/*================================*/
+.hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger svg {
+  width: 30px;
+  height: 30px;
+  fill: white;
+}
+
+/* Desktop */
+.hamburger {
+  display: none;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+}
+/* =========================================
+   NOTEBOOK / TABLET
+========================================= */
+@media (max-width: 1200px) {
+  .header-top {
+    grid-template-columns: 180px minmax(250px, 1fr) auto;
+
+    gap: 15px;
+
+    padding: 8px 20px;
+  }
+
+  .logo img {
+    width: 170px;
+  }
+
+  .search-container {
+    max-width: 100%;
+  }
+
+  .account-btn img,
+  .cart-button img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .nav {
+    gap: 15px;
+  }
+
+  .nav a {
+    font-size: 13px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+@media (max-width: 768px) {
+  .header {
+    padding-bottom: 5px;
+  }
+
+  .header-top {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "logo icons"
+      "search search";
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 15px;
+  }
+  /* LOGO */
+
+  .logo {
+    grid-area: logo;
+    left: 0;
+  }
+
+  .logo img {
+    width: 140px;
+    margin: 0;
+  }
+
+  /* ICONOS DERECHA */
+  .header-icons {
+    grid-area: icons;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 8px; /* separación igual entre todos */
+  }
+
+  .header-icons > * {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+  }
+
+  /* ICONOS */
+  .help-btn img,
+  .account-btn img,
+  .cart-button img,
+  .hamburger svg {
+    width: 30px;
+    height: 30px;
+  }
+  .help-btn {
+    width: 100%;
+    height: 100%;
+
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: transparent;
+    border: none;
+  }
+
+  /* TEXTO MI CUENTA */
+  .account-btn span {
+    display: none;
+  }
+
+  /* HAMBURGUESA */
+  .hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* BUSCADOR */
+  .search-container {
+    grid-area: search;
+
+    max-width: 100%;
+
+    margin-top: 5px;
+  }
+
+  .search-container input {
+    padding: 8px 14px;
+
+    font-size: 13px;
+  }
+
+  .help-btn span {
+    display: none;
+  }
+
+  .help-btn img {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.cart-button {
+  position: relative;
+  z-index: 5;
+  width: 20px;
+}
+
+.hamburger {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+/* =========================================
+   MOBILE - NAV
+========================================= */
+
+@media (max-width: 768px) {
+  /* ================================
+     NAV PRINCIPAL
+  ================================ */
+
+  .nav {
+    display: none;
+
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 0;
+
+    padding: 10px 20px;
+
+    background: #12110d;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+
+    box-sizing: border-box;
+
+    max-height: calc(100dvh - 150px);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior: contain;
+  }
+
+  .nav > a,
+  .nav > .dropdown {
+    flex-shrink: 0;
+  }
+
+  .nav.open {
+    display: flex;
+  }
+
+  /* ================================
+     ENLACES PRINCIPALES
+  ================================ */
+
+  .nav > a,
+  .nav .productos-toggle {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 0;
+
+    font-size: 14px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    flex-shrink: 0;
+  }
+
+  /* ================================
+     DROPDOWN
+  ================================ */
+
+  .dropdown {
+    position: relative;
+
+    width: 100%;
+
+    flex-shrink: 0;
+  }
+
+  /* ================================
+     MEGA MENU
+  ================================ */
+
+  .mega-menu {
+    position: static;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    display: none;
+
+    grid-template-columns: 1fr;
+
+    padding: 10px 15px 15px;
+
+    background: #12110d;
+
+    column-gap: 0;
+
+    /*
+      El mega menú NO hace scroll.
+    */
+    max-height: none;
+
+    overflow: visible;
+
+    z-index: auto;
+  }
+
+  /* ================================
+     MEGA MENU ABIERTO
+  ================================ */
+
+  .mega-menu.active {
+    display: grid;
+  }
+
+  /*
+    En mobile no usamos hover.
+  */
+  .dropdown:hover .mega-menu {
+    display: none;
+  }
+
+  .dropdown:hover .mega-menu.active {
+    display: grid;
+  }
+
+  /* ================================
+     COLUMNAS
+  ================================ */
+
+  .mega-column {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    width: 100%;
+
+    max-height: none;
+
+    overflow: visible;
+  }
+
+  /* ================================
+     TITULOS
+  ================================ */
+
+  .mega-column h4 {
+    margin: 0 0 6px;
+
+    padding: 0;
+
+    font-size: 15px;
+
+    color: #fff;
+
+    border: none;
+  }
+
+  /* ================================
+     ENLACES MEGA MENU
+  ================================ */
+
+  .mega-column a {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 8px 0;
+
+    font-size: 14px;
+
+    line-height: 1.2;
+
+    border: none;
+  }
+
+  /* ================================
+     AYUDA
+  ================================ */
+
+  .help-btn span {
+    display: none;
+  }
+
+  .help-btn img {
+    width: 28px;
+    height: 28px;
+  }
+}

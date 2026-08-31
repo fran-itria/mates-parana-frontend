@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Checkout | Mates Paraná</title>
+
+    <link rel="stylesheet" href="./css/checkout.css" />
+  </head>
+
+  <body>
+    <!-- OVERLAY LOADING -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="loader"></div>
+      <p>Procesando compra...</p>
+    </div>
+
+    <!-- CONTAINER -->
+    <main class="checkout-container">
+      <!-- IZQUIERDA -->
+      <section class="checkout-left">
+        <div class="checkout-box">
+          <h1>Finalizar compra</h1>
+
+          <!-- CONTACTO -->
+          <div class="checkout-section">
+            <h2>Información personal</h2>
+
+            <div class="input-grid">
+              <div class="input-group">
+                <label>Nombre</label>
+                <input type="text" id="name" placeholder="Tu nombre" />
+              </div>
+
+              <div class="input-group">
+                <label>Apellido</label>
+                <input type="text" id="surname" placeholder="Tu apellido" />
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Email</label>
+              <input type="email" id="email" placeholder="mail@email.com" />
+            </div>
+
+            <div class="input-group">
+              <label>Teléfono</label>
+              <input type="tel" id="phone" placeholder="3430000000" />
+            </div>
+
+            <div class="input-group">
+              <label>DNI</label>
+              <input type="number" id="customerDni" placeholder="12345678" />
+            </div>
+          </div>
+
+          <!-- ENTREGA -->
+          <div class="checkout-section">
+            <h2>Entrega</h2>
+
+            <div class="delivery-options">
+              <button class="delivery-btn" data-delivery="shipping">
+                Metodo de entrega
+              </button>
+            </div>
+
+            <div id="shippingFields" class="shipping-fields hidden">
+              <!-- OPCIONES DISPONIBLES ANTES DEL CÓDIGO POSTAL -->
+              <div id="preShippingOptions"></div>
+
+              <!-- CÓDIGO POSTAL -->
+              <div class="input-grid">
+                <div class="input-group">
+                  <label>Código postal</label>
+                  <input
+                    type="text"
+                    id="postalCode"
+                    placeholder="Ejemplo (E3100)"
+                  />
+                </div>
+
+                <div class="shipping-calculator">
+                  <button type="button" id="calcShipping" class="shipping-btn">
+                    Calcular envío
+                  </button>
+
+                  <div id="shippingResult"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PAGO -->
+          <div class="checkout-section">
+            <h2>Método de pago</h2>
+
+            <div class="payment-options">
+              <button class="payment-btn active" data-payment="transfer">
+                Transferencia
+              </button>
+
+              <button class="payment-btn" data-payment="card">Tarjeta</button>
+            </div>
+          </div>
+
+          <!-- TARJETA -->
+          <div id="cardFields" class="card-fields hidden">
+            <form id="cardForm">
+              <!-- Número -->
+              <!-- Número de tarjeta -->
+              <div class="input-group">
+                <label for="cardNumber">Número de tarjeta</label>
+
+                <input
+                  type="text"
+                  id="cardNumber"
+                  name="card_number"
+                  data-decidir="card_number"
+                  inputmode="numeric"
+                  autocomplete="cc-number"
+                  maxlength="19"
+                  placeholder="0000 0000 0000 0000"
+                />
+              </div>
+
+              <!-- Marca -->
+              <div class="input-group">
+                <label for="cardBrand">Marca detectada</label>
+
+                <input
+                  type="text"
+                  id="cardBrand"
+                  name="card_brand"
+                  readonly
+                  placeholder="Se detectará automáticamente"
+                />
+              </div>
+
+              <!-- Mes / Año / CVV -->
+              <div class="input-grid">
+                <div class="input-group">
+                  <label for="cardMonth">Mes</label>
+
+                  <input
+                    type="text"
+                    id="cardMonth"
+                    name="card_expiration_month"
+                    data-decidir="card_expiration_month"
+                    inputmode="numeric"
+                    maxlength="2"
+                    autocomplete="cc-exp-month"
+                    placeholder="12"
+                  />
+                </div>
+
+                <div class="input-group">
+                  <label for="cardYear">Año</label>
+
+                  <input
+                    type="text"
+                    id="cardYear"
+                    name="card_expiration_year"
+                    data-decidir="card_expiration_year"
+                    inputmode="numeric"
+                    maxlength="2"
+                    autocomplete="cc-exp-year"
+                    placeholder="30"
+                  />
+                </div>
+
+                <div class="input-group">
+                  <label for="cardCode">CVV</label>
+
+                  <input
+                    type="text"
+                    id="cardCode"
+                    name="security_code"
+                    data-decidir="security_code"
+                    inputmode="numeric"
+                    maxlength="4"
+                    autocomplete="cc-csc"
+                    placeholder="123"
+                  />
+                </div>
+              </div>
+
+              <!-- Titular -->
+              <div class="input-group">
+                <label for="cardHolder">Nombre titular</label>
+
+                <input
+                  type="text"
+                  id="cardHolder"
+                  name="card_holder_name"
+                  data-decidir="card_holder_name"
+                  autocomplete="cc-name"
+                  placeholder="Nombre completo"
+                />
+              </div>
+
+              <!-- DNI -->
+              <div class="input-group">
+                <label for="dni">DNI del titular</label>
+
+                <input
+                  type="text"
+                  id="cardHolderDni"
+                  name="card_holder_identification"
+                  data-decidir="card_holder_identification"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  placeholder="12345678"
+                />
+              </div>
+            </form>
+          </div>
+
+          <!-- BOTÓN -->
+          <button id="confirmOrderBtn" class="confirm-btn">
+            Confirmar compra
+          </button>
+        </div>
+      </section>
+
+      <!-- DERECHA -->
+      <aside class="checkout-right">
+        <div class="summary-box">
+          <h2>Resumen</h2>
+
+          <!-- PRODUCTOS -->
+          <div id="summaryProducts" class="summary-products">
+            <!-- JS -->
+          </div>
+
+          <!-- TOTALES -->
+          <div class="summary-total">
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <strong id="summarySubtotal">$0</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Envío</span>
+              <strong id="summaryShipping">$0</strong>
+            </div>
+
+            <div class="summary-row total">
+              <span>Total</span>
+              <strong id="summaryTotal">$0</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- ESTADO PAGO -->
+        <div id="paymentBox" class="payment-box hidden">
+          <h2>Orden creada</h2>
+
+          <p class="payment-order">
+            Pedido:
+            <strong id="orderNumber">#0000</strong>
+          </p>
+
+          <div class="payment-info">
+            <span>Total a pagar</span>
+            <strong id="paymentAmount">$0</strong>
+          </div>
+
+          <div class="payment-expiration">
+            <div class="expiration-icon">⏳</div>
+
+            <div class="expiration-content">
+              <h3>
+                Realizá el pago antes del
+                <span id="paymentExpirationDate"></span>
+              </h3>
+
+              <p>
+                Después de esta fecha el alias y el CVU dejarán de estar
+                disponibles y tu pedido será cancelado automáticamente.
+              </p>
+
+              <div class="expiration-note">
+                Transferí el <strong>monto exacto</strong> para que el pago se
+                acredite de forma automática.
+              </div>
+            </div>
+          </div>
+
+          <div class="payment-info">
+            <span>Beneficiario</span>
+            <strong id="paymentBeneficiary">-</strong>
+          </div>
+
+          <div class="payment-info">
+            <span>CUIT</span>
+            <strong id="paymentCUIT">-</strong>
+          </div>
+
+          <div class="payment-info">
+            <span>Alias exclusivo para esta compra</span>
+
+            <div class="copy-row">
+              <input type="text" id="paymentAlias" readonly />
+
+              <button id="copyAliasBtn">Copiar</button>
+            </div>
+          </div>
+
+          <div class="payment-info">
+            <span>CVU</span>
+
+            <div class="copy-row">
+              <input type="text" id="paymentCVU" readonly />
+
+              <button id="copyCVUBtn">Copiar</button>
+            </div>
+          </div>
+
+          <div class="payment-info">
+            <span>Monto exacto a transferir</span>
+
+            <div class="copy-row">
+              <input type="text" id="paymentTransferAmount" readonly />
+
+              <button id="copyAmountBtn">Copiar</button>
+            </div>
+          </div>
+
+          <div class="payment-status">⏳ Esperando acreditación del pago</div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- SDK PAYWAY -->
+    <script src="https://ventasonline.payway.com.ar/static/v2.6.4/decidir.js"></script>
+    <!-- JS -->
+    <script src="./js/checkout.js"></script>
+  </body>
+</html>

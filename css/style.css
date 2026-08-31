@@ -1,0 +1,1098 @@
+/* ===============================
+   RESET
+=============================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #0d0d0d;
+  color: white;
+  font-family: var(--font-semibold);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-semibold);
+}
+
+/* ===============================
+   TITULO
+=============================== */
+
+.header-img {
+  text-align: center;
+}
+
+.header-img img {
+  width: 200px;
+}
+
+.editor-header {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.editor-header h2 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.titulo {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.titulo h2 {
+  margin: 0;
+  font-size: 32px;
+  letter-spacing: 2px;
+}
+
+/* ===============================
+   NAV2
+=============================== */
+.nav2 {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.nav2 a {
+  text-decoration: none;
+  color: white;
+  border: 1px solid #444;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.nav2 a:hover {
+  background: #2f4132;
+}
+
+/*===========================
+ Botón Agregar Texto ==============*/
+.add-text-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #f1f1f1;
+  color: #222;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.add-text-btn:hover {
+  color: #ffffff;
+  background: #2f4132;
+}
+
+/*===========================
+ Agegar imagen ==============*/
+
+.upload-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f1f1f1;
+  color: #222;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.upload-btn:hover {
+  color: #ffffff;
+  background: #2f4132;
+}
+
+/*===========================
+texto advertencia=============*/
+
+.upload-warning {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #ff4d4d;
+  text-align: center;
+  font-weight: 500;
+}
+
+/*===========================
+tipografias==============*/
+
+.fonts-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.fonts-list button {
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #f1f1f1;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.fonts-list button:hover {
+  background: #ddd;
+}
+
+/*--------------------------*/
+.fonts-list div.active-font {
+  background: #2f4132;
+  color: #2f4132;
+  border: 2px solid #2f4132;
+}
+
+.fonts-list div {
+  border: 2px #2f4132;
+}
+
+/* ===============================
+   CATEGORIAS EN LISTA (FIX)
+=============================== */
+
+.cards-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* espacio entre categorías */
+}
+
+/* Cada bloque (EMOJIS, ESCUDOS, etc) */
+.category-card {
+  background: #2f4132;
+  border-radius: 14px;
+  padding: 12px;
+  color: white;
+}
+
+/* Header */
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.category-header h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Botón */
+.ver-todos {
+  background: white;
+  color: #2f4132;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* 🔥 FILA HORIZONTAL DE ICONOS */
+/* PREVIEW: solo 3 iconos */
+.category-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 👈 3 visibles */
+  gap: 8px;
+}
+
+/* ocultar el resto */
+.category-preview img:nth-child(n + 4) {
+  display: none;
+}
+
+/* Scroll más prolijo (opcional pero pro) */
+.category-preview::-webkit-scrollbar {
+  height: 6px;
+}
+
+.category-preview::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+/* ===============================
+   LAYOUT
+=============================== */
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 260px 1fr 200px;
+  gap: 20px;
+  align-items: center;
+  background: linear-gradient(135deg, #2f4132, #2f4132);
+  padding: 30px;
+  border-radius: 20px;
+}
+
+.app-3cols {
+  background-color: #2f4132;
+  border-radius: 20px;
+}
+
+/* ===============================
+   SIDEBAR (RESTAURADO)
+=============================== */
+.sidebar {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+  height: 35rem;
+  width: 22rem;
+
+  color: #000; /* 🔥 IMPORTANTE: texto negro dentro */
+}
+
+/* BOTONES SUPERIORES */
+.sidebar-top {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+}
+
+.sidebar-top button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #f1f1f1; /* 🔥 antes blanco/gris claro */
+  color: #222;
+  cursor: pointer;
+}
+
+.sidebar-top button.active {
+  background: #2f4132;
+  color: white;
+}
+
+/* ===============================
+   ASSETS PANEL (ARREGLADO)
+=============================== */
+.assets-panel {
+  flex: 1;
+  overflow-y: auto;
+
+  display: flex; /* 👈 clave */
+  flex-direction: column; /* 👈 una sola columna */
+
+  gap: 16px;
+  margin-top: 10px;
+  padding-right: 5px;
+}
+
+.assets-panel img {
+  width: 100%;
+  max-width: 150px;
+
+  border-radius: 12px;
+  padding: 6px;
+
+  cursor: grab;
+  background: white;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: 0.15s;
+}
+
+.assets-panel img:hover {
+  transform: scale(1.05);
+}
+/* ===============================
+   EDITOR
+=============================== */
+.editor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#designArea {
+  width: 600px;
+  height: 600px;
+  border-radius: 24px;
+  touch-action: none;
+}
+
+#designGroup,
+#designGroup * {
+  pointer-events: all;
+}
+
+#gizmoLayer {
+  pointer-events: none;
+}
+
+#gizmoLayer .move-gizmo circle:last-child {
+  pointer-events: all;
+}
+
+/* ===============================
+   FLOATING PANEL
+=============================== */
+
+.floating-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  width: fit-content;
+  max-width: none;
+
+  margin: 10px auto 20px;
+
+  padding: 8px 12px;
+
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.floating-panel h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-group span {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.control-row {
+  display: flex;
+  gap: 6px;
+}
+
+.floating-panel button {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  background: #f1f1f1;
+  transition: 0.2s;
+}
+
+.floating-panel button:hover {
+  background: #ddd;
+}
+
+.control-group.danger button {
+  background: #131a14;
+  color: white;
+}
+
+/* ===============================
+   BOTONES ABAJO
+=============================== */
+.editor-actions {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.action-btn {
+  padding: 14px 26px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  background: #f1f1f1;
+  border-radius: 14px;
+  font-size: 16px;
+  transition: 0.2s;
+}
+
+.action-btn:hover {
+  background: black;
+  color: white;
+}
+
+.action-btn.primary {
+  background: black;
+  color: white;
+}
+
+/* ===============================
+   TOPBAR
+=============================== */
+.topbar {
+  margin: 20px auto;
+  text-align: center;
+}
+
+.topbar button {
+  font-size: 20px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #2f4132; /* 🔥 antes blanco/gris claro */
+  color: #ffffff;
+  cursor: pointer;
+  font-family: var(--font-semibold);
+}
+
+.topbar button:hover,
+.topbar button.active {
+  background: #2f4132;
+}
+
+/* ===============================
+   MOBILE
+=============================== */
+
+@media (max-width: 768px) {
+  .header-img img {
+    width: 110px;
+  }
+  /* Layout general */
+  .workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 15px;
+    align-items: center;
+  }
+
+  /* Orden de elementos */
+  .editor {
+    order: 1;
+    width: 100%;
+  }
+
+  .sidebar {
+    order: 2;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Canvas responsive */
+  #designArea {
+    width: 250px;
+    height: 250px;
+  }
+
+  /* Sidebar más compacta */
+  .sidebar {
+    padding: 12px;
+    order: 2;
+    width: 100%;
+
+    /* 🔥 CLAVE */
+    max-height: 40vh; /* ocupa solo parte de la pantalla */
+    overflow: hidden; /* evita que todo crezca */
+  }
+
+  .assets-panel {
+    display: none;
+  }
+
+  .assets-panel.open {
+    display: block;
+  }
+
+  .assets-panel img {
+    max-width: 100px;
+    overflow-y: auto;
+    flex: 1;
+
+    /* para que el scroll funcione bien */
+    max-height: calc(40vh - 60px);
+  }
+
+  /* Topbar */
+  .topbar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  /* Floating panel sobre el editor */
+
+  /* Editor como referencia para posicionar */
+  .editor {
+    position: relative;
+    width: 300px;
+  }
+
+  /* Botones más chicos */
+
+  /* Texto */
+  .editor-header h2 {
+    font-size: 18px;
+  }
+
+  /* Sidebar botones */
+  .sidebar-top button {
+    font-size: 12px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .floating-panel {
+    display: flex;
+    flex-wrap: nowrap;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 1px;
+
+    margin-bottom: 10px;
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: row;
+
+    gap: 1px;
+  }
+
+  .control-row {
+    display: flex;
+    gap: 1px;
+  }
+
+  .floating-panel button {
+    padding: 6px 8px;
+
+    font-size: 11px;
+
+    min-height: 34px;
+
+    border-radius: 8px;
+  }
+
+  .design-preview {
+    width: min(220px, 80vw);
+    aspect-ratio: 1;
+    object-fit: contain;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #fff;
+  }
+}
+
+.toast-success {
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  min-width: 350px;
+  max-width: 500px;
+
+  padding: 20px 30px;
+
+  background: linear-gradient(135deg, #2e7d32, #43a047);
+
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+
+  border-radius: 14px;
+
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+
+  z-index: 9999;
+
+  animation: toastPop 0.3s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes toastPop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.toast-success.hidden {
+  display: none;
+}
+
+@font-face {
+  font-family: "ARIAL";
+  src: url("../fonts/ARIAL.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "bradleyHandItcRegular";
+  src: url("../fonts/bradleyHandItcRegular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "CambriaRegular";
+  src: url("../fonts/CambriaRegular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "ComicSanSms";
+  src: url("../fonts/ComicSanSms.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "copperplategothiclight";
+  src: url("../fonts/copperplategothiclight.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "gabriola";
+  src: url("../fonts/gabriola.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "LucidaUnicodeCalligraphy";
+  src: url("../fonts/LucidaUnicodeCalligraphy.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "microsofthimalaya";
+  src: url("../fonts/microsofthimalaya.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "segoeprint";
+  src: url("../fonts/segoeprint.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "timesnewroman";
+  src: url("../fonts/timesnewroman.ttf") format("truetype");
+}
+
+/* agregá todas las demás */
+.export-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.export-modal.hidden {
+  display: none;
+}
+
+.export-modal-content {
+  width: 80%;
+  max-width: 450px;
+
+  background: white;
+
+  border-radius: 16px;
+
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.export-modal-content h2 {
+  margin: 0;
+  text-align: center;
+}
+
+.export-modal-content input {
+  height: 45px;
+
+  border: 1px solid #646363;
+
+  border-radius: 10px;
+
+  padding: 0 10px;
+
+  font-size: 13px;
+}
+
+#textInputFloating {
+  width: 150px;
+
+  padding: 10px 14px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #333;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  text-align: center;
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+.modal-buttons {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 10px;
+}
+
+.modal-buttons button {
+  flex: 1;
+
+  height: 45px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-weight: bold;
+}
+
+#cancelExport {
+  background: #ddd;
+}
+
+#confirmExport {
+  background: #275c3b;
+
+  color: white;
+}
+
+.modal-select {
+  width: 100%;
+  height: 38px;
+  padding: 0 10px;
+  margin-top: 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+#clientObservations {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.required-info {
+  color: #ff0000;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.export-modal-content input::placeholder,
+.export-modal-content textarea::placeholder {
+  color: #999;
+}
+
+.preview-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.preview-title {
+  color: #000;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.design-preview {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .export-modal-content {
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .design-preview {
+    width: 100px;
+    height: 100px;
+  }
+
+  .preview-container {
+    margin-bottom: 1px;
+  }
+
+  .export-modal-content input,
+  .modal-select {
+    height: 40px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .export-modal-content h2 {
+    font-size: 22px;
+  }
+
+  .preview-title {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .required-info {
+    font-size: 11px;
+  }
+}
+
+.export-modal-content input,
+.modal-select,
+#clientObservations {
+  box-sizing: border-box;
+}
+
+/*===========ALERTA DE CARGANDO DISEÑO============*/
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 99999;
+}
+
+.loading-overlay.hidden {
+  display: none;
+}
+
+.loader {
+  width: 60px;
+  height: 60px;
+
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top: 5px solid #ffffff;
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+}
+
+.loading-overlay p {
+  margin-top: 15px;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===============================
+   TABLET 10"
+=============================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .workspace {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 20px;
+    padding: 20px;
+  }
+
+  /* Editor primero */
+  .editor {
+    order: 1;
+    width: 100%;
+  }
+
+  /* Sidebar debajo */
+  .sidebar {
+    order: 2;
+
+    width: 100%;
+    max-width: 900px;
+
+    height: auto;
+    max-height: 350px;
+  }
+
+  /* Mate */
+  #designArea {
+    width: 520px;
+    height: 520px;
+  }
+
+  /* Botones superiores */
+  .sidebar-top {
+    justify-content: center;
+  }
+
+  .sidebar-top button {
+    max-width: 180px;
+  }
+
+  /* Categorías más compactas */
+  .cards-mode {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .category-card {
+    margin: 0;
+  }
+
+  /* Panel scrollable */
+  .assets-panel {
+    overflow-y: auto;
+  }
+
+  /* Panel flotante */
+  .floating-panel {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .topbar button {
+    font-size: 18px;
+  }
+}
+
+/* =====================================
+   NOTEBOOKS 13" (MacBook Air / Neo)
+===================================== */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .workspace {
+    grid-template-columns: 320px 1fr;
+    gap: 25px;
+    padding: 20px;
+  }
+
+  .sidebar {
+    width: 320px;
+    height: 32rem;
+  }
+
+  #designArea {
+    width: 500px;
+    height: 500px;
+  }
+
+  .editor-header h2 {
+    font-size: 20px;
+  }
+
+  .topbar button {
+    font-size: 18px;
+    padding: 12px 22px;
+  }
+
+  .editor {
+    width: 650px;
+  }
+}
+
+.required-fields {
+  color: #d32f2f;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin: 1px 0 1px;
+  text-align: center;
+}
+
+.editor-guide {
+  stroke: #5d5e5b;
+  stroke-width: 0.25;
+  stroke-dasharray: 1.5 1;
+  opacity: 0.6;
+  pointer-events: none;
+}

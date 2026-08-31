@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Producto | Mates Paraná</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="./css/productos.css" />
+    <link rel="stylesheet" href="./css/header.css" />
+    <link rel="stylesheet" href="./css/producto-detalle.css" />
+    <link rel="stylesheet" href="./css/carrito.css" />
+    <link rel="stylesheet" href="./css/nav-inferior.css" />
+    <link rel="stylesheet" href="./css/burger.css" />
+    <link rel="stylesheet" href="./css/fuentes.css" />
+  </head>
+  <body>
+    <!--==========HEADER=========================================-->
+    <header class="header">
+      <div class="header-top">
+        <div class="logo">
+          <img src="./css/img/header.webp" alt="Logo" />
+        </div>
+
+        <!-- 🔍 BUSCADOR -->
+        <div class="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="¿Qué estás buscando?"
+          />
+          <button class="search-btn">
+            <img src="./css/img/lupa.svg" alt="" />
+          </button>
+
+          <!-- Resultados -->
+          <div class="search-results" id="searchResults"></div>
+        </div>
+
+        <div class="header-icons">
+          <!-- AYUDA -->
+          <div class="help-wrapper">
+            <button class="help-btn">
+              <img src="./css/img/ayuda.svg" alt="Ayuda" />
+              <span>Ayuda</span>
+            </button>
+
+            <div class="help-popup">
+              <p>3434596330</p>
+              <p>matesparana05@gmail.com</p>
+            </div>
+          </div>
+
+          <a class="account-btn" id="miCuentaBtn" href="login.html">
+            <img src="./css/img/login.svg" alt="" />
+            <span>Mi cuenta</span>
+          </a>
+
+          <div class="cart-button" id="cartButton">
+            <img src="./css/img/carrito.svg" alt="" />
+          </div>
+
+          <button class="icon-btn hamburger" aria-label="Menú">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 6h18v2h-18v-2zm0 5h18v2h-18v-2zm0 5h18v2h-18v-2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- NAV -->
+      <nav class="nav">
+        <a href="index.html">INICIO</a>
+        <div class="dropdown">
+          <a href="productos.html">PRODUCTOS ▾</a>
+          <div class="mega-menu" id="megaMenu">
+            <!-- se llena con JS -->
+          </div>
+        </div>
+
+        <a href="bienvenida.html">DISEÑA TU MATE</a>
+        <a href="regalos.html">REGALOS EMPRESARIALES</a>
+        <a href="contacto.html">CONTACTO</a>
+        <a href="preguntas.html">PREGUNTAS FRECUENTES</a>
+        <a href="mayorista.html">INFORMACIÓN MAYORISTA</a>
+      </nav>
+    </header>
+    <!--==================================================================-->
+
+    <div class="topbar-slider">
+      <div class="topbar-item active">ENVIOS GRATIS A TODO EL PAIS</div>
+      <div class="topbar-item">15% OFF TRANSFERENCIA</div>
+      <div class="topbar-item">3 CUOTAS SIN INTERES</div>
+    </div>
+    <!-- HEADER (reutilizás el mismo que ya tenés) -->
+
+    <main class="product-detail-container">
+      <section class="product-detail">
+        <!-- Galería -->
+        <div class="product-gallery">
+          <div class="gallery-thumbs" id="galleryThumbs"></div>
+
+          <div class="gallery-main">
+            <img id="mainImage" />
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="product-info">
+          <p class="breadcrumb">
+            Inicio / <span id="breadcrumbCategory"></span>
+          </p>
+
+          <h1 id="productName"></h1>
+
+          <div class="price-box">
+            <span class="old-price" id="oldPrice"></span>
+            <span class="price" id="productPrice"></span>
+            <p class="transfer-price" id="transferPrice"></p>
+          </div>
+
+          <p class="installments" id="installments"></p>
+          <p class="shipping" id="shippingText"></p>
+
+          <div class="variants" id="variants"></div>
+
+          <div class="quantity-cart">
+            <div class="quantity">
+              <button id="minusQty">-</button>
+              <input id="qtyInput" type="number" value="1" min="1" />
+              <button id="plusQty">+</button>
+            </div>
+
+            <button class="boton-verde" id="addToCartBtn">
+              Agregar al carrito
+            </button>
+          </div>
+
+          <div class="accordion">
+            <div class="accordion-item">
+              <button>Medios de pago</button>
+              <div class="accordion-content" id="paymentInfo"></div>
+            </div>
+
+            <div class="accordion-item shipping-accordion">
+              <button>Medios de envío</button>
+              <div class="accordion-content">
+                <h4 class="shipping-title">Calculá el costo de envío</h4>
+
+                <div class="shipping-calculator">
+                  <input
+                    type="text"
+                    placeholder="Código postal"
+                    id="postalCode"
+                  />
+
+                  <button id="calcShipping">OK</button>
+                </div>
+
+                <div id="shippingResult"></div>
+
+                <p class="shipping-help">
+                  El código postal debe incluir la letra inicial. Si no lo
+                  conocés podés buscarlo en: <br />
+                  <a
+                    href="https://www.correoargentino.com.ar/formularios/cpa/1000"
+                    target="_blank"
+                  >
+                    Correo Argentino
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <button>Nuestro local</button>
+              <div class="accordion-content">
+                <strong>Sucursal 1</strong><br />
+                Padre Kentenich 825<br />
+                Lunes a Viernes de 10 a 13 y de 17 a 20<br />
+                Sábados de 10 a 13
+
+                <br /><br />
+
+                <strong>Sucursal 2</strong><br />
+                General Urquiza 785<br />
+                Lunes a Sábado de 10 a 13 y de 17 a 20
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="product-description-wrapper">
+        <div class="product-description" id="productDescriptionBox">
+          <h2>Descripción</h2>
+
+          <div id="productDescription"></div>
+        </div>
+      </section>
+
+      <!-- SIMILARES -->
+      <section class="related-section">
+        <h2>Productos similares</h2>
+        <div class="products-grid" id="similarProducts"></div>
+      </section>
+
+      <!-- COMPLEMENTOS -->
+      <section class="related-section">
+        <h2>Para comprar con este producto</h2>
+        <div class="products-grid" id="comboProducts"></div>
+      </section>
+    </main>
+
+    <!--=================NAV INFERIOR=================-->
+    <section class="navegacion-inferior">
+      <div class="contenedor-inferior">
+        <!-- SEGUINOS -->
+        <div class="cubo-inferior acordeon">
+          <button class="acordeon-btn" type="button">SEGUINOS</button>
+          <h1>SEGUINOS</h1>
+          <div class="acordeon-contenido">
+            <a href="">
+              <img class="img-redes" src="./css/img/logo-ig.png" alt="" />
+            </a>
+            <a href="">
+              <img class="img-redes" src="./css/img/logo-facebook.png" alt="" />
+            </a>
+          </div>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <div class="cubo-inferior acordeon">
+          <button class="acordeon-btn" type="button">NAVEGACIÓN</button>
+          <h1>NAVEGACIÓN</h1>
+          <div class="acordeon-contenido">
+            <a href="index.html">Inicio</a><br />
+            <a href="#">Productos</a><br />
+            <a href="Diseña.html">Diseñá tu mate</a><br />
+            <a href="#">Contacto</a><br />
+            <a href="#">Preguntas frecuentes</a>
+          </div>
+        </div>
+
+        <!-- CONTACTÁNOS -->
+        <div class="cubo-inferior acordeon">
+          <button class="acordeon-btn" type="button">CONTACTÁNOS</button>
+          <h1>CONTACTÁNOS</h1>
+          <div class="acordeon-contenido">
+            <a href="">3435305255</a><br />
+            <a href="">3434596330</a><br />
+            <a href="">matesparana05@gmail.com</a><br />
+            <a href="">Padre Kentenich 825</a>
+          </div>
+        </div>
+
+        <!-- COMUNIDAD -->
+        <div class="cubo-inferior">
+          <h1>Sumate a la comunidad matera</h1>
+          <div class="comunidad-inferior">
+            <a href="#" class="btn-comunidad"> Registrate </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- TARJETAS + SESIÓN -->
+      <div class="tarjetas-sesion">
+        <div class="tarjetas">
+          <img class="tarjeta" src="./css/img/tarjeta1.png" alt="" />
+          <img class="tarjeta" src="./css/img/tajerta2.png" alt="" />
+          <img class="tarjeta" src="./css/img/tarjeta6.png" alt="" />
+          <img class="tarjeta" src="./css/img/tarjeta8.png" alt="" />
+          <img class="tarjeta" src="./css/img/coreroarg.png" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!==========================CARRITO=========================================>
+    <!-- 🛒 OVERLAY -->
+    <div id="cartOverlay" class="cart-overlay"></div>
+
+    <!-- 🛒 PANEL -->
+    <div id="cartPanel" class="cart-panel">
+      <!-- HEADER -->
+      <div class="cart-header">
+        <h3>Tu carrito</h3>
+        <button id="closeCart">✖</button>
+      </div>
+
+      <!-- PRODUCTOS -->
+      <div id="cartContent" class="cart-content">
+        <!-- JS renderiza acá -->
+      </div>
+
+      <!-- FOOTER -->
+      <div class="cart-footer">
+        <p>
+          Subtotal:
+          <span id="cartSubtotal">$0</span>
+        </p>
+
+        <p id="cartShippingRow" style="display: none">
+          <span id="cartShippingLabel">Envío</span>:
+          <span id="cartShipping">$0</span>
+        </p>
+
+        <hr class="cart-divider" />
+
+        <p>
+          Total:
+          <strong id="cartTotalBottom">$0</strong>
+        </p>
+
+        <!-- ENVÍO GRATIS -->
+        <p id="freeShipping" class="hidden"></p>
+
+        <!-- BOTÓN -->
+        <button class="checkout-btn">Finalizar compra</button>
+      </div>
+    </div>
+    <!==========================CARRITO=========================================>
+
+    <!-- VISOR DE IMAGEN -->
+    <div class="image-modal" id="imageModal">
+      <button class="close-modal" id="closeModal">&times;</button>
+
+      <button class="modal-arrow modal-prev" id="modalPrev">&#10094;</button>
+
+      <img id="modalImage" />
+
+      <button class="modal-arrow modal-next" id="modalNext">&#10095;</button>
+    </div>
+
+    <script src="./js/producto-detalle.js"></script>
+    <script src="./js/principal.js"></script>
+    <script src="./js/carrito.js"></script>
+    <script src="./js/cart-backend.js"></script>
+    <script src="./js/header.js"></script>
+  </body>
+</html>

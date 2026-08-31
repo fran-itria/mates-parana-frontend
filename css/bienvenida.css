@@ -1,0 +1,233 @@
+body {
+  margin: 0;
+  font-family: var(--font-normal);
+  background: #2f4132; /* mismo verde del container */
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* importante para permitir scroll */
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+/* CONTENEDOR */
+.container {
+  background: #2f4132;
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.container .semi {
+  text-align: left;
+}
+
+.logo {
+  width: 400px;
+  margin-top: -20px;
+}
+
+/* TEXTOS */
+h1 {
+  margin-bottom: 10px;
+}
+
+.sub {
+  font-family: var(--font-medium);
+  text-align: justify;
+}
+
+.desc {
+  opacity: 0.7;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin: 20px 0;
+}
+
+.semi {
+  font-family: var(--font-semibold);
+}
+
+.container img {
+  width: 400px;
+}
+
+/* PASOS */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.step {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.step span {
+  background: white;
+  color: #2f4132;
+  border-radius: 50%;
+  padding: 4px 8px;
+  margin-right: 5px;
+}
+
+/* BOTON */
+button {
+  background: white;
+  color: #2f4132;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* SUGERENCIAS */
+.sugerencias {
+  margin-top: 40px;
+}
+
+.sugerencias h3 {
+  font-size: 16px;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+.plantillas {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.plantillas img {
+  width: 180px;
+  border-radius: 12px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.plantillas img:hover {
+  transform: scale(1.05);
+}
+.importante {
+  margin: 30px 0;
+  text-align: left;
+}
+
+.importante h3 {
+  color: #ff5c5c;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.alerta {
+  background: rgba(255, 80, 80, 0.12);
+  border: 1px solid rgba(255, 80, 80, 0.25);
+
+  display: flex;
+  align-items: center;
+
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.alerta span {
+  background: #ff5c5c;
+  color: white;
+
+  min-width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-right: 12px;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.boton-diseño {
+  font-family: var(--font-bold);
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  body {
+    padding: 20px 10px;
+  }
+
+  .container {
+    padding: 25px 15px;
+    max-width: 100%;
+  }
+
+  /* IMAGEN HEADER */
+  .container img {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  /* PASOS EN UNA COLUMNA */
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .step {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  /* TEXTOS */
+  h2 {
+    font-size: 18px;
+  }
+
+  .desc {
+    font-size: 13px;
+  }
+
+  /* BOTÓN */
+  button {
+    width: 100%;
+  }
+
+  /* PLANTILLAS EN COLUMNA */
+  .plantillas {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .plantillas img {
+    width: 80%;
+    max-width: 250px;
+  }
+}

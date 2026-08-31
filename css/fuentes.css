@@ -1,0 +1,50 @@
+/* ==========================
+   FUENTES
+========================== */
+
+@font-face {
+  font-family: "Montserrat-Normal";
+  src: url("../fonts/Montserrat-Normal.otf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Montserrat-Medio";
+  src: url("../fonts/Montserrat-Medio.otf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Montserrat-SemiNegrita";
+  src: url("../fonts/Montserrat-SemiNegrita.otf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Montserrat-Negrita";
+  src: url("../fonts/Montserrat-Negrita.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Montserrat-Extranegrita";
+  src: url("../fonts/Montserrat-Extranegrita.otf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* ==========================
+   VARIABLES
+========================== */
+
+:root {
+  --font-normal: "Montserrat-Normal", sans-serif;
+  --font-medium: "Montserrat-Medio", sans-serif;
+  --font-semibold: "Montserrat-SemiNegrita", sans-serif;
+  --font-bold: "Montserrat-Negrita", sans-serif;
+  --font-extrabold: "Montserrat-Extranegrita", sans-serif;
+}

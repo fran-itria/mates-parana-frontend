@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/fuentes.css" />
+    <link rel="stylesheet" href="./css/esperando-pago.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <main class="order-container">
+      <div class="order-card">
+        <!-- =========================
+           ENCABEZADO
+      ========================== -->
+
+        <header class="order-header">
+          <div id="orderIcon" class="order-icon">✓</div>
+
+          <h1 id="orderTitle">Pedido confirmado</h1>
+
+          <p id="orderMessage">Tu compra fue realizada correctamente.</p>
+        </header>
+
+        <!-- =========================
+           INFORMACIÓN DEL PEDIDO
+      ========================== -->
+
+        <section class="order-info">
+          <div class="info-item">
+            <span>Número de pedido</span>
+            <strong id="orderNumber">#0000</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Estado del pago</span>
+            <strong id="paymentStatus">-</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Método de pago</span>
+            <strong id="paymentMethod">-</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Entrega</span>
+            <strong id="deliveryMethod">-</strong>
+          </div>
+        </section>
+
+        <!-- =========================
+           DATOS DE TRANSFERENCIA
+           SOLO TRANSFERENCIA
+      ========================== -->
+
+        <section id="transferSection" class="transfer-section hidden">
+          <div class="transfer-header">
+            <div class="transfer-icon">🏦</div>
+
+            <div>
+              <h2>Datos para realizar la transferencia</h2>
+
+              <p>Realizá la transferencia por el importe exacto indicado.</p>
+            </div>
+          </div>
+
+          <div class="transfer-data">
+            <!-- IMPORTE -->
+
+            <div class="transfer-item transfer-amount">
+              <span>Importe a transferir</span>
+
+              <strong id="transferAmount"> $0 </strong>
+            </div>
+
+            <!-- ALIAS -->
+
+            <div class="transfer-item">
+              <span>Alias</span>
+
+              <strong id="transferAlias"> - </strong>
+            </div>
+
+            <!-- CVU -->
+
+            <div class="transfer-item">
+              <span>CVU</span>
+
+              <strong id="transferCvu"> - </strong>
+            </div>
+
+            <!-- BENEFICIARIO -->
+
+            <div class="transfer-item">
+              <span>Beneficiario</span>
+
+              <strong id="transferHolder"> - </strong>
+            </div>
+
+            <!-- CUIT -->
+
+            <div class="transfer-item">
+              <span>CUIT</span>
+
+              <strong id="transferCuit"> - </strong>
+            </div>
+
+            <!-- VENCIMIENTO -->
+
+            <div id="transferExpirationContainer" class="transfer-item hidden">
+              <span>Vencimiento</span>
+
+              <strong id="transferExpiration"> - </strong>
+            </div>
+          </div>
+
+          <!-- AVISO -->
+
+          <div class="transfer-warning">
+            <strong> ⚠️ Importante </strong>
+
+            <p>
+              Una vez realizada la transferencia, conservá el comprobante. Tu
+              pedido quedará pendiente hasta que confirmemos el pago.
+            </p>
+          </div>
+        </section>
+
+        <!-- =========================
+           MENSAJE PAGO PENDIENTE
+           SOLO TRANSFERENCIA
+      ========================== -->
+
+        <section id="pendingMessage" class="pending-message hidden">
+          <div class="pending-icon">⏳</div>
+
+          <h3>Esperando confirmación del pago</h3>
+
+          <p>
+            Estamos esperando que se confirme tu transferencia. No cierres esta
+            página.
+          </p>
+        </section>
+
+        <!-- =========================
+           DETALLE DE LA COMPRA
+           TARJETA + TRANSFERENCIA
+      ========================== -->
+
+        <section class="products-section">
+          <h2>Detalle de tu compra</h2>
+
+          <div id="orderProducts" class="order-products">
+            <!-- Productos generados por JS -->
+          </div>
+        </section>
+
+        <!-- =========================
+           TOTALES
+           TARJETA + TRANSFERENCIA
+      ========================== -->
+
+        <section class="totals-section">
+          <div class="summary-row">
+            <span> Subtotal </span>
+
+            <strong id="orderSubtotal"> $0 </strong>
+          </div>
+
+          <div class="summary-row">
+            <span> Envío </span>
+
+            <strong id="orderShipping"> $0 </strong>
+          </div>
+
+          <div class="summary-row total">
+            <span> Total </span>
+
+            <strong id="orderTotal"> $0 </strong>
+          </div>
+        </section>
+
+        <!-- =========================
+           ACCIONES
+      ========================== -->
+
+        <div class="order-actions">
+          <button id="accountButton">Ver mi cuenta</button>
+
+          <button id="homeButton">Volver al inicio</button>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script src="./js/esperando-pago.js"></script>
+  </body>
+</html>

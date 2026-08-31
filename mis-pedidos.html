@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mis pedidos</title>
+    <link rel="stylesheet" href="./css/profile.css" />
+  </head>
+  <body>
+    <main class="profile">
+      <h1>Mis pedidos</h1>
+
+      <div id="ordersContainer" class="orders-container">
+        <p>Cargando pedidos...</p>
+      </div>
+    </main>
+
+    <script>
+      if (!localStorage.getItem("token")) {
+        window.location.href = "login.html";
+      }
+    </script>
+    <script src="./js/mis-pedidos.js"></script>
+  </body>
+</html>

@@ -1,0 +1,310 @@
+.navegacion-inferior {
+  background: #2f4132;
+  border-radius: 20px;
+  padding: 30px;
+  gap: 30px;
+  margin: 15px;
+  display: block;
+}
+
+.contenedor-inferior {
+  display: flex;
+  justify-content: center;
+}
+
+.img-redes {
+  width: 28px;
+  transition: 0.2s;
+}
+
+.img-redes:hover {
+  transform: scale(1.1);
+}
+
+.contenedor-inferior {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.cubo-inferior {
+  display: grid;
+  margin: 30px;
+  text-align: left;
+}
+
+.cubo-inferior h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.comunidad {
+  border-radius: 7px;
+}
+
+.acordeon-contenido a {
+  opacity: 0.85;
+  transition: 0.2s;
+}
+
+.acordeon-contenido a:hover {
+  opacity: 1;
+  padding-left: 4px;
+}
+
+.boton-comunidad {
+  text-decoration: none;
+  color: #ffffff;
+  border: 1px solid #fcfcfc;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.tarjetas-sesion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+}
+
+.tarjeta {
+  width: 2.4rem;
+  margin: 3px;
+  border-radius: 4px;
+}
+
+.tarjetas-sesion {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 25px;
+}
+
+.iniciar {
+  display: flex;
+}
+
+.iniciar img {
+  width: 2rem;
+}
+
+.sesion {
+  display: flex;
+  margin: 10px;
+  margin-right: 5rem;
+}
+
+.comunidad-inferior {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.comunidad-inferior input {
+  width: 50%;
+  height: 40px;
+  padding: 14px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 14px;
+  margin-bottom: 15px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.comunidad-inferior input::placeholder {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Botón */
+.comunidad-inferior button {
+  width: 30%;
+  height: 40px;
+  margin-left: 10px;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  background-color: #ffffff;
+  color: #4f6b55;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* ================= DESKTOP (no cambia nada visual) ================= */
+
+.acordeon-btn {
+  display: none;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+  .contenedor-inferior {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cubo-inferior {
+    margin: 10px 0;
+    text-align: left;
+  }
+
+  /* Ocultamos el H1 en mobile y usamos el botón */
+  .cubo-inferior h1 {
+    display: none;
+  }
+
+  .acordeon-btn {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #fff;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.3rem;
+    text-align: left;
+    padding: 12px 0;
+    cursor: pointer;
+    position: relative;
+  }
+
+  /* Flechita */
+  .acordeon-btn::after {
+    content: "+";
+    position: absolute;
+    right: 0;
+    font-size: 1.4rem;
+    transition: transform 0.3s ease;
+  }
+
+  .acordeon.activo .acordeon-btn::after {
+    content: "–";
+  }
+
+  /* Acordeón con animación */
+  .acordeon-contenido {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    padding-left: 10px;
+  }
+
+  .acordeon.activo .acordeon-contenido {
+    max-height: 500px;
+    opacity: 1;
+  }
+
+  .acordeon-contenido a {
+    display: block;
+    padding: 6px 0;
+  }
+
+  /* Comunidad */
+  .comunidad-inferior {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .comunidad-inferior input,
+  .comunidad-inferior button {
+    width: 100%;
+    margin: 0;
+  }
+
+  /* Tarjetas + sesión en columna */
+  .tarjetas-sesion {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .tarjetas {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .sesion {
+    margin-right: 0;
+  }
+}
+
+/* 🔒 FORZAMOS layout desktop como antes */
+@media (min-width: 769px) {
+  .contenedor-inferior {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .cubo-inferior {
+    display: grid;
+    text-align: center;
+    margin: 30px;
+  }
+
+  .acordeon-btn {
+    display: none;
+  }
+
+  .acordeon-contenido {
+    max-height: none;
+    opacity: 1;
+    overflow: visible;
+  }
+}
+
+/*================NUEVOS CAMBIOS====================*/
+.btn-comunidad {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 180px;
+  height: 46px;
+
+  border-radius: 999px;
+  color: #2f4132;
+  background: #ffffff;
+
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition: 0.25s ease;
+}
+
+cubo-inferior,
+a {
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+  text-decoration: none;
+}
+
+.btn-comunidad:hover {
+  transform: translateY(-2px);
+}
+
+.cubo-inferior {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+.acordeon-contenido {
+  width: 100%;
+  text-align: left !important;
+}
+
+.acordeon-contenido a {
+  display: block;
+  text-align: left !important;
+}

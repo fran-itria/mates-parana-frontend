@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./css/principal.css" />
+    <link rel="stylesheet" href="./css/carrito.css" />
+    <link rel="stylesheet" href="./css/nav-inferior.css" />
+    <link rel="stylesheet" href="./css/header.css" />
+    <link rel="stylesheet" href="./css/burger.css" />
+    <link rel="stylesheet" href="./css/contacto.css" />
+  </head>
+  <body>
+    <!--==========HEADER=========================================-->
+    <header class="header">
+      <div class="header-top">
+        <div class="logo">
+          <a href="index.html">
+            <img src="./css/img/header.webp" alt="Logo" />
+          </a>
+        </div>
+
+        <!-- 🔍 BUSCADOR -->
+        <div class="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="¿Qué estás buscando?"
+          />
+          <button class="search-btn">
+            <img src="./css/img/lupa.svg" alt="" />
+          </button>
+
+          <!-- Resultados -->
+          <div class="search-results" id="searchResults"></div>
+        </div>
+
+        <div class="header-icons">
+          <!-- AYUDA -->
+          <div class="help-wrapper">
+            <button class="help-btn">
+              <img src="./css/img/ayuda.svg" alt="Ayuda" />
+              <span>Ayuda</span>
+            </button>
+
+            <div class="help-popup">
+              <p>3434596330</p>
+              <p>matesparana05@gmail.com</p>
+            </div>
+          </div>
+
+          <a class="account-btn" id="miCuentaBtn" href="login.html">
+            <img src="./css/img/login.svg" alt="" />
+            <span>Mi cuenta</span>
+          </a>
+
+          <div class="cart-button" id="cartButton">
+            <img src="./css/img/carrito.svg" alt="" />
+          </div>
+
+          <button class="icon-btn hamburger" aria-label="Menú">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 6h18v2h-18v-2zm0 5h18v2h-18v-2zm0 5h18v2h-18v-2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- NAV -->
+      <nav class="nav">
+        <a href="index.html">INICIO</a>
+        <div class="dropdown">
+          <a href="productos.html">PRODUCTOS ▾</a>
+          <div class="mega-menu" id="megaMenu">
+            <!-- se llena con JS -->
+          </div>
+        </div>
+
+        <a href="bienvenida.html">DISEÑA TU MATE</a>
+        <a href="regalos.html">REGALOS EMPRESARIALES</a>
+        <a href="contacto.html">CONTACTO</a>
+        <a href="preguntas.html">PREGUNTAS FRECUENTES</a>
+        <a href="mayorista.html">INFORMACIÓN MAYORISTA</a>
+      </nav>
+    </header>
+    <!--==================================================================-->
+
+    <section class="contacto">
+      <div class="contacto__container">
+        <!-- INFO -->
+        <div class="contacto__info">
+          <span class="breadcrumb">Inicio / Contacto</span>
+          <h1>Contacto</h1>
+
+          <p class="intro">
+            Hola! Somos Mates Paraná! Comunicate<br />
+            vía whatsapp para recibir atención<br />
+            personalizada
+          </p>
+
+          <ul class="datos">
+            <div class="whatsapp">
+              <img src="./css/img/whatsapp_logo.png" alt="" />
+              <li>3434596330</li>
+            </div>
+
+            <li>✉️ matesparana05@gmail.com</li>
+            <li>📍 Padre Kentenich 825</li>
+          </ul>
+        </div>
+
+        <!-- FORM -->
+        <div class="contacto__form">
+          <form>
+            <label>
+              Nombre
+              <input type="text" />
+            </label>
+
+            <label>
+              Email
+              <input type="email" />
+            </label>
+
+            <label>
+              Teléfono
+              <input type="tel" />
+            </label>
+
+            <label>
+              Mensaje
+              <textarea></textarea>
+            </label>
+
+            <button type="submit">Enviar</button>
+          </form>
+        </div>
+      </div>
+    </section>
+    <!--=================NAV INFERIOR=================-->
+    <section class="navegacion-inferior">
+      <div class="contenedor-inferior">
+        <!-- SEGUINOS -->
+        <div class="cubo-inferior acordeon">
+          <button class="acordeon-btn" type="button">SEGUINOS</button>
+          <h1>SEGUINOS</h1>
+          <div class="acordeon-contenido">
+            <a href="">
+              <img class="img-redes" src="./css/img/logo-ig.png" alt="" />
+            </a>
+            <a href="">
+              <img class="img-redes" src="./css/img/logo-facebook.png" alt="" />
+            </a>
+          </div>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <div class="cubo-inferior acordeon">
+          <button class="acordeon-btn" type="button">NAVEGACIÓN</button>
+          <h1>NAVEGACIÓN</h1>
+          <div class="acordeon-contenido">
+            <a href="index.html">Inicio</a><br />
+            <a href="#">Productos</a><br />
+            <a href="Diseña.html">Diseñá tu mate</a><br />
+            <a href="#">Contacto</a><br />
+            <a href="#">Preguntas frecuentes</a>
+          </div>
+        </div>
+
+        <!-- CONTACTÁNOS -->
+        <div class="cubo-inferior acordeon">
+          <button class="acordeon-btn" type="button">CONTACTÁNOS</button>
+          <h1>CONTACTÁNOS</h1>
+          <div class="acordeon-contenido">
+            <a href="">3435305255</a><br />
+            <a href="">3434596330</a><br />
+            <a href="">matesparana05@gmail.com</a><br />
+            <a href="">Padre Kentenich 825</a>
+          </div>
+        </div>
+
+        <!-- COMUNIDAD -->
+        <div class="cubo-inferior">
+          <h1>Sumate a la comunidad matera</h1>
+          <div class="comunidad-inferior">
+            <a href="#" class="btn-comunidad"> Registrate </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- TARJETAS + SESIÓN -->
+      <div class="tarjetas-sesion">
+        <div class="tarjetas">
+          <img class="tarjeta" src="./css/img/tarjeta1.png" alt="" />
+          <img class="tarjeta" src="./css/img/tajerta2.png" alt="" />
+          <img class="tarjeta" src="./css/img/tarjeta6.png" alt="" />
+          <img class="tarjeta" src="./css/img/tarjeta8.png" alt="" />
+          <img class="tarjeta" src="./css/img/coreroarg.png" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!==========================CARRITO=========================================>
+    <!-- 🛒 OVERLAY -->
+    <div id="cartOverlay" class="cart-overlay"></div>
+
+    <!-- 🛒 PANEL -->
+    <div id="cartPanel" class="cart-panel">
+      <!-- HEADER -->
+      <div class="cart-header">
+        <h3>Tu carrito</h3>
+        <button id="closeCart">✖</button>
+      </div>
+
+      <!-- PRODUCTOS -->
+      <div id="cartContent" class="cart-content">
+        <!-- JS renderiza acá -->
+      </div>
+
+      <!-- FOOTER -->
+      <div class="cart-footer">
+        <p>
+          Subtotal:
+          <span id="cartSubtotal">$0</span>
+        </p>
+
+        <p id="cartShippingRow" style="display: none">
+          <span id="cartShippingLabel">Envío</span>:
+          <span id="cartShipping">$0</span>
+        </p>
+
+        <hr class="cart-divider" />
+
+        <p>
+          Total:
+          <strong id="cartTotalBottom">$0</strong>
+        </p>
+
+        <!-- ENVÍO GRATIS -->
+        <p id="freeShipping" class="hidden"></p>
+
+        <!-- BOTÓN -->
+        <button class="checkout-btn">Finalizar compra</button>
+      </div>
+    </div>
+    <!==========================CARRITO=========================================>
+
+    <script src="./js/principal.js" defer></script>
+    <script src="./js/carrito.js" defer></script>
+    <script src="./js/header.js" defer></script>
+  </body>
+</html>

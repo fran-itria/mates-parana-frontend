@@ -1,0 +1,32 @@
+.checkout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+  color: white;
+}
+
+.checkout input {
+  width: 100%;
+  padding: 12px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: white;
+}
+
+.checkout-summary {
+  border: 1px solid #333;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.summary-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.total {
+  font-size: 20px;
+  font-weight: bold;
+}

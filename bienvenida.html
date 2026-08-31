@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <title>Diseñador de Mates</title>
+    <link rel="stylesheet" href="./css/bienvenida.css" />
+    <link rel="stylesheet" href="./css/fuentes.css" />
+  </head>
+  <body>
+    <div class="container">
+      <a href="index.html">
+        <img class="logo" src="./css/img/header.webp" alt="" />
+      </a>
+
+      <h3 class="media">Diseñá tu mate ideal con estilo único</h3>
+
+      <p class="desc">
+        Creá diseños únicos combinando iconos, textos y estilos de manera
+        sencilla e intuitiva.
+      </p>
+
+      <h3 class="semi">¿Cómo crear tu diseño?</h3>
+
+      <div class="steps">
+        <div class="step"><span>1</span> Hacé clic en comenzar a diseñar</div>
+        <div class="step">
+          <span>2</span> En el menu tenes iconos, textos y un apartado donde
+          puedes agregar tus propias imagenes
+        </div>
+        <div class="step"><span>3</span> Enviá tu diseño</div>
+      </div>
+
+      <div class="importante">
+        <h3 class="semi">Cosas a tener en cuenta</h3>
+
+        <div class="alerta">
+          <span>1</span>
+          En caso de usar un diseño descargado de internet, es necesario que
+          este tenga el fondo blanco Y que tanto las imágenes como los textos
+          sean en color negro.
+        </div>
+
+        <div class="alerta">
+          <span>2</span>
+          Los diseños enviados no se pueden eliminar, por ende es necesario que
+          revise el diseño antes de enviarlo Para evitar errores o confusiones
+          en el grabado final.
+        </div>
+      </div>
+
+      <button class="boton-diseño" onclick="goToEditor()">
+        Comenzar a diseñar
+      </button>
+
+      <!-- NUEVA SECCIÓN -->
+      <div class="media">
+        <h3>¿No se te ocurre ningún diseño? Te dejamos estas referencias</h3>
+
+        <div class="plantillas">
+          <img src="./css/img/plantilla1.webp" alt="Plantilla 1" />
+          <img src="./css/img/plantilla2.webp" alt="Plantilla 2" />
+          <img src="./css/img/plantilla3.webp" alt="Plantilla 3" />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function goToEditor() {
+        window.location.href = "Diseña.html";
+      }
+    </script>
+  </body>
+</html>
