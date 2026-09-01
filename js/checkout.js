@@ -1266,22 +1266,22 @@ confirmOrderBtn.addEventListener("click", async () => {
       alert("Colocar dirección de envío")
     }
 
-    const res = await fetch(`${API_BASE}/orders`, {
-      method: "POST",
+    // const res = await fetch(`${API_BASE}/orders`, {
+    //   method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-      },
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
 
-      body: JSON.stringify(orderBody),
-    });
+    //   body: JSON.stringify(orderBody),
+    // });
 
-    const data = await res.json();
-    console.log("ORDER RESPONSE:", data);
+    // const data = await res.json();
+    // console.log("ORDER RESPONSE:", data);
 
-    if (!res.ok) {
-      throw new Error(data.message || "Error creando orden");
-    }
+    // if (!res.ok) {
+    //   throw new Error(data.message || "Error creando orden");
+    // }
 
     //const createdOrder = data.orders.orders;
     console.log(data);
@@ -1357,30 +1357,30 @@ confirmOrderBtn.addEventListener("click", async () => {
        TRANSFER
     ========================= */
 
-    if (paymentMethod === "transfer") {
-      const aliasRes = await fetch(`${API_BASE}/orders/create-alias-transfer`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          orderId: createdOrder.id,
-        }),
-      });
+    // if (paymentMethod === "transfer") {
+    //   const aliasRes = await fetch(`${API_BASE}/orders/create-alias-transfer`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       orderId: createdOrder.id,
+    //     }),
+    //   });
 
-      console.log("STATUS:", aliasRes.status);
-      const aliasData = await aliasRes.json();
-      localStorage.setItem("transferInfo", JSON.stringify(aliasData));
+    //   console.log("STATUS:", aliasRes.status);
+    //   const aliasData = await aliasRes.json();
+    //   localStorage.setItem("transferInfo", JSON.stringify(aliasData));
 
-      console.log("ALIAS RESPONSE:", aliasData);
+    //   console.log("ALIAS RESPONSE:", aliasData);
 
-      if (!aliasRes.ok && aliasRes.status !== 409) {
-        throw new Error(
-          aliasData.error || "No se pudo obtener la información de pago"
-        );
-      }
-      window.location.href = "esperando-pago.html";
-    }
+    //   if (!aliasRes.ok && aliasRes.status !== 409) {
+    //     throw new Error(
+    //       aliasData.error || "No se pudo obtener la información de pago"
+    //     );
+    //   }
+    //   window.location.href = "esperando-pago.html";
+    // }
 
     /* =========================
        CLEAN CART
