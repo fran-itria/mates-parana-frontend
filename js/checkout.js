@@ -1,16 +1,19 @@
+import {
+  API_BASE_PRODUCCION,
+  API_BASE_PRUEBA,
+  PAYWAY_API_KEY_PRODUCCION,
+  PAYWAY_API_KEY_SANDBOX,
+  PAYWAY_URL_PRODUCCION,
+  PAYWAY_URL_SANDBOX
+} from "./Const/const.js"
+
 //PRUDUCCIÓN:
-const SHIPPING_API = "https://ventasonline.payway.com.ar/api/v2";
-const API_BASE = "https://matesparana-backend-production.up.railway.app";
-const publicApiKey = "0263f55d7bf6464cabd58c904e1d258d";
-const decidir = new Decidir(SHIPPING_API, true);
+const decidir = new Decidir(PAYWAY_URL_PRODUCCION, true);
 
 //PRUEBA:
-//const API_BASE = "https://05c8-190-183-135-185.ngrok-free.app";
-//const publicApiKey = "e9cdb99fff374b5f91da4480c8dca741";
-//const urlSandbox = "https://developers.decidir.com/api/v2";
-//const decidir = new Decidir(urlSandbox, true);
+// const decidir = new Decidir(PAYWAY_URL_SANDBOX, true);
 
-decidir.setPublishableKey(publicApiKey);
+decidir.setPublishableKey(PAYWAY_API_KEY_PRODUCCION);
 decidir.setTimeout(5000);
 /* =========================
    STORAGE
@@ -99,7 +102,7 @@ async function calculateShipping() {
   }
 
   try {
-    const response = await fetch(`${API_BASE}/orders/delivered-price/${postalCode}`);
+    const response = await fetch(`${API_BASE_PRODUCCION}/orders/delivered-price/${postalCode}`);
 
     if (!response.ok) {
       throw new Error();
@@ -286,7 +289,6 @@ function renderAgencyOptions(
         agencyName: selectedPoint.agency,
       });
 
-      console.log("AGENCIA SELECCIONADA:", selectedShipping);
     });
   });
 }
@@ -518,8 +520,6 @@ function renderPreShippingOptions() {
       setSelectedShipping({
         type: branch.value
       });
-
-      console.log("SUCURSAL SELECCIONADA:", branch.value);
     });
   });
 
@@ -541,7 +541,6 @@ function renderPreShippingOptions() {
 
       loadCadeteOptions();
 
-      console.log("CADETE SELECCIONADO");
     });
 
   }
@@ -559,15 +558,13 @@ async function loadCadeteOptions() {
   `;
 
   try {
-    const response = await fetch(`${API_BASE}/orders/delivered-price/E3100`);
+    const response = await fetch(`${API_BASE_PRODUCCION}/orders/delivered-price/E3100`);
 
     if (!response.ok) {
       throw new Error("No se pudieron obtener las opciones de cadete");
     }
 
     const data = await response.json();
-
-    console.log("OPCIONES CADETE:", data.cadete);
 
     if (!data.cadete || data.cadete.length === 0) {
       container.innerHTML = `
@@ -630,11 +627,6 @@ async function loadCadeteOptions() {
       const city = selectedOption.value;
 
       const price = Number(selectedOption.dataset.price);
-
-      console.log("CADETE SELECCIONADO:", {
-        city,
-        price,
-      });
 
       setSelectedShipping({
         type: "cadete",
@@ -944,9 +936,6 @@ copyAmountBtn.addEventListener("click", async () => {
    CREATE ORDER
 ========================= */
 
-console.log("MES:", document.getElementById("cardMonth").value);
-console.log("AÑO:", document.getElementById("cardYear").value);
-
 function createCardToken() {
   return new Promise((resolve, reject) => {
     const form = document.getElementById("cardForm");
@@ -958,17 +947,13 @@ function createCardToken() {
 
     try {
       decidir.createToken(form, (status, response) => {
-        console.log("PAYWAY STATUS:", status);
-        console.log("PAYWAY RESPONSE:", response);
 
         if (status !== 200 && status !== 201) {
-          console.error("❌ ERROR GENERANDO TOKEN");
 
           const validationErrors = response?.validation_errors;
 
           if (validationErrors?.length) {
             validationErrors.forEach((err, index) => {
-              console.error(`ERROR ${index}:`, err);
             });
           } else {
             console.error("Payway no devolvió validation_errors.", response);
@@ -984,8 +969,6 @@ function createCardToken() {
           return;
         }
 
-        console.log("✅ TOKEN GENERADO:", response?.id);
-
         if (!response?.id) {
           reject(
             new Error(
@@ -998,13 +981,10 @@ function createCardToken() {
         resolve(response.id);
       });
     } catch (error) {
-      console.log("erorr en el catch");
       console.log(erorr);
     }
   });
 }
-console.log("ANTES DEL ADDEVENT");
-console.log(confirmOrderBtn);
 
 confirmOrderBtn.addEventListener("click", async () => {
   try {
@@ -1037,9 +1017,6 @@ confirmOrderBtn.addEventListener("click", async () => {
       return;
     }
 
-    console.log("SELECTED SHIPPING:");
-    console.log(selectedShipping);
-
     if (selectedShipping) {
       const provinceInput = document.getElementById("shippingProvince");
       const cityInput = document.getElementById("shippingCity");
@@ -1068,15 +1045,12 @@ confirmOrderBtn.addEventListener("click", async () => {
         shippingPrice = 0;
       }
     }
-    console.log("PASO 5");
 
     const total = subtotal + shippingPrice;
 
     /* =========================
        PRODUCTS FORMAT
     ========================= */
-    console.log("CARRITO COMPLETO:", cart);
-    console.log("PRIMER PRODUCTO DEL CARRITO:", cart[0]);
     const products = cart.map((item) => {
       const product = {
         quantity: item.qty,
@@ -1228,9 +1202,6 @@ confirmOrderBtn.addEventListener("click", async () => {
         break;
     }
 
-    console.log("DELIVERED:");
-    console.log(delivered);
-
     /* =========================
        ORDER BODY
     ========================= */
@@ -1255,18 +1226,12 @@ confirmOrderBtn.addEventListener("click", async () => {
     /* =========================
        CREATE ORDER
     ========================= */
-    console.log(selectedShipping);
-    console.log("ORDER BODY:");
-    console.log(orderBody);
-
-    console.log("PRODUCTS QUE SE ENVIAN:", JSON.stringify(products, null, 2));
-    console.log("ORDER BODY:", JSON.stringify(orderBody, null, 2));
 
     if (delivered.method == "Cadete" && !delivered.shipping.address.streetName) {
       alert("Colocar dirección de envío")
     }
 
-    const res = await fetch(`${API_BASE}/orders`, {
+    const res = await fetch(`${API_BASE_PRODUCCION}/orders`, {
       method: "POST",
 
       headers: {
@@ -1277,14 +1242,10 @@ confirmOrderBtn.addEventListener("click", async () => {
     });
 
     const data = await res.json();
-    console.log("ORDER RESPONSE:", data);
 
     if (!res.ok) {
       throw new Error(data.message || "Error creando orden");
     }
-
-    //const createdOrder = data.orders.orders;
-    console.log(data);
 
     const createdOrder = data.order;
 
@@ -1295,7 +1256,6 @@ confirmOrderBtn.addEventListener("click", async () => {
     if (paymentMethod === "card") {
       console.log("INTENTANDO GENERAR TOKEN...");
       const token = await createCardToken();
-      console.log("TOKEN FINAL:", token);
 
       const cardNumber = document.getElementById("cardNumber").value;
 
@@ -1305,11 +1265,8 @@ confirmOrderBtn.addEventListener("click", async () => {
         throw new Error("Tarjeta no soportada");
       }
 
-      console.log("TOKEN:", token);
-      console.log("PAYMENT INFO:", paymentInfo);
-
       const paymentRes = await fetch(
-        `${API_BASE}/orders/process-payment-card`,
+        `${API_BASE_PRODUCCION}/orders/process-payment-card`,
         {
           method: "POST",
           headers: {
@@ -1325,11 +1282,7 @@ confirmOrderBtn.addEventListener("click", async () => {
 
       const paymentResult = await paymentRes.json();
 
-      console.log("PAYMENT RESULT:", paymentResult);
-
       if (!paymentRes.ok) {
-        console.error("ERROR PAYMENT:", paymentResult);
-
         throw new Error(
           paymentResult.message ||
           paymentResult.error ||
@@ -1338,8 +1291,6 @@ confirmOrderBtn.addEventListener("click", async () => {
       }
 
       console.log("✅ PAGO CON TARJETA APROBADO");
-      console.log("PAYMENT RESULT:", paymentResult);
-      console.log("ORDER:", createdOrder);
 
       localStorage.removeItem("cart");
 
@@ -1351,14 +1302,12 @@ confirmOrderBtn.addEventListener("click", async () => {
       window.location.href = "esperando-pago.html";
     }
 
-    const paymentData = data.payment;
-
     /* =========================
        TRANSFER
     ========================= */
 
     if (paymentMethod === "transfer") {
-      const aliasRes = await fetch(`${API_BASE}/orders/create-alias-transfer`, {
+      const aliasRes = await fetch(`${API_BASE_PRODUCCION}/orders/create-alias-transfer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1368,11 +1317,9 @@ confirmOrderBtn.addEventListener("click", async () => {
         }),
       });
 
-      console.log("STATUS:", aliasRes.status);
       const aliasData = await aliasRes.json();
       localStorage.setItem("transferInfo", JSON.stringify(aliasData));
 
-      console.log("ALIAS RESPONSE:", aliasData);
 
       if (!aliasRes.ok && aliasRes.status !== 409) {
         throw new Error(
@@ -1399,8 +1346,6 @@ confirmOrderBtn.addEventListener("click", async () => {
       behavior: "smooth",
     });
   } catch (err) {
-    console.error("ERROR COMPLETO:", err);
-
     alert(err?.message || JSON.stringify(err) || "Error desconocido");
   } finally {
     loadingOverlay.classList.add("hidden");
