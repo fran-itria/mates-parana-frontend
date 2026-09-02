@@ -9,11 +9,12 @@ import {
 
 //PRUDUCCIÓN:
 const decidir = new Decidir(PAYWAY_URL_PRODUCCION, true);
+decidir.setPublishableKey(PAYWAY_API_KEY_PRODUCCION);
 
 //PRUEBA:
 // const decidir = new Decidir(PAYWAY_URL_SANDBOX, true);
+// decidir.setPublishableKey(PAYWAY_API_KEY_PRUEBA);
 
-decidir.setPublishableKey(PAYWAY_API_KEY_PRODUCCION);
 decidir.setTimeout(5000);
 /* =========================
    STORAGE
