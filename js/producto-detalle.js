@@ -1,6 +1,10 @@
 import { renderComboDetail } from "./Combos/renderCombo.js";
 import { renderProduct } from "./Productos/renderProduct.js";
 import {
+  getGalleryImages,
+  getCurrentImageIndex,
+} from "./Services/updateGalleryImages.js";
+import {
   API_BASE_PRODUCCION,
   API_BASE_PRUEBA
 } from "./Const/const.js"
@@ -16,12 +20,8 @@ let selectedType = null;
 let selectedColor = null;
 let selectedVariant = null;
 
-/* ==========================
-   GALERÍA
-========================== */
-
-let galleryImages = [];
-let currentImageIndex = 0;
+// Variedades elegidas de cada producto del combo (defaultSelected)
+let comboSelections = [];
 
 async function getProductDetail() {
   if (type === "combo") {
@@ -35,7 +35,9 @@ async function getProductDetail() {
 
     currentProduct = data;
 
-    renderComboDetail(currentProduct);
+    renderComboDetail(data, (selections) => {
+      comboSelections = selections;
+    });
 
     return;
   } else {
@@ -50,8 +52,6 @@ async function getProductDetail() {
       selectedType,
       selectedColor,
       selectedVariant,
-      galleryImages,
-      currentImageIndex,
       (color, type, variant) => {
         selectedColor = color;
         selectedType = type;
@@ -515,15 +515,45 @@ if (addToCartBtn) {
       currentProduct.image?.[0]?.replace(/\s/g, "") ||
       "";
 
-    addToCart({
-      id: currentProduct.id,
-      name: currentProduct.name,
-      price: currentProduct.discountedPrice ?? currentProduct.price,
-      image: variantImage,
-      qty: parseInt(document.getElementById("qtyInput").value) || 1,
-      varity: Object.keys(selectedVarity).length > 0 ? selectedVarity : null,
-      promotion: type === "combo",
-    });
+    const qty = parseInt(document.getElementById("qtyInput").value) || 1;
+
+    if (type == "combo") {
+      const price = currentProduct.discountedPrice ?? currentProduct.price;
+
+      const comboImage = currentProduct.image?.[0]?.replace(/\s/g, "") || "";
+
+      addToCart({
+        id: currentProduct.id,
+        name: currentProduct.name,
+        price,
+        image: comboImage,
+        qty,
+        varity: null,
+        promotion: true,
+        promotionData: {
+          id: currentProduct.id,
+          name: currentProduct.name,
+          image: comboImage,
+          price: currentProduct.price,
+          custom: 1,
+          quantity: qty,
+          cardPrice:
+            currentProduct.cardPrice ?? Math.round(price * 1.15),
+          defaultSelected: comboSelections,
+          discountedPrice: currentProduct.discountedPrice ?? null,
+        },
+      });
+    }
+    else
+      addToCart({
+        id: currentProduct.id,
+        name: currentProduct.name,
+        price: currentProduct.discountedPrice ?? currentProduct.price,
+        image: variantImage,
+        qty,
+        varity: Object.keys(selectedVarity).length > 0 ? selectedVarity : null,
+        promotion: false,
+      });
   });
 }
 
@@ -588,6 +618,8 @@ const closeModal = document.getElementById("closeModal");
 let modalImageIndex = 0;
 
 function updateModalImage(index) {
+  const galleryImages = getGalleryImages();
+
   if (!galleryImages.length) return;
 
   modalImageIndex = index;
@@ -595,13 +627,15 @@ function updateModalImage(index) {
   modalImage.classList.add("fade");
 
   setTimeout(() => {
-    modalImage.src = galleryImages[modalImageIndex];
+    modalImage.src = getGalleryImages()[modalImageIndex];
 
     modalImage.classList.remove("fade");
   }, 120);
 }
 
 function changeModalImage(direction) {
+  const galleryImages = getGalleryImages();
+
   if (!galleryImages.length) return;
 
   modalImageIndex =
@@ -612,7 +646,7 @@ function changeModalImage(direction) {
 
 if (mainImageZoom && imageModal && modalImage) {
   mainImageZoom.addEventListener("click", () => {
-    modalImageIndex = currentImageIndex;
+    modalImageIndex = getCurrentImageIndex();
 
     updateModalImage(modalImageIndex);
 

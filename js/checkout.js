@@ -841,6 +841,13 @@ function renderProducts() {
         ? `• ${item.varity.color || ""} ${item.varity.type || ""}`
         : ""
       }
+            ${(item.promotionData?.defaultSelected || [])
+        .filter((d) => d.select)
+        .map(
+          (d) =>
+            `<br>${d.productName || ""}: ${d.select.color || ""} ${d.select.type || ""}`
+        )
+        .join("")}
           </p>
         </div>
 
@@ -1052,22 +1059,30 @@ confirmOrderBtn.addEventListener("click", async () => {
     /* =========================
        PRODUCTS FORMAT
     ========================= */
-    const products = cart.map((item) => {
-      const product = {
-        quantity: item.qty,
-        productId: item.id,
-      };
+    const isPromotion = (item) => Boolean(item.promotion && item.promotionData);
 
-      if (item.varity) {
-        product.varity = item.varity;
-      }
+    const products = cart
+      .filter((item) => !isPromotion(item))
+      .map((item) => {
+        const product = {
+          quantity: item.qty,
+          productId: item.id,
+        };
 
-      if (item.promotion) {
-        product.promotion = true;
-      }
+        if (item.varity) {
+          product.varity = item.varity;
+        }
 
-      return product;
-    });
+        return product;
+      });
+
+    /* =========================
+       PROMOTIONS FORMAT
+    ========================= */
+    const promotionId = cart.filter(isPromotion).map((item) => ({
+      ...item.promotionData,
+      quantity: item.qty,
+    }));
 
     /* =========================
    DELIVERY
@@ -1216,13 +1231,17 @@ confirmOrderBtn.addEventListener("click", async () => {
       userId: user?.id || null,
       cartId: backendCartId,
       channel: "web",
-      products: products.filter((p) => !p.promotions),
+      products,
       amount: total,
       paymentMethod: paymentMethod === "transfer" ? "transfer" : "card",
       paymentStatus: "pending",
       delivered,
       timeDelivered: "Una semana",
     };
+
+    if (promotionId.length) {
+      orderBody.promotionId = promotionId;
+    }
 
     /* =========================
        CREATE ORDER

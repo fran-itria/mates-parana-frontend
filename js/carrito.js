@@ -136,6 +136,15 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `<small>${item.varity.type || ""} ${item.varity.color || ""}</small>`
         : ""
     }
+    ${(item.promotionData?.defaultSelected || [])
+      .filter((d) => d.select)
+      .map(
+        (d) =>
+          `<small>${d.productName || ""}: ${d.select.type || ""} ${
+            d.select.color || ""
+          }</small>`
+      )
+      .join("")}
               <p>$${item.price}</p>
 
               <div class="qty-controls">
@@ -165,9 +174,18 @@ document.addEventListener("DOMContentLoaded", () => {
   window._addToCartInternal = async function (product) {
     await ensureBackendCart();
 
+    // Los combos personalizados se diferencian por la variedad elegida
+    // de cada uno de sus productos
+    const promotionKey = (product.promotionData?.defaultSelected || [])
+      .map(
+        (d) =>
+          `${d.productId}:${d.select?.type || ""}:${d.select?.color || ""}`
+      )
+      .join("|");
+
     const cartKey = `${product.id}-${product.varity?.type || ""}-${
       product.varity?.color || ""
-    }`;
+    }${promotionKey ? `-${promotionKey}` : ""}`;
 
     const existing = cart.find((p) => p.cartKey === cartKey);
 
@@ -183,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
         varity: product.varity || null,
         qty: product.qty || 1,
         promotion: product.promotion || false,
+        promotionData: product.promotionData || null,
       });
     }
 
