@@ -20,11 +20,12 @@ let selectedVariant = null;
 // Variedades elegidas de cada producto del combo (defaultSelected)
 let comboSelections = [];
 
+let data
 async function getProductDetail() {
   if (type === "combo") {
     const res = await fetch(`${API_BASE_PRODUCCION}/promotions/${productId}`);
 
-    const data = await res.json();
+    data = await res.json();
 
     if (!data) return;
 
@@ -35,36 +36,30 @@ async function getProductDetail() {
     });
 
     return;
+  } else {
+
+    const res = await fetch(
+      `${API_BASE_PRODUCCION}/products/oneProduct/${productId}`
+    );
+
+    data = await res.json();
+
+    if (!data) return;
+
+    currentProduct = data;
+
+    renderProduct(
+      data,
+      selectedType,
+      selectedColor,
+      selectedVariant,
+      (color, type, variant) => {
+        selectedColor = color;
+        selectedType = type;
+        selectedVariant = variant;
+      }
+    );
   }
-
-  const res = await fetch(
-    `${API_BASE_PRODUCCION}/products/oneProduct/${productId}`
-  );
-
-  const data = await res.json();
-
-  if (!data) return;
-
-  currentProduct = data;
-
-  console.log("=================================");
-  console.log("PRODUCTO COMPLETO:", data);
-  console.log("relatedProducts:", data.relatedProducts);
-  console.log("complementProducts:", data.complementProducts);
-  console.log("=================================");
-
-  renderProduct(
-    data,
-    selectedType,
-    selectedColor,
-    selectedVariant,
-    (color, type, variant) => {
-      selectedColor = color;
-      selectedType = type;
-      selectedVariant = variant;
-    }
-  );
-
   renderSimilar(data);
   renderComplementProducts(data);
 }
@@ -80,8 +75,6 @@ function renderSimilar(p) {
     return;
   }
 
-  console.log("Renderizando similares:", p.relatedProducts);
-
   const similares = Array.isArray(p.relatedProducts) ? p.relatedProducts : [];
 
   if (similares.length === 0) {
@@ -95,8 +88,8 @@ function renderSimilar(p) {
       const image = Array.isArray(prod.image)
         ? prod.image.find((img) => typeof img === "string" && img.trim())
         : typeof prod.image === "string"
-        ? prod.image
-        : "";
+          ? prod.image
+          : "";
 
       const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
 
@@ -134,14 +127,12 @@ function renderComplementProducts(p) {
     return;
   }
 
-  console.log("Renderizando complementos:", p.complementProducts);
 
   const complementos = Array.isArray(p.complementProducts)
     ? p.complementProducts
     : [];
 
   if (complementos.length === 0) {
-    console.warn("⚠️ No hay productos complementarios");
     container.innerHTML = "";
     return;
   }
@@ -151,8 +142,8 @@ function renderComplementProducts(p) {
       const image = Array.isArray(prod.image)
         ? prod.image.find((img) => typeof img === "string" && img.trim())
         : typeof prod.image === "string"
-        ? prod.image
-        : "";
+          ? prod.image
+          : "";
 
       const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
 
@@ -213,8 +204,6 @@ async function calculateShipping() {
 
     const data = await response.json();
 
-    console.log(data);
-
     renderShipping(data, postalCode);
   } catch (error) {
     shippingResult.innerHTML = `
@@ -259,9 +248,8 @@ function renderShipping(data, postalCode) {
 
   </div>
 
-${
-  postalCode === "E3100"
-    ? `
+${postalCode === "E3100"
+      ? `
 
 <div class="shipping-card local-card">
 
@@ -339,11 +327,10 @@ ${
 </div>
 
 `
-    : ""
-}
-${
-  data.cadete
-    ? `
+      : ""
+    }
+${data.cadete
+      ? `
 
 <div class="shipping-card">
 
@@ -368,8 +355,8 @@ ${
             <select id="cadeteCity">
 
                 ${data.cadete
-                  .map(
-                    (city) => `
+        .map(
+          (city) => `
 
                     <option
                         value="${city.ciudad}"
@@ -381,8 +368,8 @@ ${
                     </option>
 
                 `
-                  )
-                  .join("")}
+        )
+        .join("")}
 
             </select>
 
@@ -399,8 +386,8 @@ ${
 </div>
 
 `
-    : ""
-}
+      : ""
+    }
 
 
 
@@ -480,9 +467,9 @@ ${
           .map(
             (point) => `
             ${(() => {
-              const agency = formatAgencyName(point.agency);
+                const agency = formatAgencyName(point.agency);
 
-              return `
+                return `
 
 <label class="agency-option">
 
@@ -509,7 +496,7 @@ ${
 </label>
 
 `;
-            })()}
+              })()}
             <br>
           `
           )
