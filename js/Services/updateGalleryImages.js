@@ -1,19 +1,37 @@
-export function updateGalleryImage(index, galleryImages, currentImageIndex) {
-    if (!galleryImages.length) return;
+let galleryImages = [];
+let currentImageIndex = 0;
 
-    currentImageIndex = index;
+export function setGalleryImages(images = []) {
+  galleryImages = images;
+  currentImageIndex = 0;
+}
 
-    const mainImage = document.getElementById("mainImage");
+export function getGalleryImages() {
+  return galleryImages;
+}
 
-    mainImage.classList.add("fade");
+export function getCurrentImageIndex() {
+  return currentImageIndex;
+}
 
-    setTimeout(() => {
-        mainImage.src = galleryImages[currentImageIndex];
+export function updateGalleryImage(index) {
+  if (!galleryImages.length) return;
 
-        document.querySelectorAll(".gallery-thumbs img").forEach((thumb, i) => {
-            thumb.classList.toggle("active", i === currentImageIndex);
-        });
+  currentImageIndex = index;
 
-        mainImage.classList.remove("fade");
-    }, 150);
+  const mainImage = document.getElementById("mainImage");
+
+  if (!mainImage) return;
+
+  mainImage.classList.add("fade");
+
+  setTimeout(() => {
+    mainImage.src = galleryImages[currentImageIndex];
+
+    document.querySelectorAll(".gallery-thumbs img").forEach((thumb, i) => {
+      thumb.classList.toggle("active", i === currentImageIndex);
+    });
+
+    mainImage.classList.remove("fade");
+  }, 150);
 }

@@ -1,9 +1,10 @@
 import { renderComboDetail } from "./Combos/renderCombo.js";
 import { renderProduct } from "./Productos/renderProduct.js";
 import {
-  API_BASE_PRODUCCION,
-  API_BASE_PRUEBA
-} from "./Const/const.js"
+  getGalleryImages,
+  getCurrentImageIndex,
+} from "./Services/updateGalleryImages.js";
+import { API_BASE_PRODUCCION, API_BASE_PRUEBA } from "./Const/const.js";
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
@@ -16,110 +17,159 @@ let selectedType = null;
 let selectedColor = null;
 let selectedVariant = null;
 
-/* ==========================
-   GALERÍA
-========================== */
+// Variedades elegidas de cada producto del combo (defaultSelected)
+let comboSelections = [];
 
-let galleryImages = [];
-let currentImageIndex = 0;
-
+let data
 async function getProductDetail() {
   if (type === "combo") {
-    const res = await fetch(
-      `${API_BASE_PRODUCCION}/promotions/${productId}`
-    );
+    const res = await fetch(`${API_BASE_PRODUCCION}/promotions/${productId}`);
 
-    const data = await res.json();
+    data = await res.json();
 
     if (!data) return;
 
     currentProduct = data;
 
-    renderComboDetail(currentProduct);
+    renderComboDetail(data, (selections) => {
+      comboSelections = selections;
+    });
 
     return;
   } else {
-    const res = await fetch(`${API_BASE_PRODUCCION}/products/oneProduct/${productId}`);
-    const data = await res.json();
+
+    const res = await fetch(
+      `${API_BASE_PRODUCCION}/products/oneProduct/${productId}`
+    );
+
+    data = await res.json();
+
     if (!data) return;
 
-    currentProduct = data
+    currentProduct = data;
 
     renderProduct(
       data,
       selectedType,
       selectedColor,
       selectedVariant,
-      galleryImages,
-      currentImageIndex,
       (color, type, variant) => {
         selectedColor = color;
         selectedType = type;
         selectedVariant = variant;
       }
     );
-    // renderSimilar(data);
-    // renderRandomCombos(data);
   }
+  renderSimilar(data);
+  renderComplementProducts(data);
 }
 
 //========================================================
+/* ================= PRODUCTOS SIMILARES ================= */
 
-/* ================= SIMILARES ================= */
 function renderSimilar(p) {
   const container = document.getElementById("similarProducts");
 
-  let similares = allProducts.filter((x) => {
-    if (x.id === p.id) return false;
+  if (!container) {
+    console.error("❌ No existe #similarProducts en el HTML");
+    return;
+  }
 
-    // misma categoría / tipo principal
-    if (x.type && p.type && x.type === p.type) return true;
+  const similares = Array.isArray(p.relatedProducts) ? p.relatedProducts : [];
 
-    // fallback: mismo nombre base (por si el backend es medio random)
-    const baseNameX = x.name.toLowerCase().split(" ")[0];
-    const baseNameP = p.name.toLowerCase().split(" ")[0];
-
-    return baseNameX === baseNameP;
-  });
-
-  // shuffle para que no sean siempre los mismos
-  similares = similares.sort(() => 0.5 - Math.random()).slice(0, 4);
+  if (similares.length === 0) {
+    console.warn("⚠️ No hay productos similares");
+    container.innerHTML = "";
+    return;
+  }
 
   container.innerHTML = similares
-    .map(
-      (prod) => `
-      <a href="./producto-card.html?id=${prod.id}" class="product-card">
-        <img src="${prod.image[0].replace(/\s/g, "")}" alt="${prod.name}">
-        <div class="product-name">${prod.name}</div>
-        <div class="product-price">$${prod.price.toLocaleString("es-AR")}</div>
-      </a>
-    `
-    )
+    .map((prod) => {
+      const image = Array.isArray(prod.image)
+        ? prod.image.find((img) => typeof img === "string" && img.trim())
+        : typeof prod.image === "string"
+          ? prod.image
+          : "";
+
+      const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
+
+      const price = prod.discountedPrice ?? prod.price ?? 0;
+
+      return `
+        <a href="./producto-card.html?id=${prod.id}" class="product-card">
+
+          <img
+            src="${image}"
+            alt="${prod.name || "Producto"}"
+          >
+
+          <div class="product-name">
+            ${prod.name || ""}
+          </div>
+
+          <div class="product-price">
+            $${Number(price).toLocaleString("es-AR")}
+          </div>
+
+        </a>
+      `;
+    })
     .join("");
 }
 
-/* ================= COMPLEMENTOS ================= */
-function renderRandomCombos(p) {
+/* ================= PARA COMPRAR CON ESTE PRODUCTO ================= */
+
+function renderComplementProducts(p) {
   const container = document.getElementById("comboProducts");
 
-  const randoms = allProducts
-    .filter((x) => x.id !== p.id)
-    .sort(() => 0.5 - Math.random())
-    .slice(0, 4);
+  if (!container) {
+    console.error("❌ No existe #comboProducts en el HTML");
+    return;
+  }
 
-  container.innerHTML = randoms
-    .map(
-      (prod) => `
-      <a href="./producto-card.html?id=${prod.id}" class="product-card">
-        <img src="${prod.image[0].replace(/\s/g, "")}" alt="${prod.name}">
-        <div class="product-name">${prod.name}</div>
-        <div class="product-price">$${prod.price.toLocaleString("es-AR")}</div>
-      </a>
-    `
-    )
+
+  const complementos = Array.isArray(p.complementProducts)
+    ? p.complementProducts
+    : [];
+
+  if (complementos.length === 0) {
+    container.innerHTML = "";
+    return;
+  }
+
+  container.innerHTML = complementos
+    .map((prod) => {
+      const image = Array.isArray(prod.image)
+        ? prod.image.find((img) => typeof img === "string" && img.trim())
+        : typeof prod.image === "string"
+          ? prod.image
+          : "";
+
+      const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
+
+      const price = prod.discountedPrice ?? prod.price ?? 0;
+
+      return `
+        <a href="./producto-card.html?id=${prod.id}" class="product-card">
+
+          <img
+            src="${image}"
+            alt="${prod.name || "Producto"}"
+          >
+
+          <div class="product-name">
+            ${prod.name || ""}
+          </div>
+
+          <div class="product-price">
+            $${Number(price).toLocaleString("es-AR")}
+          </div>
+
+        </a>
+      `;
+    })
     .join("");
 }
-
 /*=========================
 CALCULO DE ENVIO
 ==========================*/
@@ -144,15 +194,15 @@ async function calculateShipping() {
   }
 
   try {
-    const response = await fetch(`${API_BASE_PRODUCCION}/orders/delivered-price/${postalCode}`);
+    const response = await fetch(
+      `${API_BASE_PRODUCCION}/orders/delivered-price/${postalCode}`
+    );
 
     if (!response.ok) {
       throw new Error();
     }
 
     const data = await response.json();
-
-    console.log(data);
 
     renderShipping(data, postalCode);
   } catch (error) {
@@ -515,15 +565,43 @@ if (addToCartBtn) {
       currentProduct.image?.[0]?.replace(/\s/g, "") ||
       "";
 
-    addToCart({
-      id: currentProduct.id,
-      name: currentProduct.name,
-      price: currentProduct.discountedPrice ?? currentProduct.price,
-      image: variantImage,
-      qty: parseInt(document.getElementById("qtyInput").value) || 1,
-      varity: Object.keys(selectedVarity).length > 0 ? selectedVarity : null,
-      promotion: type === "combo",
-    });
+    const qty = parseInt(document.getElementById("qtyInput").value) || 1;
+
+    if (type == "combo") {
+      const price = currentProduct.discountedPrice ?? currentProduct.price;
+
+      const comboImage = currentProduct.image?.[0]?.replace(/\s/g, "") || "";
+
+      addToCart({
+        id: currentProduct.id,
+        name: currentProduct.name,
+        price,
+        image: comboImage,
+        qty,
+        varity: null,
+        promotion: true,
+        promotionData: {
+          id: currentProduct.id,
+          name: currentProduct.name,
+          image: comboImage,
+          price: currentProduct.price,
+          custom: 1,
+          quantity: qty,
+          cardPrice: currentProduct.cardPrice ?? Math.round(price * 1.15),
+          defaultSelected: comboSelections,
+          discountedPrice: currentProduct.discountedPrice ?? null,
+        },
+      });
+    } else
+      addToCart({
+        id: currentProduct.id,
+        name: currentProduct.name,
+        price: currentProduct.discountedPrice ?? currentProduct.price,
+        image: variantImage,
+        qty,
+        varity: Object.keys(selectedVarity).length > 0 ? selectedVarity : null,
+        promotion: false,
+      });
   });
 }
 
@@ -588,6 +666,8 @@ const closeModal = document.getElementById("closeModal");
 let modalImageIndex = 0;
 
 function updateModalImage(index) {
+  const galleryImages = getGalleryImages();
+
   if (!galleryImages.length) return;
 
   modalImageIndex = index;
@@ -595,13 +675,15 @@ function updateModalImage(index) {
   modalImage.classList.add("fade");
 
   setTimeout(() => {
-    modalImage.src = galleryImages[modalImageIndex];
+    modalImage.src = getGalleryImages()[modalImageIndex];
 
     modalImage.classList.remove("fade");
   }, 120);
 }
 
 function changeModalImage(direction) {
+  const galleryImages = getGalleryImages();
+
   if (!galleryImages.length) return;
 
   modalImageIndex =
@@ -612,7 +694,7 @@ function changeModalImage(direction) {
 
 if (mainImageZoom && imageModal && modalImage) {
   mainImageZoom.addEventListener("click", () => {
-    modalImageIndex = currentImageIndex;
+    modalImageIndex = getCurrentImageIndex();
 
     updateModalImage(modalImageIndex);
 
