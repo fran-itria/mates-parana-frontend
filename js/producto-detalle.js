@@ -1,14 +1,9 @@
 import { renderComboDetail } from "./Combos/renderCombo.js";
 import { renderProduct } from "./Productos/renderProduct.js";
-
-const PROMOS_URL =
-  "https://matesparana-backend-production.up.railway.app/promotions";
-
-const SHIPPING_API =
-  "https://matesparana-backend-production.up.railway.app/orders/delivered-price/";
-
-const API_URL =
-  "https://matesparana-backend-production.up.railway.app/products";
+import {
+  API_BASE_PRODUCCION,
+  API_BASE_PRUEBA
+} from "./Const/const.js"
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
@@ -31,7 +26,7 @@ let currentImageIndex = 0;
 async function getProductDetail() {
   if (type === "combo") {
     const res = await fetch(
-      `${PROMOS_URL}/${productId}`
+      `${API_BASE_PRODUCCION}/promotions/${productId}`
     );
 
     const data = await res.json();
@@ -44,7 +39,7 @@ async function getProductDetail() {
 
     return;
   } else {
-    const res = await fetch(`${API_URL}/oneProduct/${productId}`);
+    const res = await fetch(`${API_BASE_PRODUCCION}/products/oneProduct/${productId}`);
     const data = await res.json();
     if (!data) return;
 
@@ -52,13 +47,16 @@ async function getProductDetail() {
 
     renderProduct(
       data,
-      allProducts,
-      currentProduct,
       selectedType,
       selectedColor,
       selectedVariant,
       galleryImages,
-      currentImageIndex
+      currentImageIndex,
+      (color, type, variant) => {
+        selectedColor = color;
+        selectedType = type;
+        selectedVariant = variant;
+      }
     );
     // renderSimilar(data);
     // renderRandomCombos(data);
@@ -146,7 +144,7 @@ async function calculateShipping() {
   }
 
   try {
-    const response = await fetch(SHIPPING_API + postalCode);
+    const response = await fetch(`${API_BASE_PRODUCCION}/orders/delivered-price/${postalCode}`);
 
     if (!response.ok) {
       throw new Error();
@@ -500,7 +498,6 @@ const addToCartBtn = document.getElementById("addToCartBtn");
 
 if (addToCartBtn) {
   addToCartBtn.addEventListener("click", () => {
-    console.log(selectedColor)
     if (!currentProduct) return;
 
     const selectedVarity = {};

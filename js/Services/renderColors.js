@@ -1,31 +1,34 @@
 export function renderColors(
-    varities,
+    availableColors,
     updateImageByVariant,
     colorWrapper,
-    selectedColor,
-    colorMap
+    colorMap,
+    onColorChange
 ) {
     colorWrapper.innerHTML = "<p>Color</p>";
-    const availableColors = [...new Set(varities.map((v) => v.color))];
 
-    // Si el color seleccionado ya no existe para ese tipo
-    console.log(availableColors)
-
-    availableColors.forEach((color) => {
+    availableColors.forEach((color, i) => {
         const colorBtn = document.createElement("span");
 
         colorBtn.classList.add("variant-color");
 
         colorBtn.style.background = colorMap[color] || color;
 
-        if (color === selectedColor) {
+        if (i == 0) {
             colorBtn.classList.add("active");
         }
 
         colorBtn.addEventListener("click", () => {
-            selectedColor = color;
-            renderColors(varities, updateImageByVariant, colorWrapper, selectedColor, colorMap);
-            updateImageByVariant();
+
+            // visualmente seleccionarlo
+            colorWrapper
+                .querySelectorAll(".variant-color")
+                .forEach(btn => btn.classList.remove("active"));
+
+            colorBtn.classList.add("active");
+
+            // 👇 ESTO ES LO IMPORTANTE
+            onColorChange(color);
         });
 
         colorWrapper.appendChild(colorBtn);

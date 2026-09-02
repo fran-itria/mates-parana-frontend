@@ -1,15 +1,18 @@
 import { renderColors } from "../Services/renderColors.js";
+import { renderTypes } from "../Services/renderTypes.js";
 import { updateGalleryImage } from "../Services/updateGalleryImages.js";
+import { detectColor } from "../Services/detectColor.js";
+import { normalizeVarities } from "../Services/normalizeVarities.js";
+import { colorMap } from "../Const/const.js"
 
 export function renderProduct(
     p,
-    allProducts,
-    currentProduct,
     selectedType,
     selectedColor,
     selectedVariant,
     galleryImages,
-    currentImageIndex
+    currentImageIndex,
+    onVariantChange
 ) {
     if (!p) return;
 
@@ -117,64 +120,7 @@ Precio con transferencia: $${transferPrice.toLocaleString("es-AR")}
         "Envío gratis superando los $80.000,00";
 
     //============ variantes de cada producto:
-
-    function detectColor(text = "") {
-        text = text.toLowerCase();
-
-        const colors = {
-            negro: ["negro"],
-
-            blanco: ["blanco"],
-
-            rojo: ["rojo"],
-
-            rojoOscuro: ["rojo oscuro"],
-
-            rosa: ["rosa", "pink"],
-
-            marron: ["marron", "marrón"],
-
-            marronClaro: ["marron claro", "marrón claro"],
-
-            marronOscuro: ["marron oscuro", "marrón oscuro"],
-
-            beige: ["beige", "nude"],
-
-            verde: ["verde"],
-
-            azul: ["azul"],
-
-            amarillo: ["amarillo"],
-
-            violeta: ["violeta", "lila"],
-
-            gris: ["gris"],
-
-            chocolate: ["chocolate", "marronoscuro"],
-
-            borravino: ["bordo", "borra vino", "borravino", "vino"],
-        };
-
-        for (const [key, aliases] of Object.entries(colors)) {
-            if (aliases.some((alias) => text.includes(alias))) {
-                return key;
-            }
-        }
-
-        return null;
-    }
-
-    function normalizeVarities(varities) {
-        return varities.map((v) => ({
-            ...v,
-
-            color: detectColor(
-                `${v.color || ""} ${v.name || ""} ${v.description || ""}`
-            ),
-        }));
-    }
-
-    const varities = normalizeVarities(p.varities || []);
+    const varities = normalizeVarities(p.varities || [], detectColor);
 
     const variantsContainer = document.getElementById("variants");
 
@@ -184,8 +130,6 @@ Precio con transferencia: $${transferPrice.toLocaleString("es-AR")}
         // ✅ FUNCIÓN CORRECTA (UNA SOLA)
         function updateImageByVariant() {
             const match = varities.find((v) => v.color === selectedColor);
-
-            selectedVariant = match || null;
 
             if (match?.image) {
                 const img = match.image.replace(/\s/g, "");
@@ -200,39 +144,73 @@ Precio con transferencia: $${transferPrice.toLocaleString("es-AR")}
             }
         }
 
+        // ===== Tipos =====
+        const availableTypes = [...new Set(varities.map((v) => v.type))];
+        if (availableTypes.some(type => type !== null && type !== undefined && type !== "")) {
+            const typeWrapper = document.createElement("div");
+            variantsContainer.appendChild(typeWrapper);
+
+            selectedType = availableTypes[0];
+            const match = varities.find(
+                (v) => v.type === selectedType
+            );
+            selectedVariant = match || null;
+            onVariantChange(selectedColor, selectedType, selectedVariant);
+
+            renderTypes(
+                availableTypes,
+                updateImageByVariant,
+                typeWrapper,
+                (type) => {
+                    selectedType = type;
+
+                    const match = varities.find(
+                        (v) => v.type === selectedType
+                    );
+
+                    selectedVariant = match || null;
+
+                    onVariantChange(selectedColor, selectedType, selectedVariant);
+
+                    updateImageByVariant();
+                }
+            )
+        }
+
+
         // ===== COLORES =====
-
-        const colorWrapper = document.createElement("div");
-
-        const colorMap = {
-            negro: "#000",
-            blanco: "#fff",
-            rojo: "#c00",
-            rojoOscuro: "rgb(112, 7, 7)",
-            rosa: "rgb(233, 152, 152)",
-            verde: "#477e4c",
-            azul: "#34449b",
-            amarillo: "#ffd23d",
-            violeta: "#773dff",
-            gris: "#757575",
-            marron: "#553321",
-            chocolate: "#4d2e1e",
-            marronclaro: "#e08f64",
-            marronoscuro: "#442617",
-            borravino: "#5e2231",
-            beige: "#d2b48c",
-        };
-
         const availableColors = [...new Set(varities.map((v) => v.color))];
-        variantsContainer.appendChild(colorWrapper);
-        // selectedColor = availableColors[0];
-        renderColors(
-            varities,
-            updateImageByVariant,
-            colorWrapper,
-            selectedColor,
-            colorMap
-        )
+        if (availableColors.some(color => color !== null && color !== undefined && color !== "")) {
+            const colorWrapper = document.createElement("div");
+            variantsContainer.appendChild(colorWrapper);
+
+            selectedColor = availableColors[0];
+            const match = varities.find(
+                (v) => v.color === selectedColor
+            );
+            selectedVariant = match || null;
+            onVariantChange(selectedColor, selectedType, selectedVariant);
+
+            renderColors(
+                availableColors,
+                updateImageByVariant,
+                colorWrapper,
+                colorMap,
+                (color) => {
+                    selectedColor = color;
+
+                    const match = varities.find(
+                        (v) => v.color === selectedColor
+                    );
+
+                    selectedVariant = match || null;
+
+                    onVariantChange(selectedColor, selectedType, selectedVariant);
+
+                    updateImageByVariant();
+                }
+            )
+        }
 
         updateImageByVariant();
     }
