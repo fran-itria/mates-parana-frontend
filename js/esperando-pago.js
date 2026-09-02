@@ -238,7 +238,7 @@ function mostrarEstadoPago(status) {
   if (!element) return;
 
   if (status === "approved" || status === "received") {
-    element.textContent = "✅ Aprobado";
+    element.textContent = "Aprobado";
 
     return;
   }
@@ -306,6 +306,42 @@ function mostrarDatosTransferencia(order) {
   if (alias) {
     alias.textContent = transferInfo.alias || "-";
   }
+
+  /* =======================================================
+   COPIAR IMPORTE Y ALIAS
+======================================================= */
+
+  document.querySelectorAll(".copy-btn").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const targetId = button.dataset.copyTarget;
+      const target = document.getElementById(targetId);
+
+      if (!target) return;
+
+      let textToCopy = target.textContent.trim();
+
+      // Si es el importe, eliminamos el símbolo $
+      if (targetId === "transferAmount") {
+        textToCopy = textToCopy.replace("$", "").trim();
+      }
+
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+
+        const originalContent = button.textContent;
+
+        button.textContent = "✓";
+        button.classList.add("copied");
+
+        setTimeout(() => {
+          button.textContent = originalContent;
+          button.classList.remove("copied");
+        }, 1500);
+      } catch (error) {
+        console.error("Error al copiar:", error);
+      }
+    });
+  });
 
   /* =======================================================
      CVU

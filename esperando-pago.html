@@ -69,18 +69,36 @@
 
             <div class="transfer-item transfer-amount">
               <span>Importe a transferir</span>
-
-              <strong id="transferAmount"> $0 </strong>
+              <div class="transfer-copy">
+                <strong id="transferAmount">$0</strong>
+                <button
+                  type="button"
+                  class="copy-btn"
+                  data-copy-target="transferAmount"
+                  title="Copiar importe"
+                  aria-label="Copiar importe"
+                >
+                  📝
+                </button>
+              </div>
             </div>
 
             <!-- ALIAS -->
-
             <div class="transfer-item">
               <span>Alias</span>
-
-              <strong id="transferAlias"> - </strong>
+              <div class="transfer-copy">
+                <strong id="transferAlias">-</strong>
+                <button
+                  type="button"
+                  class="copy-btn"
+                  data-copy-target="transferAlias"
+                  title="Copiar alias"
+                  aria-label="Copiar alias"
+                >
+                  📝
+                </button>
+              </div>
             </div>
-
             <!-- CVU -->
 
             <div class="transfer-item">
@@ -120,8 +138,8 @@
             <strong> ⚠️ Importante </strong>
 
             <p>
-              Una vez realizada la transferencia, conservá el comprobante. Tu
-              pedido quedará pendiente hasta que confirmemos el pago.
+              Al momento de hacer la trasferencia, colocar el mismo importa que
+              figura que el sistema acepte la compra
             </p>
           </div>
         </section>
