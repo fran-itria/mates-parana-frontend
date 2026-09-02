@@ -4,8 +4,8 @@ import {
   PAYWAY_API_KEY_PRODUCCION,
   PAYWAY_API_KEY_SANDBOX,
   PAYWAY_URL_PRODUCCION,
-  PAYWAY_URL_SANDBOX
-} from "./Const/const.js"
+  PAYWAY_URL_SANDBOX,
+} from "./Const/const.js";
 
 //PRUDUCCIÓN:
 const decidir = new Decidir(PAYWAY_URL_PRODUCCION, true);
@@ -103,7 +103,9 @@ async function calculateShipping() {
   }
 
   try {
-    const response = await fetch(`${API_BASE_PRODUCCION}/orders/delivered-price/${postalCode}`);
+    const response = await fetch(
+      `${API_BASE_PRODUCCION}/orders/delivered-price/${postalCode}`
+    );
 
     if (!response.ok) {
       throw new Error();
@@ -289,7 +291,6 @@ function renderAgencyOptions(
         agency: selectedPoint.agency_id,
         agencyName: selectedPoint.agency,
       });
-
     });
   });
 }
@@ -488,9 +489,7 @@ function renderPreShippingOptions() {
   // SUCURSALES
   // ==========================================
 
-  const localBranches = document.querySelectorAll(
-    'input[name="localBranch"]'
-  );
+  const localBranches = document.querySelectorAll('input[name="localBranch"]');
 
   const cadeteRadio = document.querySelector(
     'input[name="shippingType"][value="cadete"]'
@@ -498,7 +497,6 @@ function renderPreShippingOptions() {
 
   localBranches.forEach((branch) => {
     branch.addEventListener("change", () => {
-
       if (!branch.checked) return;
 
       // DESMARCAR CADETE
@@ -519,20 +517,17 @@ function renderPreShippingOptions() {
       }
 
       setSelectedShipping({
-        type: branch.value
+        type: branch.value,
       });
     });
   });
-
 
   // ==========================================
   // CADETE
   // ==========================================
 
   if (cadeteRadio) {
-
     cadeteRadio.addEventListener("change", () => {
-
       if (!cadeteRadio.checked) return;
 
       // DESMARCAR TODAS LAS SUCURSALES
@@ -541,9 +536,7 @@ function renderPreShippingOptions() {
       });
 
       loadCadeteOptions();
-
     });
-
   }
 }
 
@@ -559,7 +552,9 @@ async function loadCadeteOptions() {
   `;
 
   try {
-    const response = await fetch(`${API_BASE_PRODUCCION}/orders/delivered-price/E3100`);
+    const response = await fetch(
+      `${API_BASE_PRODUCCION}/orders/delivered-price/E3100`
+    );
 
     if (!response.ok) {
       throw new Error("No se pudieron obtener las opciones de cadete");
@@ -592,8 +587,8 @@ async function loadCadeteOptions() {
           </option>
 
           ${data.cadete
-        .map(
-          (option) => `
+            .map(
+              (option) => `
                 <option
                   value="${option.ciudad}"
                   data-price="${option.price}"
@@ -602,8 +597,8 @@ async function loadCadeteOptions() {
                   $${Number(option.price).toLocaleString("es-AR")}
                 </option>
               `
-        )
-        .join("")}
+            )
+            .join("")}
 
         </select>
 
@@ -712,7 +707,9 @@ function renderShipping(data, postalCode) {
       </p>
 
       <div class="agency-list">
-        ${data.retirePoints.map((sucursal) => `
+        ${data.retirePoints
+          .map(
+            (sucursal) => `
           
           <label class="agency-option" for="agency-${sucursal.agency_id}">
             
@@ -727,7 +724,9 @@ function renderShipping(data, postalCode) {
 
           </label>
 
-        `).join("")}
+        `
+          )
+          .join("")}
       </div>
 
     </div>
@@ -837,17 +836,20 @@ function renderProducts() {
 
           <p>
             Cantidad: ${item.qty}
-            ${item.varity
-        ? `• ${item.varity.color || ""} ${item.varity.type || ""}`
-        : ""
-      }
+            ${
+              item.varity
+                ? `• ${item.varity.color || ""} ${item.varity.type || ""}`
+                : ""
+            }
             ${(item.promotionData?.defaultSelected || [])
-        .filter((d) => d.select)
-        .map(
-          (d) =>
-            `<br>${d.productName || ""}: ${d.select.color || ""} ${d.select.type || ""}`
-        )
-        .join("")}
+              .filter((d) => d.select)
+              .map(
+                (d) =>
+                  `<br>${d.productName || ""}: ${d.select.color || ""} ${
+                    d.select.type || ""
+                  }`
+              )
+              .join("")}
           </p>
         </div>
 
@@ -955,14 +957,11 @@ function createCardToken() {
 
     try {
       decidir.createToken(form, (status, response) => {
-
         if (status !== 200 && status !== 201) {
-
           const validationErrors = response?.validation_errors;
 
           if (validationErrors?.length) {
-            validationErrors.forEach((err, index) => {
-            });
+            validationErrors.forEach((err, index) => {});
           } else {
             console.error("Payway no devolvió validation_errors.", response);
           }
@@ -1247,8 +1246,11 @@ confirmOrderBtn.addEventListener("click", async () => {
        CREATE ORDER
     ========================= */
 
-    if (delivered.method == "Cadete" && !delivered.shipping.address.streetName) {
-      alert("Colocar dirección de envío")
+    if (
+      delivered.method == "Cadete" &&
+      !delivered.shipping.address.streetName
+    ) {
+      alert("Colocar dirección de envío");
     }
 
     const res = await fetch(`${API_BASE_PRODUCCION}/orders`, {
@@ -1305,8 +1307,8 @@ confirmOrderBtn.addEventListener("click", async () => {
       if (!paymentRes.ok) {
         throw new Error(
           paymentResult.message ||
-          paymentResult.error ||
-          JSON.stringify(paymentResult)
+            paymentResult.error ||
+            JSON.stringify(paymentResult)
         );
       }
 
@@ -1327,19 +1329,21 @@ confirmOrderBtn.addEventListener("click", async () => {
     ========================= */
 
     if (paymentMethod === "transfer") {
-      const aliasRes = await fetch(`${API_BASE_PRODUCCION}/orders/create-alias-transfer`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          orderId: createdOrder.id,
-        }),
-      });
+      const aliasRes = await fetch(
+        `${API_BASE_PRODUCCION}/orders/create-alias-transfer`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: createdOrder.id,
+          }),
+        }
+      );
 
       const aliasData = await aliasRes.json();
       localStorage.setItem("transferInfo", JSON.stringify(aliasData));
-
 
       if (!aliasRes.ok && aliasRes.status !== 409) {
         throw new Error(

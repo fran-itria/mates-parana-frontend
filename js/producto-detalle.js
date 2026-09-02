@@ -4,10 +4,7 @@ import {
   getGalleryImages,
   getCurrentImageIndex,
 } from "./Services/updateGalleryImages.js";
-import {
-  API_BASE_PRODUCCION,
-  API_BASE_PRUEBA
-} from "./Const/const.js"
+import { API_BASE_PRODUCCION, API_BASE_PRUEBA } from "./Const/const.js";
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
@@ -25,9 +22,7 @@ let comboSelections = [];
 
 async function getProductDetail() {
   if (type === "combo") {
-    const res = await fetch(
-      `${API_BASE_PRODUCCION}/promotions/${productId}`
-    );
+    const res = await fetch(`${API_BASE_PRODUCCION}/promotions/${productId}`);
 
     const data = await res.json();
 
@@ -40,86 +35,150 @@ async function getProductDetail() {
     });
 
     return;
-  } else {
-    const res = await fetch(`${API_BASE_PRODUCCION}/products/oneProduct/${productId}`);
-    const data = await res.json();
-    if (!data) return;
-
-    currentProduct = data
-
-    renderProduct(
-      data,
-      selectedType,
-      selectedColor,
-      selectedVariant,
-      (color, type, variant) => {
-        selectedColor = color;
-        selectedType = type;
-        selectedVariant = variant;
-      }
-    );
-    // renderSimilar(data);
-    // renderRandomCombos(data);
   }
+
+  const res = await fetch(
+    `${API_BASE_PRODUCCION}/products/oneProduct/${productId}`
+  );
+
+  const data = await res.json();
+
+  if (!data) return;
+
+  currentProduct = data;
+
+  console.log("=================================");
+  console.log("PRODUCTO COMPLETO:", data);
+  console.log("relatedProducts:", data.relatedProducts);
+  console.log("complementProducts:", data.complementProducts);
+  console.log("=================================");
+
+  renderProduct(
+    data,
+    selectedType,
+    selectedColor,
+    selectedVariant,
+    (color, type, variant) => {
+      selectedColor = color;
+      selectedType = type;
+      selectedVariant = variant;
+    }
+  );
+
+  renderSimilar(data);
+  renderComplementProducts(data);
 }
 
 //========================================================
+/* ================= PRODUCTOS SIMILARES ================= */
 
-/* ================= SIMILARES ================= */
 function renderSimilar(p) {
   const container = document.getElementById("similarProducts");
 
-  let similares = allProducts.filter((x) => {
-    if (x.id === p.id) return false;
+  if (!container) {
+    console.error("❌ No existe #similarProducts en el HTML");
+    return;
+  }
 
-    // misma categoría / tipo principal
-    if (x.type && p.type && x.type === p.type) return true;
+  console.log("Renderizando similares:", p.relatedProducts);
 
-    // fallback: mismo nombre base (por si el backend es medio random)
-    const baseNameX = x.name.toLowerCase().split(" ")[0];
-    const baseNameP = p.name.toLowerCase().split(" ")[0];
+  const similares = Array.isArray(p.relatedProducts) ? p.relatedProducts : [];
 
-    return baseNameX === baseNameP;
-  });
-
-  // shuffle para que no sean siempre los mismos
-  similares = similares.sort(() => 0.5 - Math.random()).slice(0, 4);
+  if (similares.length === 0) {
+    console.warn("⚠️ No hay productos similares");
+    container.innerHTML = "";
+    return;
+  }
 
   container.innerHTML = similares
-    .map(
-      (prod) => `
-      <a href="./producto-card.html?id=${prod.id}" class="product-card">
-        <img src="${prod.image[0].replace(/\s/g, "")}" alt="${prod.name}">
-        <div class="product-name">${prod.name}</div>
-        <div class="product-price">$${prod.price.toLocaleString("es-AR")}</div>
-      </a>
-    `
-    )
+    .map((prod) => {
+      const image = Array.isArray(prod.image)
+        ? prod.image.find((img) => typeof img === "string" && img.trim())
+        : typeof prod.image === "string"
+        ? prod.image
+        : "";
+
+      const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
+
+      const price = prod.discountedPrice ?? prod.price ?? 0;
+
+      return `
+        <a href="./producto-card.html?id=${prod.id}" class="product-card">
+
+          <img
+            src="${image}"
+            alt="${prod.name || "Producto"}"
+          >
+
+          <div class="product-name">
+            ${prod.name || ""}
+          </div>
+
+          <div class="product-price">
+            $${Number(price).toLocaleString("es-AR")}
+          </div>
+
+        </a>
+      `;
+    })
     .join("");
 }
 
-/* ================= COMPLEMENTOS ================= */
-function renderRandomCombos(p) {
+/* ================= PARA COMPRAR CON ESTE PRODUCTO ================= */
+
+function renderComplementProducts(p) {
   const container = document.getElementById("comboProducts");
 
-  const randoms = allProducts
-    .filter((x) => x.id !== p.id)
-    .sort(() => 0.5 - Math.random())
-    .slice(0, 4);
+  if (!container) {
+    console.error("❌ No existe #comboProducts en el HTML");
+    return;
+  }
 
-  container.innerHTML = randoms
-    .map(
-      (prod) => `
-      <a href="./producto-card.html?id=${prod.id}" class="product-card">
-        <img src="${prod.image[0].replace(/\s/g, "")}" alt="${prod.name}">
-        <div class="product-name">${prod.name}</div>
-        <div class="product-price">$${prod.price.toLocaleString("es-AR")}</div>
-      </a>
-    `
-    )
+  console.log("Renderizando complementos:", p.complementProducts);
+
+  const complementos = Array.isArray(p.complementProducts)
+    ? p.complementProducts
+    : [];
+
+  if (complementos.length === 0) {
+    console.warn("⚠️ No hay productos complementarios");
+    container.innerHTML = "";
+    return;
+  }
+
+  container.innerHTML = complementos
+    .map((prod) => {
+      const image = Array.isArray(prod.image)
+        ? prod.image.find((img) => typeof img === "string" && img.trim())
+        : typeof prod.image === "string"
+        ? prod.image
+        : "";
+
+      const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
+
+      const price = prod.discountedPrice ?? prod.price ?? 0;
+
+      return `
+        <a href="./producto-card.html?id=${prod.id}" class="product-card">
+
+          <img
+            src="${image}"
+            alt="${prod.name || "Producto"}"
+          >
+
+          <div class="product-name">
+            ${prod.name || ""}
+          </div>
+
+          <div class="product-price">
+            $${Number(price).toLocaleString("es-AR")}
+          </div>
+
+        </a>
+      `;
+    })
     .join("");
 }
-
 /*=========================
 CALCULO DE ENVIO
 ==========================*/
@@ -144,7 +203,9 @@ async function calculateShipping() {
   }
 
   try {
-    const response = await fetch(`${API_BASE_PRODUCCION}/orders/delivered-price/${postalCode}`);
+    const response = await fetch(
+      `${API_BASE_PRODUCCION}/orders/delivered-price/${postalCode}`
+    );
 
     if (!response.ok) {
       throw new Error();
@@ -198,8 +259,9 @@ function renderShipping(data, postalCode) {
 
   </div>
 
-${postalCode === "E3100"
-      ? `
+${
+  postalCode === "E3100"
+    ? `
 
 <div class="shipping-card local-card">
 
@@ -277,10 +339,11 @@ ${postalCode === "E3100"
 </div>
 
 `
-      : ""
-    }
-${data.cadete
-      ? `
+    : ""
+}
+${
+  data.cadete
+    ? `
 
 <div class="shipping-card">
 
@@ -305,8 +368,8 @@ ${data.cadete
             <select id="cadeteCity">
 
                 ${data.cadete
-        .map(
-          (city) => `
+                  .map(
+                    (city) => `
 
                     <option
                         value="${city.ciudad}"
@@ -318,8 +381,8 @@ ${data.cadete
                     </option>
 
                 `
-        )
-        .join("")}
+                  )
+                  .join("")}
 
             </select>
 
@@ -336,8 +399,8 @@ ${data.cadete
 </div>
 
 `
-      : ""
-    }
+    : ""
+}
 
 
 
@@ -417,9 +480,9 @@ ${data.cadete
           .map(
             (point) => `
             ${(() => {
-                const agency = formatAgencyName(point.agency);
+              const agency = formatAgencyName(point.agency);
 
-                return `
+              return `
 
 <label class="agency-option">
 
@@ -446,7 +509,7 @@ ${data.cadete
 </label>
 
 `;
-              })()}
+            })()}
             <br>
           `
           )
@@ -537,14 +600,12 @@ if (addToCartBtn) {
           price: currentProduct.price,
           custom: 1,
           quantity: qty,
-          cardPrice:
-            currentProduct.cardPrice ?? Math.round(price * 1.15),
+          cardPrice: currentProduct.cardPrice ?? Math.round(price * 1.15),
           defaultSelected: comboSelections,
           discountedPrice: currentProduct.discountedPrice ?? null,
         },
       });
-    }
-    else
+    } else
       addToCart({
         id: currentProduct.id,
         name: currentProduct.name,

@@ -2,36 +2,36 @@ let galleryImages = [];
 let currentImageIndex = 0;
 
 export function setGalleryImages(images = []) {
-    galleryImages = images;
-    currentImageIndex = 0;
+  galleryImages = images;
+  currentImageIndex = 0;
 }
 
 export function getGalleryImages() {
-    return galleryImages;
+  return galleryImages;
 }
 
 export function getCurrentImageIndex() {
-    return currentImageIndex;
+  return currentImageIndex;
 }
 
 export function updateGalleryImage(index) {
-    if (!galleryImages.length) return;
+  if (!galleryImages.length) return;
 
-    currentImageIndex = index;
+  currentImageIndex = index;
 
-    const mainImage = document.getElementById("mainImage");
+  const mainImage = document.getElementById("mainImage");
 
-    if (!mainImage) return;
+  if (!mainImage) return;
 
-    mainImage.classList.add("fade");
+  mainImage.classList.add("fade");
 
-    setTimeout(() => {
-        mainImage.src = galleryImages[currentImageIndex];
+  setTimeout(() => {
+    mainImage.src = galleryImages[currentImageIndex];
 
-        document.querySelectorAll(".gallery-thumbs img").forEach((thumb, i) => {
-            thumb.classList.toggle("active", i === currentImageIndex);
-        });
+    document.querySelectorAll(".gallery-thumbs img").forEach((thumb, i) => {
+      thumb.classList.toggle("active", i === currentImageIndex);
+    });
 
-        mainImage.classList.remove("fade");
-    }, 150);
+    mainImage.classList.remove("fade");
+  }, 150);
 }
