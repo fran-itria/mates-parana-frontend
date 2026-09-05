@@ -20,7 +20,7 @@ let selectedVariant = null;
 // Variedades elegidas de cada producto del combo (defaultSelected)
 let comboSelections = [];
 
-let data
+let data;
 async function getProductDetail() {
   if (type === "combo") {
     const res = await fetch(`${API_BASE_PRODUCCION}/promotions/${productId}`);
@@ -37,7 +37,6 @@ async function getProductDetail() {
 
     return;
   } else {
-
     const res = await fetch(
       `${API_BASE_PRODUCCION}/products/oneProduct/${productId}`
     );
@@ -88,8 +87,8 @@ function renderSimilar(p) {
       const image = Array.isArray(prod.image)
         ? prod.image.find((img) => typeof img === "string" && img.trim())
         : typeof prod.image === "string"
-          ? prod.image
-          : "";
+        ? prod.image
+        : "";
 
       const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
 
@@ -127,7 +126,6 @@ function renderComplementProducts(p) {
     return;
   }
 
-
   const complementos = Array.isArray(p.complementProducts)
     ? p.complementProducts
     : [];
@@ -142,8 +140,8 @@ function renderComplementProducts(p) {
       const image = Array.isArray(prod.image)
         ? prod.image.find((img) => typeof img === "string" && img.trim())
         : typeof prod.image === "string"
-          ? prod.image
-          : "";
+        ? prod.image
+        : "";
 
       const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
 
@@ -248,8 +246,9 @@ function renderShipping(data, postalCode) {
 
   </div>
 
-${postalCode === "E3100"
-      ? `
+${
+  postalCode === "E3100"
+    ? `
 
 <div class="shipping-card local-card">
 
@@ -327,10 +326,11 @@ ${postalCode === "E3100"
 </div>
 
 `
-      : ""
-    }
-${data.cadete
-      ? `
+    : ""
+}
+${
+  data.cadete
+    ? `
 
 <div class="shipping-card">
 
@@ -355,8 +355,8 @@ ${data.cadete
             <select id="cadeteCity">
 
                 ${data.cadete
-        .map(
-          (city) => `
+                  .map(
+                    (city) => `
 
                     <option
                         value="${city.ciudad}"
@@ -368,8 +368,8 @@ ${data.cadete
                     </option>
 
                 `
-        )
-        .join("")}
+                  )
+                  .join("")}
 
             </select>
 
@@ -386,8 +386,8 @@ ${data.cadete
 </div>
 
 `
-      : ""
-    }
+    : ""
+}
 
 
 
@@ -467,9 +467,9 @@ ${data.cadete
           .map(
             (point) => `
             ${(() => {
-                const agency = formatAgencyName(point.agency);
+              const agency = formatAgencyName(point.agency);
 
-                return `
+              return `
 
 <label class="agency-option">
 
@@ -496,7 +496,7 @@ ${data.cadete
 </label>
 
 `;
-              })()}
+            })()}
             <br>
           `
           )
