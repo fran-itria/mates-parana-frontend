@@ -423,7 +423,7 @@ body {
   font-size: 15px;
 }
 
-.product-info > span {
+.product-info>span {
   color: var(--text-muted);
 
   font-size: 13px;
@@ -451,7 +451,7 @@ body {
 
 /* Precio */
 
-.order-product > strong {
+.order-product>strong {
   white-space: nowrap;
 
   font-size: 16px;
@@ -464,9 +464,10 @@ body {
 .totals-section {
   margin-top: 10px;
 
-  padding: 20px 0;
+  /* padding: 20px 0px; */
 
   border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .summary-row {
@@ -475,7 +476,7 @@ body {
   align-items: center;
   justify-content: space-between;
 
-  padding: 8px 0;
+  padding: 12px 0;
 
   color: var(--text-secondary);
 }
@@ -485,9 +486,10 @@ body {
 }
 
 .summary-row.total {
-  margin-top: 10px;
+  /* margin-top: 10px; */
 
-  padding-top: 18px;
+  /* padding-top: 18px; */
+  padding-block: 12px;
 
   border-top: 1px solid var(--border);
 
@@ -517,7 +519,7 @@ body {
 
   margin-top: 10px;
 
-  border-top: 1px solid var(--border);
+  /* border-top: 1px solid var(--border); */
 }
 
 .order-actions button {
@@ -662,7 +664,7 @@ body {
     align-items: flex-start;
   }
 
-  .order-product > strong {
+  .order-product>strong {
     font-size: 14px;
   }
 

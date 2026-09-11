@@ -32,8 +32,10 @@ const backendCartId = localStorage.getItem("backendCartId");
 const summaryProducts = document.getElementById("summaryProducts");
 
 const summarySubtotal = document.getElementById("summarySubtotal");
+const summaryShippingText = document.getElementById("summaryShipping-text");
 const summaryShipping = document.getElementById("summaryShipping");
 const summaryTotal = document.getElementById("summaryTotal");
+const cardText = document.getElementById("card-text")
 
 const deliveryBtns = document.querySelectorAll(".delivery-btn");
 const paymentBtns = document.querySelectorAll(".payment-btn");
@@ -170,22 +172,58 @@ function updateSummary(subtotal) {
   summarySubtotal.textContent = `$${subtotal.toLocaleString("es-AR")}`;
 
   if (!selectedShipping) {
-    summaryShipping.textContent = "$0";
-  } else if (selectedShipping.type === "local") {
-    summaryShipping.textContent = "🏪 Gratis";
-  } else if (shippingCost === 0) {
-    summaryShipping.textContent = "🚚 Gratis";
-  } else if (selectedShipping.type === "cadete") {
-    summaryShipping.textContent = `🛵 $${shippingCost.toLocaleString("es-AR")}`;
-  } else if (selectedShipping.type === "agency") {
-    summaryShipping.textContent = `🏤 $${shippingCost.toLocaleString("es-AR")}`;
+    summaryShipping.style.visibility = "hidden";
+    summaryShippingText.style.visibility = "hidden";
   } else {
-    summaryShipping.textContent = `🚚 $${shippingCost.toLocaleString("es-AR")}`;
+    summaryShipping.style.visibility = "visible";
+    summaryShippingText.style.visibility = "visible";
+    switch (selectedShipping.type) {
+      case "Sucursal Urquiza":
+        summaryShipping.textContent = selectedShipping.type;
+        summaryShippingText.textContent = "Retiro en";
+        break;
+      case "Casa Central":
+        summaryShipping.textContent = selectedShipping.type;
+        summaryShippingText.textContent = "Retiro en";
+        break;
+      case "cadete":
+        summaryShippingText.textContent = "Envío";
+        summaryShipping.textContent = `🛵 $${shippingCost.toLocaleString("es-AR")}`;
+        break;
+      case "agency":
+        summaryShippingText.textContent = "Envío";
+        summaryShipping.textContent = `🏤 $${shippingCost.toLocaleString("es-AR")}`;
+        break;
+      default:
+        summaryShipping.textContent = `🚚 $${shippingCost.toLocaleString("es-AR")}`;
+        break;
+    }
   }
+
 
   const total = subtotal + shippingCost;
 
   summaryTotal.textContent = `$${total.toLocaleString("es-AR")}`;
+
+  if (paymentMethod == "card") {
+    const containerResume = document.getElementsByClassName("summary-total")
+    const cardTextElement = document.createElement("p")
+    cardTextElement.id = "card-text-element"
+    cardTextElement.textContent = "Abonando con tarjeta el pago se realiza en 3 cuotas sin interés"
+    const strongText = document.createElement("strong")
+    strongText.id = "card-text-element-2"
+    strongText.textContent = `3 cuotas de $${(total / 3).toLocaleString("es-AR")} c/u`
+    cardTextElement.classList.add("card-text-information")
+    containerResume[0].appendChild(cardTextElement)
+    containerResume[0].appendChild(strongText)
+  } else {
+    const removeElement = document.getElementById("card-text-element")
+    const removeElement2 = document.getElementById("card-text-element-2")
+    if (removeElement && removeElement2) {
+      removeElement.remove()
+      removeElement2.remove()
+    }
+  }
 }
 
 loadUserData();
@@ -197,48 +235,48 @@ function renderHomeFields() {
   const container = document.getElementById("homeExtraFields");
 
   container.innerHTML = `
-    <div class="input-group extra-field">
-      <label>Provincia</label>
-      <input
-        type="text"
-        id="shippingProvince"
-        placeholder="Provincia"
-      >
-    </div>
+        <div class="input-group extra-field">
+          <label>Provincia</label>
+          <input
+            type="text"
+            id="shippingProvince"
+            placeholder="Provincia"
+          >
+        </div>
 
-    <div class="input-group extra-field">
-      <label>Ciudad</label>
-      <input
-        type="text"
-        id="shippingCity"
-        placeholder="Ciudad"
-      >
-    </div>
+        <div class="input-group extra-field">
+          <label>Ciudad</label>
+          <input
+            type="text"
+            id="shippingCity"
+            placeholder="Ciudad"
+          >
+        </div>
 
-    <div class="input-group extra-field">
-      <label>Calle</label>
-      <input
-        type="text"
-        id="shippingStreet"
-        placeholder="Ej: Rosario del Tala 543"
-      >
-    </div>
-  `;
+        <div class="input-group extra-field">
+          <label>Calle</label>
+          <input
+            type="text"
+            id="shippingStreet"
+            placeholder="Ej: Rosario del Tala 543"
+          >
+        </div>
+        `;
 }
 
 function renderCadeteFields() {
   const container = document.getElementById("cadeteExtraFields");
 
   container.innerHTML = `
-    <div class="input-group extra-field">
-      <label>Calle</label>
-      <input
-        type="text"
-        id="shippingStreet"
-        placeholder="Ej: Rosario del Tala 543"
-      >
-    </div>
-  `;
+        <div class="input-group extra-field">
+          <label>Calle</label>
+          <input
+            type="text"
+            id="shippingStreet"
+            placeholder="Ej: Rosario del Tala 543"
+          >
+        </div>
+        `;
 }
 
 function renderAgencyOptions(
@@ -326,164 +364,164 @@ function renderPreShippingOptions() {
 
   container.innerHTML = `
 
-    <!-- ==========================================
-         RETIRO EN LOCAL
+        <!-- ==========================================
+        RETIRO EN LOCAL
     =========================================== -->
 
-    <div class="shipping-card local-card">
+        <div class="shipping-card local-card">
 
-      <div class="local-info">
+          <div class="local-info">
 
-        <strong>🏪 Retirá en nuestro local GRATIS</strong>
+            <strong>🏪 Retirá en nuestro local GRATIS</strong>
 
-        <div class="pickup-locations">
+            <div class="pickup-locations">
 
-          <!-- CASA CENTRAL -->
+              <!-- CASA CENTRAL -->
 
-          <label class="pickup-location">
+              <label class="pickup-location">
 
-            <input
-              type="radio"
-              name="localBranch"
-              value="Casa Central"
-              data-address="Kentenich 825, Paracao, Paraná, Entre Ríos"
-            >
+                <input
+                  type="radio"
+                  name="localBranch"
+                  value="Casa Central"
+                  data-address="Kentenich 825, Paracao, Paraná, Entre Ríos"
+                >
 
-            <div class="pickup-location-content">
+                  <div class="pickup-location-content">
 
-              <strong>Casa Central</strong>
+                    <strong>Casa Central</strong>
 
-              <small>
-                Kentenich 825, Paracao, Paraná, Entre Ríos
-              </small>
+                    <small>
+                      Kentenich 825, Paracao, Paraná, Entre Ríos
+                    </small>
 
-              <div class="pickup-time">
+                    <div class="pickup-time">
 
-                <span class="pickup-badge">
-                  Retirás hoy
-                </span>
+                      <span class="pickup-badge">
+                        Retirás hoy
+                      </span>
 
-              </div>
+                    </div>
 
-              <div class="pickup-schedule">
+                    <div class="pickup-schedule">
 
-                <strong>Horarios</strong>
+                      <strong>Horarios</strong>
 
-                <p>
-                  Lunes a Viernes<br>
-                  10:00 a 13:00<br>
-                  17:00 a 20:00
-                </p>
+                      <p>
+                        Lunes a Viernes<br>
+                          10:00 a 13:00<br>
+                            17:00 a 20:00
+                          </p>
 
-                <p>
-                  Sábados<br>
-                  10:00 a 13:00
-                </p>
+                          <p>
+                            Sábados<br>
+                              10:00 a 13:00
+                          </p>
 
-                <small>
-                  El tiempo de entrega no contempla feriados.
-                </small>
+                          <small>
+                            El tiempo de entrega no contempla feriados.
+                          </small>
 
-              </div>
+                        </div>
 
-            </div>
+                    </div>
 
-          </label>
+                  </label>
 
 
-          <!-- SUCURSAL URQUIZA -->
+                  <!-- SUCURSAL URQUIZA -->
 
-          <label class="pickup-location">
+                  <label class="pickup-location">
 
-            <input
-              type="radio"
-              name="localBranch"
-              value="Sucursal Urquiza"
-              data-address="Urquiza 785, Paraná, Entre Ríos"
-            >
+                    <input
+                      type="radio"
+                      name="localBranch"
+                      value="Sucursal Urquiza"
+                      data-address="Urquiza 785, Paraná, Entre Ríos"
+                    >
 
-            <div class="pickup-location-content">
+                      <div class="pickup-location-content">
 
-              <strong>Sucursal</strong>
+                        <strong>Sucursal</strong>
 
-              <small>
-                Urquiza 785, Paraná, Entre Ríos
-              </small>
+                        <small>
+                          Urquiza 785, Paraná, Entre Ríos
+                        </small>
 
-              <div class="pickup-time">
+                        <div class="pickup-time">
 
-                <span class="pickup-badge">
-                  Retirás hoy
-                </span>
+                          <span class="pickup-badge">
+                            Retirás hoy
+                          </span>
 
-              </div>
+                        </div>
 
-              <div class="pickup-schedule">
+                        <div class="pickup-schedule">
 
-                <strong>Horarios</strong>
+                          <strong>Horarios</strong>
 
-                <p>
-                  Lunes a Viernes<br>
-                  10:00 a 13:00<br>
-                  17:00 a 20:00
-                </p>
+                          <p>
+                            Lunes a Viernes<br>
+                              10:00 a 13:00<br>
+                                17:00 a 20:00
+                              </p>
 
-                <p>
-                  Sábados<br>
-                  10:00 a 13:00<br>
-                  17:00 a 20:00
-                </p>
+                              <p>
+                                Sábados<br>
+                                  10:00 a 13:00<br>
+                                    17:00 a 20:00
+                                  </p>
 
-                <small>
-                  El tiempo de entrega no contempla feriados.
-                </small>
+                                  <small>
+                                    El tiempo de entrega no contempla feriados.
+                                  </small>
 
-              </div>
+                                </div>
 
-            </div>
+                              </div>
 
-          </label>
+                            </label>
 
-        </div>
+                        </div>
 
-      </div>
-      
-      </div>
+                      </div>
 
-      
-      <!-- ==========================================
-           ENVÍO POR CADETE
+                    </div>
+
+
+                    <!-- ==========================================
+                    ENVÍO POR CADETE
       =========================================== -->
-  
-      <div class="shipping-card">
-  
-        <label class="shipping-option">
-  
-          <input
-            type="radio"
-            name="shippingType"
-            value="cadete"
-          >
-  
-          <div class="cadete-info">
-  
-            <strong>🛵 Envío por cadete</strong>
-  
-            <p>
-              Seleccioná tu ciudad para consultar el costo de envío.
-            </p>
-  
-            <div id="cadetePreOptions"></div>
-  
-            <div id="cadeteExtraFields"></div>
-  
-          </div>
-  
-        </label>
-  
-      </div>
-  
-      `;
+
+                    <div class="shipping-card">
+
+                      <label class="shipping-option">
+
+                        <input
+                          type="radio"
+                          name="shippingType"
+                          value="cadete"
+                        >
+
+                          <div class="cadete-info">
+
+                            <strong>🛵 Envío por cadete</strong>
+
+                            <p>
+                              Seleccioná tu ciudad para consultar el costo de envío.
+                            </p>
+
+                            <div id="cadetePreOptions"></div>
+
+                            <div id="cadeteExtraFields"></div>
+
+                          </div>
+
+                      </label>
+
+                    </div>
+
+                    `;
 
   // ==========================================
   // SUCURSALES
@@ -546,10 +584,10 @@ async function loadCadeteOptions() {
   if (!container) return;
 
   container.innerHTML = `
-    <p>
-      Buscando opciones de cadete...
-    </p>
-  `;
+                    <p>
+                      Buscando opciones de cadete...
+                    </p>
+                    `;
 
   try {
     const response = await fetch(
@@ -574,21 +612,21 @@ async function loadCadeteOptions() {
 
     container.innerHTML = `
 
-      <div class="input-group extra-field">
+                    <div class="input-group extra-field">
 
-        <label for="cadeteCity">
-          Ciudad
-        </label>
+                      <label for="cadeteCity">
+                        Ciudad
+                      </label>
 
-        <select id="cadeteCity">
+                      <select id="cadeteCity">
 
-          <option value="">
-            Seleccioná tu ciudad
-          </option>
+                        <option value="">
+                          Seleccioná tu ciudad
+                        </option>
 
-          ${data.cadete
-            .map(
-              (option) => `
+                        ${data.cadete
+        .map(
+          (option) => `
                 <option
                   value="${option.ciudad}"
                   data-price="${option.price}"
@@ -597,14 +635,14 @@ async function loadCadeteOptions() {
                   $${Number(option.price).toLocaleString("es-AR")}
                 </option>
               `
-            )
-            .join("")}
+        )
+        .join("")}
 
-        </select>
+                      </select>
 
-      </div>
+                    </div>
 
-    `;
+                    `;
 
     const cadeteSelect = document.getElementById("cadeteCity");
 
@@ -638,11 +676,11 @@ async function loadCadeteOptions() {
     console.error("Error cargando opciones de cadete:", error);
 
     container.innerHTML = `
-      <p>
-        No se pudieron cargar las opciones de cadete.
-        Intentá nuevamente.
-      </p>
-    `;
+                    <p>
+                      No se pudieron cargar las opciones de cadete.
+                      Intentá nuevamente.
+                    </p>
+                    `;
   }
 }
 
@@ -678,7 +716,7 @@ function renderShipping(data, postalCode) {
             <strong>🚚 Envío a domicilio</strong>
 
             <p>
-              $${Number(data.price).toLocaleString("es-AR")}
+              $${Number(data.homePrice).toLocaleString("es-AR")}
             </p>
 
             <div id="homeExtraFields"></div>
@@ -708,8 +746,8 @@ function renderShipping(data, postalCode) {
 
       <div class="agency-list">
         ${data.retirePoints
-          .map(
-            (sucursal) => `
+      .map(
+        (sucursal) => `
           
           <label class="agency-option" for="agency-${sucursal.agency_id}">
             
@@ -725,8 +763,8 @@ function renderShipping(data, postalCode) {
           </label>
 
         `
-          )
-          .join("")}
+      )
+      .join("")}
       </div>
 
     </div>
@@ -772,7 +810,7 @@ function renderShipping(data, postalCode) {
           postalCode,
           province: data.province,
           type: "home",
-          price: Number(data.price),
+          price: Number(data.homePrice),
         });
 
         renderHomeFields();
@@ -826,38 +864,36 @@ function renderProducts() {
   let subtotal = 0;
 
   cart.forEach((item) => {
-    subtotal += item.price * item.qty;
+    subtotal += (paymentMethod != "card" ? item.price : item.cardPrice) * item.qty;
     summaryProducts.innerHTML += `
-      <div class="summary-item">
-        <img src="${item.image}" />
+                    <div class="summary-item">
+                      <img src="${item.image}" />
 
-        <div class="summary-item-info">
-          <h3>${item.name}</h3>
+                      <div class="summary-item-info">
+                        <h3>${item.name}</h3>
 
-          <p>
-            Cantidad: ${item.qty}
-            ${
-              item.varity
-                ? `• ${item.varity.color || ""} ${item.varity.type || ""}`
-                : ""
-            }
-            ${(item.promotionData?.defaultSelected || [])
-              .filter((d) => d.select)
-              .map(
-                (d) =>
-                  `<br>${d.productName || ""}: ${d.select.color || ""} ${
-                    d.select.type || ""
-                  }`
-              )
-              .join("")}
-          </p>
-        </div>
+                        <p>
+                          Cantidad: ${item.qty}
+                          ${item.varity
+        ? `${item.varity.color || ""} ${item.varity.type || ""}`
+        : ""
+      }
+                          ${(item.promotionData?.defaultSelected || [])
+        .filter((d) => d.select)
+        .map(
+          (d) =>
+            `<br>${d.productName || ""}: ${d.select.color || ""} ${d.select.type || ""
+            }`
+        )
+        .join("")}
+                        </p>
+                      </div>
 
-        <div class="summary-item-price">
-          $${(item.price * item.qty).toLocaleString("es-AR")}
-        </div>
-      </div>
-    `;
+                      <div class="summary-item-price">
+                        $${((paymentMethod != "card" ? item.price : item.cardPrice) * item.qty).toLocaleString("es-AR")}
+                      </div>
+                    </div>
+                    `;
   });
 
   updateSummary(subtotal);
@@ -905,6 +941,8 @@ paymentBtns.forEach((btn) => {
     } else {
       cardFields.classList.add("hidden");
     }
+
+    renderProducts()
   });
 });
 
@@ -961,7 +999,7 @@ function createCardToken() {
           const validationErrors = response?.validation_errors;
 
           if (validationErrors?.length) {
-            validationErrors.forEach((err, index) => {});
+            validationErrors.forEach((err, index) => { });
           } else {
             console.error("Payway no devolvió validation_errors.", response);
           }
@@ -1225,13 +1263,14 @@ confirmOrderBtn.addEventListener("click", async () => {
       alert("Primero calculá y seleccioná un método de envío.");
       return;
     }
+    const totalValue = Number(summaryTotal.textContent.replace("$", ""))
 
     const orderBody = {
       userId: user?.id || null,
       cartId: backendCartId,
       channel: "web",
       products,
-      amount: total,
+      amount: totalValue,
       paymentMethod: paymentMethod === "transfer" ? "transfer" : "card",
       paymentStatus: "pending",
       delivered,
@@ -1307,8 +1346,8 @@ confirmOrderBtn.addEventListener("click", async () => {
       if (!paymentRes.ok) {
         throw new Error(
           paymentResult.message ||
-            paymentResult.error ||
-            JSON.stringify(paymentResult)
+          paymentResult.error ||
+          JSON.stringify(paymentResult)
         );
       }
 

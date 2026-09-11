@@ -235,8 +235,15 @@ body {
 
 .summary-row.total {
   margin-top: 25px;
+  margin-bottom: 0px;
   font-size: 20px;
   font-weight: bold;
+}
+
+.card-text-information {
+  width: 100%;
+  text-align: justify;
+  margin-top: 25px;
 }
 
 /* =========================

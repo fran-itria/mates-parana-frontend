@@ -125,26 +125,23 @@ document.addEventListener("DOMContentLoaded", () => {
       subtotal += item.price * item.qty;
       totalItems += item.qty;
 
-      console.log(item.cartKey);
       cartContent.innerHTML += `
           <div class="cart-item">
             <img src="${item.image}" />
             <div class="cart-item-info">
               <strong>${item.name}</strong>
-    ${
-      item.varity
-        ? `<small>${item.varity.type || ""} ${item.varity.color || ""}</small>`
-        : ""
-    }
+    ${item.varity
+          ? `<small>${item.varity.type || ""} ${item.varity.color || ""}</small>`
+          : ""
+        }
     ${(item.promotionData?.defaultSelected || [])
-      .filter((d) => d.select)
-      .map(
-        (d) =>
-          `<small>${d.productName || ""}: ${d.select.type || ""} ${
-            d.select.color || ""
-          }</small>`
-      )
-      .join("")}
+          .filter((d) => d.select)
+          .map(
+            (d) =>
+              `<small>${d.productName || ""}: ${d.select.type || ""} ${d.select.color || ""
+              }</small>`
+          )
+          .join("")}
               <p>$${item.price}</p>
 
               <div class="qty-controls">
@@ -153,9 +150,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button onclick="changeQty('${item.cartKey}', 1)">+</button>
               </div>
 
-              <span class="delete-item" onclick="removeItem('${
-                item.cartKey
-              }')">Borrar</span>
+              <span class="delete-item" onclick="removeItem('${item.cartKey
+        }')">Borrar</span>
             </div>
           </div>
         `;
@@ -183,9 +179,8 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .join("|");
 
-    const cartKey = `${product.id}-${product.varity?.type || ""}-${
-      product.varity?.color || ""
-    }${promotionKey ? `-${promotionKey}` : ""}`;
+    const cartKey = `${product.id}-${product.varity?.type || ""}-${product.varity?.color || ""
+      }${promotionKey ? `-${promotionKey}` : ""}`;
 
     const existing = cart.find((p) => p.cartKey === cartKey);
 
@@ -197,6 +192,8 @@ document.addEventListener("DOMContentLoaded", () => {
         id: product.id,
         name: product.name,
         price: product.price,
+        discountedPrice: product.discountedPrice,
+        cardPrice: product.cardPrice,
         image: product.image,
         varity: product.varity || null,
         qty: product.qty || 1,

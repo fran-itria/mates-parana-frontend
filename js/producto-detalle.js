@@ -87,8 +87,8 @@ function renderSimilar(p) {
       const image = Array.isArray(prod.image)
         ? prod.image.find((img) => typeof img === "string" && img.trim())
         : typeof prod.image === "string"
-        ? prod.image
-        : "";
+          ? prod.image
+          : "";
 
       const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
 
@@ -140,8 +140,8 @@ function renderComplementProducts(p) {
       const image = Array.isArray(prod.image)
         ? prod.image.find((img) => typeof img === "string" && img.trim())
         : typeof prod.image === "string"
-        ? prod.image
-        : "";
+          ? prod.image
+          : "";
 
       const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
 
@@ -246,9 +246,8 @@ function renderShipping(data, postalCode) {
 
   </div>
 
-${
-  postalCode === "E3100"
-    ? `
+${postalCode === "E3100"
+      ? `
 
 <div class="shipping-card local-card">
 
@@ -326,11 +325,10 @@ ${
 </div>
 
 `
-    : ""
-}
-${
-  data.cadete
-    ? `
+      : ""
+    }
+${data.cadete
+      ? `
 
 <div class="shipping-card">
 
@@ -355,8 +353,8 @@ ${
             <select id="cadeteCity">
 
                 ${data.cadete
-                  .map(
-                    (city) => `
+        .map(
+          (city) => `
 
                     <option
                         value="${city.ciudad}"
@@ -368,8 +366,8 @@ ${
                     </option>
 
                 `
-                  )
-                  .join("")}
+        )
+        .join("")}
 
             </select>
 
@@ -386,8 +384,8 @@ ${
 </div>
 
 `
-    : ""
-}
+      : ""
+    }
 
 
 
@@ -467,9 +465,9 @@ ${
           .map(
             (point) => `
             ${(() => {
-              const agency = formatAgencyName(point.agency);
+                const agency = formatAgencyName(point.agency);
 
-              return `
+                return `
 
 <label class="agency-option">
 
@@ -496,7 +494,7 @@ ${
 </label>
 
 `;
-            })()}
+              })()}
             <br>
           `
           )
@@ -568,14 +566,14 @@ if (addToCartBtn) {
     const qty = parseInt(document.getElementById("qtyInput").value) || 1;
 
     if (type == "combo") {
-      const price = currentProduct.discountedPrice ?? currentProduct.price;
-
       const comboImage = currentProduct.image?.[0]?.replace(/\s/g, "") || "";
 
       addToCart({
         id: currentProduct.id,
         name: currentProduct.name,
-        price,
+        price: currentProduct.price,
+        discountedPrice: currentProduct.discountedPrice,
+        cardPrice: currentProduct.cardPrice,
         image: comboImage,
         qty,
         varity: null,
@@ -592,16 +590,19 @@ if (addToCartBtn) {
           discountedPrice: currentProduct.discountedPrice ?? null,
         },
       });
-    } else
+    } else {
       addToCart({
         id: currentProduct.id,
         name: currentProduct.name,
-        price: currentProduct.discountedPrice ?? currentProduct.price,
+        price: currentProduct.price,
+        discountedPrice: currentProduct.discountedPrice,
+        cardPrice: currentProduct.cardPrice,
         image: variantImage,
         qty,
         varity: Object.keys(selectedVarity).length > 0 ? selectedVarity : null,
         promotion: false,
       });
+    }
   });
 }
 

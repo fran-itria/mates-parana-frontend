@@ -20,16 +20,6 @@ const transferInfo = JSON.parse(localStorage.getItem("transferInfo"));
    DEBUG
 ========================================================= */
 
-console.log("=================================");
-console.log("ESPERANDO-PAGO INICIADO");
-console.log("=================================");
-
-console.log("LAST ORDER:", lastOrder);
-console.log("LAST ORDER ID:", lastOrderId);
-console.log("PAYMENT CONFIRMED:", paymentConfirmed);
-console.log("SHIPPING:", shipping);
-console.log("TRANSFER INFO:", transferInfo);
-
 /* =========================================================
    VALIDACIÓN
 ========================================================= */
@@ -47,32 +37,22 @@ if (!lastOrderId || !lastOrder) {
 document.addEventListener("DOMContentLoaded", iniciar);
 
 async function iniciar() {
-  console.log("🚀 INICIANDO PÁGINA DE PEDIDO");
 
   try {
     /* =====================================================
        OBTENER ORDEN ACTUALIZADA DESDE EL BACKEND
     ===================================================== */
 
-    console.log("🔎 OBTENIENDO ORDEN DESDE BACKEND...");
-    console.log("🧪 PRUEBA DIRECTA FETCH");
-
     fetch(`${API_BASE}/orders/oneOrder/${lastOrderId}`)
       .then((res) => {
-        console.log("🧪 STATUS DIRECTO:", res.status);
         return res.text();
       })
       .then((data) => {
-        console.log("🧪 RESPUESTA DIRECTA:", data);
       })
       .catch((error) => {
-        console.error("🧪 ERROR FETCH DIRECTO:", error);
       });
 
     const order = await obtenerOrdenActualizada();
-
-    console.log("✅ ORDEN RECIBIDA DEL BACKEND:", order);
-    console.log("🛒 PRODUCTOS DE LA ORDEN:", order.products);
 
     /* =====================================================
        GUARDAR ORDEN ACTUALIZADA
@@ -91,7 +71,6 @@ async function iniciar() {
     ===================================================== */
 
     if (order.paymentMethod === "card") {
-      console.log("💳 ORDEN CON TARJETA");
 
       /*
        * El pago con tarjeta ya fue aprobado
@@ -111,7 +90,6 @@ async function iniciar() {
     ===================================================== */
 
     if (order.paymentMethod === "transfer") {
-      console.log("🏦 ORDEN CON TRANSFERENCIA");
 
       /*
        * Mostrar datos bancarios.
@@ -127,7 +105,6 @@ async function iniciar() {
         order.paymentStatus === "approved" ||
         order.paymentStatus === "received"
       ) {
-        console.log("✅ TRANSFERENCIA YA CONFIRMADA");
 
         mostrarPagoAprobado();
 
@@ -141,8 +118,6 @@ async function iniciar() {
          PAGO PENDIENTE
       =================================================== */
 
-      console.log("⏳ TRANSFERENCIA PENDIENTE");
-
       mostrarPagoPendiente();
 
       /* ===================================================
@@ -150,8 +125,6 @@ async function iniciar() {
       =================================================== */
 
       if (trackingToken) {
-        console.log("🔌 CONECTANDO SOCKET...");
-
         conectarSocket();
       } else {
         console.warn("⚠️ NO EXISTE TRACKING TOKEN");
@@ -171,8 +144,6 @@ async function iniciar() {
 ========================================================= */
 
 function mostrarOrden(order) {
-  console.log("🎨 MOSTRANDO ORDEN:", order);
-
   /* =======================================================
      NÚMERO DE PEDIDO
   ======================================================= */
@@ -191,7 +162,15 @@ function mostrarOrden(order) {
 
   if (paymentMethod) {
     if (order.paymentMethod === "card") {
+      const p = document.createElement("p")
+      const cuotes = document.createElement("p")
+      p.textContent = "3 cuotas sin interés"
+      p.style.marginTop = "10px"
+      cuotes.textContent = `$${(order.amount / 3).toLocaleString("es-Ar")} c/u`
+      cuotes.style.marginTop = "10px"
       paymentMethod.textContent = "Tarjeta";
+      paymentMethod.appendChild(p)
+      paymentMethod.appendChild(cuotes)
     } else if (order.paymentMethod === "transfer") {
       paymentMethod.textContent = "Transferencia";
     } else {
@@ -205,7 +184,19 @@ function mostrarOrden(order) {
 
   const deliveryMethod = document.getElementById("deliveryMethod");
 
-  if (deliveryMethod) {
+  if (order.delivered.method.includes("Correo Argentino")) {
+    const split = order.delivered.method.split("-")
+    const text1 = split[0].replace("Shipping", "")
+    const p1 = document.createElement("p")
+    p1.textContent = text1
+    const p2 = document.createElement("p")
+    p2.textContent = split[2]
+    p2.style.marginTop = "10px"
+
+    deliveryMethod.textContent = ""
+    deliveryMethod.appendChild(p1)
+    deliveryMethod.appendChild(p2)
+  } else {
     deliveryMethod.textContent = obtenerTextoEntrega(order);
   }
 
@@ -220,6 +211,7 @@ function mostrarOrden(order) {
   ======================================================= */
 
   mostrarProductos(order.orderProducts || []);
+  mostrarPromociones(order.promotionId || []);
 
   /* =======================================================
      TOTALES
@@ -282,8 +274,6 @@ function mostrarDatosTransferencia(order) {
 
     return;
   }
-
-  console.log("🏦 MOSTRANDO DATOS DE TRANSFERENCIA:", transferInfo);
 
   /* =======================================================
      IMPORTE
@@ -507,7 +497,6 @@ function mostrarPagoPendiente() {
 ========================================================= */
 
 function conectarSocket() {
-  console.log("🔌 CONECTANDO SOCKET...");
 
   if (typeof io !== "function") {
     console.error("❌ Socket.IO no está cargado.");
@@ -524,30 +513,21 @@ function conectarSocket() {
   });
 
   socket.on("connect", () => {
-    console.log("✅ SOCKET CONECTADO");
-
-    console.log("SOCKET ID:", socket.id);
   });
 
   socket.on("connect_error", (error) => {
-    console.error("❌ ERROR SOCKET:", error.message);
   });
 
   socket.on("disconnect", (reason) => {
-    console.log("🔌 SOCKET DESCONECTADO:", reason);
   });
 
   socket.on("order:payment-approved", async (event) => {
-    console.log("💰 EVENTO DE PAGO:", event);
-
     /*
      * Verificar que el evento
      * pertenece a esta orden.
      */
 
     if (String(event.orderId) !== String(lastOrderId)) {
-      console.log("⚠️ Evento de otra orden.");
-
       return;
     }
 
@@ -558,8 +538,6 @@ function conectarSocket() {
        */
 
       const order = await obtenerOrdenActualizada();
-
-      console.log("🔄 ORDEN ACTUALIZADA:", order);
 
       localStorage.setItem("lastOrder", JSON.stringify(order));
 
@@ -573,7 +551,6 @@ function conectarSocket() {
         order.paymentStatus === "approved" ||
         order.paymentStatus === "received"
       ) {
-        console.log("✅ PAGO CONFIRMADO");
 
         mostrarPagoAprobado();
 
@@ -594,9 +571,7 @@ function conectarSocket() {
 ========================================================= */
 
 async function obtenerOrdenActualizada() {
-  console.log("🔎 BUSCANDO ORDEN:", lastOrderId);
   const url = `${API_BASE}/orders/oneOrder/${lastOrderId}`;
-  console.log("🌐 URL:", url);
   try {
     const res = await fetch(url, {
       method: "GET",
@@ -604,18 +579,14 @@ async function obtenerOrdenActualizada() {
         "Content-Type": "application/json",
       },
     });
-    console.log("📡 STATUS:", res.status);
     if (!res.ok) {
       throw new Error(`Error HTTP ${res.status}`);
     }
     const data = await res.json();
-    console.log("📦 RESPUESTA COMPLETA:", data);
     /* * El backend puede devolver: * * { * order: {...} * } * * o directamente: * * { * id: "...", * products: [...] * } */ const order =
       data.order ?? data;
-    console.log("✅ ORDEN FINAL PARA MOSTRAR:", order);
     return order;
   } catch (error) {
-    console.error("❌ ERROR OBTENIENDO LA ORDEN:", error);
     /* * Si el backend falla pero tenemos * la orden guardada en localStorage, * usamos esa como respaldo. */ if (
       lastOrder
     ) {
@@ -633,13 +604,11 @@ async function obtenerOrdenActualizada() {
 ========================================================= */
 
 function mostrarProductos(products) {
-  console.log("🛒 PRODUCTS RECIBIDOS:", products);
-  console.log("🛒 PRODUCTS JSON:", JSON.stringify(products, null, 2));
   const container = document.getElementById("orderProducts");
 
   if (!container) return;
 
-  container.innerHTML = "";
+  // container.innerHTML = "";
 
   if (!Array.isArray(products) || !products.length) {
     container.innerHTML = "<p>No se encontraron productos.</p>";
@@ -647,7 +616,7 @@ function mostrarProductos(products) {
     return;
   }
 
-  products.forEach((item) => {
+  products.filter(p => !p.promotion).forEach((item) => {
     const quantity = item.quantity || item.qty || 1;
 
     const product = item.product || item;
@@ -655,7 +624,13 @@ function mostrarProductos(products) {
     const name = product.name || item.name || item.productName || "Producto";
 
     const price = Number(
-      item.cardPrice ?? item.price ?? product.cardPrice ?? product.price ?? 0
+      item.cardPriceWhenOrderCreated
+      ??
+      item.discountedPriceWhenOrderCreated
+      ??
+      item.priceWhenOrderCreated
+      ??
+      0
     );
 
     let varietyHTML = "";
@@ -690,15 +665,98 @@ function mostrarProductos(products) {
             ${name}
           </strong>
 
-          ${
-            varietyHTML
-              ? `
+          ${varietyHTML
+        ? `
                 <div class="product-variety">
                   ${varietyHTML}
                 </div>
               `
-              : ""
-          }
+        : ""
+      }
+
+          <span>
+            Cantidad: ${quantity}
+          </span>
+
+        </div>
+
+        <strong>
+          $${price.toLocaleString("es-AR")}
+        </strong>
+
+      `;
+
+    container.appendChild(productHTML);
+  });
+}
+
+function mostrarPromociones(promos) {
+  const container = document.getElementById("orderProducts");
+
+  if (!container) return;
+
+  // container.innerHTML = "";
+
+  if (!Array.isArray(promos) || !promos.length) {
+    container.innerHTML = "<p>No se encontraron productos.</p>";
+
+    return;
+  }
+
+  promos.forEach((item) => {
+    const quantity = item.quantity || item.qty || 1;
+
+    const product = item.product || item;
+
+    const name = product.name || item.name || item.productName || "Producto";
+
+    let price = 0
+    if (lastOrder.paymentMethod == "transfer")
+      price = Number(item.discountedPrice ?? item.price ?? 0);
+    else if (lastOrder.paymentMethod == "card") {
+      price = Number(item.cardPrice ?? 0);
+    }
+
+    let varietyHTML = "";
+
+    if (item.defaultSelected.select) {
+      if (item.select.type) {
+        varietyHTML += `
+            <span>
+              Tipo: ${item.select.type}
+            </span>
+          `;
+      }
+
+      if (item.select.color) {
+        varietyHTML += `
+            <span>
+              Color: ${item.select.color}
+            </span>
+          `;
+      }
+    }
+
+    const productHTML = document.createElement("div");
+
+    productHTML.className = "order-product";
+
+    productHTML.innerHTML = `
+
+        <div class="product-info">
+
+          <strong>
+            ${name}
+          </strong>
+
+          ${varietyHTML
+        ? `
+                <div class="product-variety">
+                  ${varietyHTML}
+                </div>
+              `
+        : ""
+      }
 
           <span>
             Cantidad: ${quantity}
@@ -729,14 +787,7 @@ function mostrarTotales(order) {
    * Primero intentamos obtener
    * el envío de la orden.
    */
-
-  if (order.shippingPrice !== undefined) {
-    shippingPrice = Number(order.shippingPrice || 0);
-  } else if (
-    order.delivered &&
-    typeof order.delivered === "object" &&
-    order.delivered.price !== undefined
-  ) {
+  if (order.delivered.price) {
     shippingPrice = Number(order.delivered.price || 0);
   } else if (shipping) {
     shippingPrice = Number(shipping.price || 0);
@@ -747,6 +798,7 @@ function mostrarTotales(order) {
   const subtotalElement = document.getElementById("orderSubtotal");
 
   const shippingElement = document.getElementById("orderShipping");
+  const shippingElementContainer = document.getElementsByClassName("summary-row");
 
   const totalElement = document.getElementById("orderTotal");
 
@@ -754,15 +806,16 @@ function mostrarTotales(order) {
     subtotalElement.textContent = "$" + subtotal.toLocaleString("es-AR");
   }
 
-  if (shippingElement) {
-    shippingElement.textContent =
-      shippingPrice === 0
-        ? "Gratis"
-        : "$" + shippingPrice.toLocaleString("es-AR");
+  if (shippingElement && shippingPrice) {
+    shippingElement.textContent = "$" + shippingPrice.toLocaleString("es-AR");
+  } else {
+    shippingElementContainer[1].style.visibility = "hidden"
+    shippingElementContainer[1].remove()
   }
 
   if (totalElement) {
     totalElement.textContent = "$" + total.toLocaleString("es-AR");
+    totalElement.style.paddingBlock = "0px"
   }
 }
 
@@ -803,16 +856,12 @@ function obtenerTextoEntrega(order) {
      * utiliza "method".
      */
 
-    if (delivered.method === "Sucursal Casa Central") {
-      return "Retiro en Sucursal";
+    if (delivered.method == "Sucursal Casa Central" || delivered.method == "Sucursal Urquiza") {
+      return `Retiro en ${delivered.method}`;
     }
 
     if (delivered.method === "Cadete") {
       return "Envío por cadete";
-    }
-
-    if (delivered.method) {
-      return delivered.method;
     }
 
     if (delivered.type === "pickup") {
