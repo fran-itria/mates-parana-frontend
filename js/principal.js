@@ -87,18 +87,20 @@ async function loadFeatured() {
 
       card.innerHTML = `
         <img src="${image}" alt="${product.name}">
-        ${discount
-          ? `<span class="featured-badge">
+        ${
+          discount
+            ? `<span class="featured-badge">
                  <span class="featured-value">${discount}%</span>
                  <span class="featured-text">OFF</span>
                </span>`
-          : ""
+            : ""
         }
         <h3 class="featured-name">${product.name}</h3>
         <span class="featured-price">${formatPrice(newPrice)}</span>
-        ${oldPrice && oldPrice !== newPrice
-          ? `<span class="featured-old">${formatPrice(oldPrice)}</span>`
-          : ""
+        ${
+          oldPrice && oldPrice !== newPrice
+            ? `<span class="featured-old">${formatPrice(oldPrice)}</span>`
+            : ""
         }
       `;
 
@@ -179,19 +181,21 @@ async function loadSales() {
 
       card.innerHTML = `
   <img src="${promo.image?.[0] || ""}" alt="${promo.name}">
-${discount
-          ? `<span class="sale-discount">
+${
+  discount
+    ? `<span class="sale-discount">
          <span class="sale-value">${discount.replace("-", "")}</span>
          <span class="sale-text">OFF</span>
        </span>`
-          : ""
-        }
+    : ""
+}
   <h3 class="sale-name">${promo.name}</h3>
   <span class="sale-price">${formatPrice(newPrice)}</span>
-  ${oldPrice && oldPrice !== newPrice
-          ? `<span class="sale-old">${formatPrice(oldPrice)}</span>`
-          : ""
-        }
+  ${
+    oldPrice && oldPrice !== newPrice
+      ? `<span class="sale-old">${formatPrice(oldPrice)}</span>`
+      : ""
+  }
 `;
 
       card.addEventListener("click", () => {
@@ -235,20 +239,22 @@ const dotsContainer = document.querySelector(".slider-dots");
 
 if (bannerTrack && bannerSlides.length > 0) {
   let bannerIndex = 0;
+  let autoPlay;
 
-  let startX = 0;
-  let currentX = 0;
-  let isDragging = false;
-  let sliderWidth = bannerTrack.offsetWidth;
+  // ==============================
+  // CREAR DOTS
+  // ==============================
 
-  // crear dots
   bannerSlides.forEach((_, i) => {
     const dot = document.createElement("span");
-    if (i === 0) dot.classList.add("active");
+
+    if (i === 0) {
+      dot.classList.add("active");
+    }
 
     dot.addEventListener("click", () => {
-      bannerIndex = i;
-      updateSlider(true);
+      goToSlide(i);
+      resetAutoplay();
     });
 
     dotsContainer.appendChild(dot);
@@ -256,44 +262,102 @@ if (bannerTrack && bannerSlides.length > 0) {
 
   const dots = document.querySelectorAll(".slider-dots span");
 
+  // ==============================
+  // ACTUALIZAR DOTS
+  // ==============================
+
   function updateDots() {
-    dots.forEach((dot) => dot.classList.remove("active"));
-    dots[bannerIndex].classList.add("active");
+    dots.forEach((dot, i) => {
+      dot.classList.toggle("active", i === bannerIndex);
+    });
   }
 
-  function updateSlider(smooth = true) {
-    bannerTrack.style.transition = smooth ? "transform 0.5s ease" : "none";
-    bannerTrack.style.transform = `translateX(-${bannerIndex * sliderWidth}px)`;
+  // ==============================
+  // IR A SLIDE
+  // ==============================
+
+  function goToSlide(index, animate = true) {
+    bannerIndex = index;
+
+    if (!animate) {
+      bannerTrack.style.transition = "none";
+    } else {
+      bannerTrack.style.transition = "";
+    }
+
+    bannerTrack.style.transform = `translateX(-${bannerIndex * 100}%)`;
+
     updateDots();
+
+    // Volver a activar transición después de un movimiento instantáneo
+    if (!animate) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          bannerTrack.style.transition = "";
+        });
+      });
+    }
   }
+
+  // ==============================
+  // SIGUIENTE
+  // ==============================
 
   function nextSlide() {
     bannerIndex++;
-    if (bannerIndex >= bannerSlides.length) bannerIndex = 0;
-    updateSlider(true);
+
+    if (bannerIndex >= bannerSlides.length) {
+      bannerIndex = 0;
+    }
+
+    goToSlide(bannerIndex);
   }
+
+  // ==============================
+  // ANTERIOR
+  // ==============================
 
   function prevSlide() {
     bannerIndex--;
-    if (bannerIndex < 0) bannerIndex = bannerSlides.length - 1;
-    updateSlider(true);
+
+    if (bannerIndex < 0) {
+      bannerIndex = bannerSlides.length - 1;
+    }
+
+    goToSlide(bannerIndex);
   }
 
-  // autoplay
-  let autoPlay = setInterval(nextSlide, 4000);
+  // ==============================
+  // AUTOPLAY
+  // ==============================
+
+  function startAutoplay() {
+    clearInterval(autoPlay);
+
+    autoPlay = setInterval(() => {
+      nextSlide();
+    }, 4000);
+  }
 
   function resetAutoplay() {
     clearInterval(autoPlay);
-    autoPlay = setInterval(nextSlide, 4000);
+    startAutoplay();
   }
 
-  // botones
+  // ==============================
+  // BOTÓN SIGUIENTE
+  // ==============================
+
   if (bannerNextBtn) {
     bannerNextBtn.addEventListener("click", () => {
       nextSlide();
       resetAutoplay();
     });
   }
+
+  // ==============================
+  // BOTÓN ANTERIOR
+  // ==============================
 
   if (bannerPrevBtn) {
     bannerPrevBtn.addEventListener("click", () => {
@@ -302,111 +366,74 @@ if (bannerTrack && bannerSlides.length > 0) {
     });
   }
 
-  // TOUCH + DRAG REAL
-  bannerTrack.addEventListener("touchstart", (e) => {
-    startX = e.touches[0].clientX;
-    isDragging = true;
-    bannerTrack.style.transition = "none";
-  });
+  // ==============================
+  // SWIPE MOBILE
+  // ==============================
 
-  bannerTrack.addEventListener("touchmove", (e) => {
-    if (!isDragging) return;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchEndX = 0;
+  let touchEndY = 0;
 
-    currentX = e.touches[0].clientX;
-    const diff = currentX - startX;
+  bannerTrack.addEventListener(
+    "touchstart",
+    (e) => {
+      if (window.innerWidth > 768) return;
 
-    const move = -bannerIndex * sliderWidth + diff;
-    bannerTrack.style.transform = `translateX(${move}px)`;
-  });
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
 
-  bannerTrack.addEventListener("touchend", () => {
-    if (!isDragging) return;
+      // Pausar mientras el usuario toca
+      clearInterval(autoPlay);
+    },
+    { passive: true }
+  );
 
-    const diff = currentX - startX;
+  bannerTrack.addEventListener(
+    "touchend",
+    (e) => {
+      if (window.innerWidth > 768) return;
 
-    if (diff < -50) {
-      nextSlide();
-    } else if (diff > 50) {
-      prevSlide();
-    } else {
-      updateSlider(true);
-    }
+      touchEndX = e.changedTouches[0].clientX;
+      touchEndY = e.changedTouches[0].clientY;
 
-    isDragging = false;
-    resetAutoplay();
-  });
+      const differenceX = touchStartX - touchEndX;
+      const differenceY = touchStartY - touchEndY;
 
-  // soporte mouse (desktop también arrastrable 🔥)
-  bannerTrack.addEventListener("mousedown", (e) => {
-    startX = e.clientX;
-    isDragging = true;
-    bannerTrack.style.transition = "none";
-  });
+      // Solo consideramos swipe horizontal
+      if (
+        Math.abs(differenceX) > 50 &&
+        Math.abs(differenceX) > Math.abs(differenceY)
+      ) {
+        if (differenceX > 0) {
+          // Swipe hacia la izquierda
+          nextSlide();
+        } else {
+          // Swipe hacia la derecha
+          prevSlide();
+        }
+      }
 
-  window.addEventListener("mousemove", (e) => {
-    if (!isDragging) return;
+      resetAutoplay();
+    },
+    { passive: true }
+  );
 
-    currentX = e.clientX;
-    const diff = currentX - startX;
+  // ==============================
+  // RESIZE
+  // ==============================
 
-    const move = -bannerIndex * sliderWidth + diff;
-    bannerTrack.style.transform = `translateX(${move}px)`;
-  });
-
-  window.addEventListener("mouseup", () => {
-    if (!isDragging) return;
-
-    const diff = currentX - startX;
-
-    if (diff < -50) {
-      nextSlide();
-    } else if (diff > 50) {
-      prevSlide();
-    } else {
-      updateSlider(true);
-    }
-
-    isDragging = false;
-    resetAutoplay();
-  });
-
-  // resize fix
   window.addEventListener("resize", () => {
-    sliderWidth = bannerTrack.offsetWidth;
-    updateSlider(false);
+    goToSlide(bannerIndex, false);
   });
+
+  // ==============================
+  // INICIAR
+  // ==============================
+
+  goToSlide(0, false);
+  startAutoplay();
 }
-
-/*================================================= */
-
-/*============SLIDER 2====== */
-
-const topbarItems = document.querySelectorAll(".topbar-item");
-
-let current = 0;
-
-setInterval(() => {
-  const currentEl = topbarItems[current];
-
-  // siguiente índice
-  const next = (current + 1) % topbarItems.length;
-  const nextEl = topbarItems[next];
-
-  // animación salida
-  currentEl.classList.remove("active");
-  currentEl.classList.add("exit");
-
-  // preparar entrada
-  nextEl.classList.remove("exit");
-  nextEl.classList.add("active");
-
-  // limpiar clases después de animar
-  setTimeout(() => {
-    currentEl.classList.remove("exit");
-  }, 500);
-
-  current = next;
-}, 5000);
 
 /*========================================== */
 
