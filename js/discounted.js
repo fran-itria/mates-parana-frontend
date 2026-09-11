@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const nextBtn = document.getElementById("discountedNext");
 
   if (!track) {
-    console.warn("No existe #discountedTrack en el HTML");
     return;
   }
 
@@ -14,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch("https://matesparana-backend-production.up.railway.app/products")
     .then((res) => res.json())
     .then((data) => {
-      console.log("Productos del backend:", data);
 
       // 👉 ACA ESTA EL FILTRO CORRECTO PARA TU BACKEND
       const discountedProducts = data.filter(
@@ -24,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
           p.discountedPrice < p.price
       );
 
-      console.log("Productos con descuento:", discountedProducts);
 
       if (discountedProducts.length === 0) {
         track.innerHTML = `<p style="color:#999;">No hay productos en descuento</p>`;
@@ -40,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       window.addEventListener("resize", updateSlider);
       setInterval(next, 5000);
     })
-    .catch((err) => console.error("Error trayendo productos:", err));
+    .catch((err) => { });
 
   function renderDiscounted(list) {
     track.innerHTML = list
@@ -59,8 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <h3>${p.name}</h3>
             <div class="price">
               <span class="price-final">$${discountedPrice.toLocaleString(
-                "es-AR"
-              )}</span>
+          "es-AR"
+        )}</span>
               <span class="price-old">$${price.toLocaleString("es-AR")}</span>
             </div>
           </div>

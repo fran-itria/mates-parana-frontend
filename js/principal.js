@@ -87,20 +87,18 @@ async function loadFeatured() {
 
       card.innerHTML = `
         <img src="${image}" alt="${product.name}">
-        ${
-          discount
-            ? `<span class="featured-badge">
+        ${discount
+          ? `<span class="featured-badge">
                  <span class="featured-value">${discount}%</span>
                  <span class="featured-text">OFF</span>
                </span>`
-            : ""
+          : ""
         }
         <h3 class="featured-name">${product.name}</h3>
         <span class="featured-price">${formatPrice(newPrice)}</span>
-        ${
-          oldPrice && oldPrice !== newPrice
-            ? `<span class="featured-old">${formatPrice(oldPrice)}</span>`
-            : ""
+        ${oldPrice && oldPrice !== newPrice
+          ? `<span class="featured-old">${formatPrice(oldPrice)}</span>`
+          : ""
         }
       `;
 
@@ -132,7 +130,6 @@ async function loadFeatured() {
       });
     }
   } catch (err) {
-    console.error("Error cargando destacados:", err);
   }
 }
 
@@ -181,21 +178,19 @@ async function loadSales() {
 
       card.innerHTML = `
   <img src="${promo.image?.[0] || ""}" alt="${promo.name}">
-${
-  discount
-    ? `<span class="sale-discount">
+${discount
+          ? `<span class="sale-discount">
          <span class="sale-value">${discount.replace("-", "")}</span>
          <span class="sale-text">OFF</span>
        </span>`
-    : ""
-}
+          : ""
+        }
   <h3 class="sale-name">${promo.name}</h3>
   <span class="sale-price">${formatPrice(newPrice)}</span>
-  ${
-    oldPrice && oldPrice !== newPrice
-      ? `<span class="sale-old">${formatPrice(oldPrice)}</span>`
-      : ""
-  }
+  ${oldPrice && oldPrice !== newPrice
+          ? `<span class="sale-old">${formatPrice(oldPrice)}</span>`
+          : ""
+        }
 `;
 
       card.addEventListener("click", () => {
@@ -499,7 +494,6 @@ async function loadDiscounts() {
       discountSlider.appendChild(card);
     });
   } catch (err) {
-    console.error("Error cargando productos de Yerbas:", err);
   }
 }
 

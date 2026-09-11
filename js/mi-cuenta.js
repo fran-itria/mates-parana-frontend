@@ -28,7 +28,6 @@ async function loadUser() {
     window.location.href = "login.html";
     return;
   }
-  console.log(data.user);
   userInput.value = data.user.user || "";
   nameInput.value = data.user.name || "";
   surnameInput.value = data.user.surname || "";
@@ -54,7 +53,6 @@ async function loadOrders() {
 
     const data = await res.json();
 
-    console.log("MIS PEDIDOS:", data);
 
     if (!Array.isArray(data) || data.length === 0) {
       ordersContainer.innerHTML = `
@@ -74,15 +72,15 @@ async function loadOrders() {
         paymentStatus === "received"
           ? "Pago aprobado"
           : paymentStatus === "rejected"
-          ? "Pago rechazado"
-          : "Esperando pago";
+            ? "Pago rechazado"
+            : "Esperando pago";
 
       const statusClass =
         paymentStatus === "received"
           ? "status-received"
           : paymentStatus === "rejected"
-          ? "status-rejected"
-          : "status-pending";
+            ? "status-rejected"
+            : "status-pending";
 
       ordersContainer.innerHTML += `
         <div class="order-item">
@@ -115,7 +113,6 @@ async function loadOrders() {
       `;
     });
   } catch (err) {
-    console.error(err);
 
     ordersContainer.innerHTML = `
       <p class="orders-empty">

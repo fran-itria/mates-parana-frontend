@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const cartButton = document.getElementById("cartButton");
 
   if (!cartButton) {
-    console.warn("Cart no encontrado en esta página");
     return;
   }
   const cartPanel = document.getElementById("cartPanel");
@@ -28,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const freeShipping = document.getElementById("freeShipping");
 
   if (!cartContent || !cartSubtotal || !cartTotalBottom) {
-    console.warn("Faltan elementos del carrito en el HTML");
     return;
   }
 
@@ -42,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if (!res.ok) {
-      console.error("Error creando carrito en backend");
       return null;
     }
 
@@ -53,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return backendCartId;
 
     if (!USER_ID) {
-      console.warn("Usuario no logueado");
       return null;
     }
   }
@@ -67,7 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: cartId }),
     }).catch((err) => {
-      console.warn("No se pudo actualizar actividad del carrito", err);
     });
   }
 
@@ -205,7 +200,6 @@ document.addEventListener("DOMContentLoaded", () => {
     touchBackendCart();
     saveCart();
 
-    console.log("ABRIENDO CARRITO");
 
     cartPanel.classList.add("active");
     cartOverlay.classList.add("active");
@@ -213,7 +207,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addToCart = function (product) {
     // si el carrito todavía no está listo, esperar
     if (!window._addToCartInternal) {
-      console.warn("Carrito aún no inicializado, reintentando...");
       setTimeout(() => window.addToCart(product), 100);
       return;
     }

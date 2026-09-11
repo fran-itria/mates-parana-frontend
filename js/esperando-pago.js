@@ -25,7 +25,6 @@ const transferInfo = JSON.parse(localStorage.getItem("transferInfo"));
 ========================================================= */
 
 if (!lastOrderId || !lastOrder) {
-  console.warn("No existe lastOrder o lastOrderId");
 
   window.location.href = "checkout.html";
 }
@@ -127,15 +126,12 @@ async function iniciar() {
       if (trackingToken) {
         conectarSocket();
       } else {
-        console.warn("⚠️ NO EXISTE TRACKING TOKEN");
       }
 
       return;
     }
 
-    console.warn("⚠️ MÉTODO DE PAGO DESCONOCIDO:", order.paymentMethod);
   } catch (error) {
-    console.error("❌ ERROR DENTRO DE INICIAR():", error);
   }
 }
 
@@ -270,7 +266,6 @@ function mostrarDatosTransferencia(order) {
    */
 
   if (!transferInfo) {
-    console.warn("⚠️ No existe transferInfo");
 
     return;
   }
@@ -328,7 +323,6 @@ function mostrarDatosTransferencia(order) {
           button.classList.remove("copied");
         }, 1500);
       } catch (error) {
-        console.error("Error al copiar:", error);
       }
     });
   });
@@ -499,7 +493,6 @@ function mostrarPagoPendiente() {
 function conectarSocket() {
 
   if (typeof io !== "function") {
-    console.error("❌ Socket.IO no está cargado.");
 
     return;
   }
@@ -561,7 +554,6 @@ function conectarSocket() {
         socket.disconnect();
       }
     } catch (error) {
-      console.error("❌ ERROR ACTUALIZANDO ORDEN:", error);
     }
   });
 }
@@ -590,7 +582,6 @@ async function obtenerOrdenActualizada() {
     /* * Si el backend falla pero tenemos * la orden guardada en localStorage, * usamos esa como respaldo. */ if (
       lastOrder
     ) {
-      console.warn("⚠️ Usando lastOrder desde localStorage");
       /* * Por si lastOrder también viene como: * * { order: {...} } */ return (
         lastOrder.order ?? lastOrder
       );

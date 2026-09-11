@@ -70,14 +70,12 @@ function renderSimilar(p) {
   const container = document.getElementById("similarProducts");
 
   if (!container) {
-    console.error("❌ No existe #similarProducts en el HTML");
     return;
   }
 
   const similares = Array.isArray(p.relatedProducts) ? p.relatedProducts : [];
 
   if (similares.length === 0) {
-    console.warn("⚠️ No hay productos similares");
     container.innerHTML = "";
     return;
   }
@@ -122,7 +120,6 @@ function renderComplementProducts(p) {
   const container = document.getElementById("comboProducts");
 
   if (!container) {
-    console.error("❌ No existe #comboProducts en el HTML");
     return;
   }
 

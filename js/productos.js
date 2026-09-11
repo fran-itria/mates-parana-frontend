@@ -62,9 +62,7 @@ async function getProducts() {
 
     products = mapBackendProducts(data);
 
-    console.log("CATEGORÍAS FINALES:", [
-      ...new Set(products.map((p) => p.category)),
-    ]);
+
 
     filteredProducts = [...products];
 
@@ -82,7 +80,6 @@ async function getProducts() {
       renderProducts(products);
     }
   } catch (error) {
-    console.error("Error trayendo productos:", error);
   }
 }
 
@@ -176,28 +173,26 @@ function renderProducts(list, append = false) {
 
     card.innerHTML = `
       <a href="./producto-card.html?id=${p.id}" class="product-link">
-        ${
-          p.oldPrice
-            ? `<div class="badge">
+        ${p.oldPrice
+        ? `<div class="badge">
          <span class="badge-value">${Math.round(
-           ((p.oldPrice - p.price) / p.oldPrice) * 100
-         )}%</span>
+          ((p.oldPrice - p.price) / p.oldPrice) * 100
+        )}%</span>
          <span class="badge-text">OFF</span>
        </div>`
-            : ""
-        }
+        : ""
+      }
 
         <img src="${p.image}" alt="${p.name}" loading="lazy">
 
         <div class="product-name">${p.name}</div>
 
-        ${
-          p.oldPrice
-            ? `<div class="old-price">$${p.oldPrice.toLocaleString(
-                "es-AR"
-              )}</div>`
-            : ""
-        }
+        ${p.oldPrice
+        ? `<div class="old-price">$${p.oldPrice.toLocaleString(
+          "es-AR"
+        )}</div>`
+        : ""
+      }
 
         <div class="product-price">$${p.price.toLocaleString("es-AR")}</div>
       </a>
@@ -232,12 +227,6 @@ function buildCategoriesMenu(products) {
     "Materas y mochilas": [],
   };
 
-  console.log("PRODUCTOS RECIBIDOS:", products);
-
-  console.log("CATEGORÍAS RECIBIDAS:", [
-    ...new Set(products.map((p) => p.category)),
-  ]);
-
   products.forEach((p) => {
     if (categories[p.category]) categories[p.category].push(p.name);
   });
@@ -254,11 +243,11 @@ function buildCategoriesMenu(products) {
       <div class="category-title">${category.toUpperCase()}</div>
       <ul class="variants hidden">
         ${uniqueNames
-          .map(
-            (name) =>
-              `<li class="variant-item" data-name="${name}">${name}</li>`
-          )
-          .join("")}
+        .map(
+          (name) =>
+            `<li class="variant-item" data-name="${name}">${name}</li>`
+        )
+        .join("")}
       </ul>
     `;
 
@@ -341,8 +330,8 @@ function buildDynamicFilters(products) {
 <div class="filter-content">
 
 ${Object.entries(colorCount)
-  .map(
-    ([color, count]) => `
+      .map(
+        ([color, count]) => `
       <label class="color-filter">
         <input
           type="checkbox"
@@ -360,8 +349,8 @@ ${Object.entries(colorCount)
         </span>
       </label>
     `
-  )
-  .join("")}
+      )
+      .join("")}
 
 </div>
 </div>

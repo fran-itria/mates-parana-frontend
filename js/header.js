@@ -73,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
           category: inferCategory(p), // 👈 CLAVE
         }));
     } catch (err) {
-      console.error("Error en buscador:", err);
     }
 
     buildMegaMenu(globalProducts);

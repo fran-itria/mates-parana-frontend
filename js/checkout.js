@@ -673,7 +673,6 @@ async function loadCadeteOptions() {
       renderCadeteFields();
     });
   } catch (error) {
-    console.error("Error cargando opciones de cadete:", error);
 
     container.innerHTML = `
                     <p>
@@ -1001,7 +1000,6 @@ function createCardToken() {
           if (validationErrors?.length) {
             validationErrors.forEach((err, index) => { });
           } else {
-            console.error("Payway no devolvió validation_errors.", response);
           }
 
           reject(
@@ -1026,7 +1024,6 @@ function createCardToken() {
         resolve(response.id);
       });
     } catch (error) {
-      console.log(erorr);
     }
   });
 }
@@ -1315,7 +1312,6 @@ confirmOrderBtn.addEventListener("click", async () => {
     localStorage.setItem("lastOrderId", createdOrder.id);
 
     if (paymentMethod === "card") {
-      console.log("INTENTANDO GENERAR TOKEN...");
       const token = await createCardToken();
 
       const cardNumber = document.getElementById("cardNumber").value;
@@ -1351,7 +1347,6 @@ confirmOrderBtn.addEventListener("click", async () => {
         );
       }
 
-      console.log("✅ PAGO CON TARJETA APROBADO");
 
       localStorage.removeItem("cart");
 

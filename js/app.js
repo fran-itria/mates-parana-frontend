@@ -125,14 +125,12 @@ async function loadFont(fontName) {
   const url = FONT_FILES[fontName];
 
   if (!url) {
-    console.warn("No hay archivo para fuente:", fontName);
     return null;
   }
 
   return new Promise((resolve, reject) => {
     opentype.load(url, (err, font) => {
       if (err) {
-        console.error("Error cargando fuente:", fontName);
         reject(err);
       } else {
         loadedFonts[fontName] = font;
@@ -151,7 +149,6 @@ async function textToPath(g) {
   const font = await loadFont(fontName);
 
   if (!font) {
-    console.warn("Fuente no encontrada:", fontName);
     return;
   }
 
@@ -481,7 +478,6 @@ function selectElement(el) {
     updateMoveGizmoPosition(el);
   }
 
-  console.log("Scale gizmo", document.querySelector(".scale-gizmo"));
 }
 
 /* =========================
@@ -505,7 +501,6 @@ function makeSelectable(el) {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log("pointerdown", e.pointerType);
 
     selectElement(el);
 
@@ -547,7 +542,7 @@ function makeSelectable(el) {
 
     try {
       el.releasePointerCapture(e.pointerId);
-    } catch {}
+    } catch { }
   });
 
   el.addEventListener("pointercancel", () => {
@@ -758,7 +753,6 @@ async function cargarSVGInline(url) {
 }
 
 async function createImageElement(src, category) {
-  console.log("CLICK:", src);
 
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
@@ -1452,7 +1446,6 @@ function enableMoveGizmoUnified(handle, el) {
 
     e.preventDefault();
 
-    console.log("MOVIENDO"); // ahora esto SÍ debería aparecer
 
     const current = getMousePosition(e);
 
@@ -1549,7 +1542,6 @@ async function exportCleanSVG(originalSvg) {
       }
     `;
     } catch (err) {
-      console.warn("No se pudo embeber fuente:", fontName);
     }
   }
 
@@ -1678,7 +1670,6 @@ async function generateDesignPreview() {
 
     preview.src = url;
   } catch (error) {
-    console.error("Error generando preview:", error);
   }
 }
 
@@ -1720,18 +1711,15 @@ async function getNextDesignFileName(orderNumber) {
 }
 
 async function exportDesignToBackend(orderNumber, clientData) {
-  console.log("🚀 Exportando diseño al backend:", orderNumber);
 
   const loadingOverlay = document.getElementById("loadingOverlay");
   const svg = document.querySelector("#designArea");
 
   if (!svg) {
-    console.error("❌ SVG no encontrado");
     return;
   }
 
   if (!orderNumber) {
-    console.error("❌ Falta orderNumber");
     return;
   }
 
@@ -1748,7 +1736,6 @@ async function exportDesignToBackend(orderNumber, clientData) {
     // 🔢 BUSCAR EL SIGUIENTE NÚMERO DISPONIBLE
     const fileName = await getNextDesignFileName(orderNumber);
 
-    console.log("📁 Nombre generado:", fileName);
 
     // 📁 REFERENCIA A FIREBASE STORAGE
     const storageRef = firebase.storage().ref().child(`Diseños/${fileName}`);
@@ -1770,11 +1757,9 @@ async function exportDesignToBackend(orderNumber, clientData) {
       }
     );
 
-    console.log("✅ Respuesta backend:", response.data);
 
     showSuccessToast("✅ El diseño fue enviado con éxito");
   } catch (error) {
-    console.error("❌ Error exportando:", error);
   } finally {
     // OCULTAR LOADER SIEMPRE
     loadingOverlay.classList.add("hidden");
@@ -1940,7 +1925,6 @@ function showUpload() {
 }
 
 function showIcons() {
-  console.log("iconos funcionando");
 
   setActiveButton(0);
 
@@ -2015,7 +1999,6 @@ function showSuccessToast(message) {
   const toast = document.getElementById("toastSuccess");
 
   if (!toast) {
-    console.error("❌ No existe #toastSuccess");
     return;
   }
 
