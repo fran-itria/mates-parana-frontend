@@ -198,6 +198,7 @@ body {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
+
 @media (max-width: 768px) {
   .newsletter {
     justify-content: center;
@@ -239,6 +240,7 @@ body {
     position: relative;
     z-index: 2;
   }
+
   .newsletter__text span {
     display: block;
   }
@@ -265,7 +267,8 @@ body {
     width: 100%;
 
     margin-top: auto;
-    padding-bottom: 6rem; /* separa el botón del borde inferior */
+    padding-bottom: 6rem;
+    /* separa el botón del borde inferior */
   }
 
   .newsletter__form input {
@@ -299,6 +302,7 @@ body {
     max-width: 250px;
   }
 }
+
 /*=========== INFORMACION ====================*/
 
 .informacion {
@@ -782,10 +786,18 @@ body {
 
 .featured-card img {
   width: 100%;
+  height: 320px;
+  object-fit: cover;
   border-radius: 10px;
 }
 
 /* badge */
+.featured-transfer-info {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  gap: 0.5rem;
+}
 
 .featured-badge {
   position: absolute;
@@ -793,13 +805,16 @@ body {
   left: 12px;
   background: #ff0000;
   color: #fff;
-  padding: 8px 10px;
+  padding: 10px 10px;
   border-radius: 2rem;
-
   display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 5px;
   line-height: 1;
 }
 
@@ -813,7 +828,6 @@ body {
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 1px;
-  margin-top: 2px;
 }
 
 /* textos */
@@ -824,7 +838,15 @@ body {
   font-weight: 500;
   line-height: 1.2;
   margin-top: 10px;
-  margin-bottom: 10px;
+  padding-inline: 5px;
+}
+
+.prices-transfer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  padding-inline: 5px;
 }
 
 .featured-price {
@@ -834,11 +856,27 @@ body {
   margin-bottom: 10px;
 }
 
-.featured-old {
+.featured-price-transfer-text {
+  display: none;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.featured-price-through {
   font-family: var(--font-normal);
   font-size: 0.85rem;
   color: #aaa;
   text-decoration: line-through;
+  margin-top: 10px;
+}
+
+.featured-old {
+  font-family: var(--font-normal);
+  font-size: 0.85rem;
+  color: #aaa;
+  /* text-decoration: line-through; */
+  margin-top: 10px;
+  padding-inline: 5px;
 }
 
 /*====LO MAS PEDIDO===============*/
@@ -981,6 +1019,7 @@ body {
     margin-top: 20px;
   }
 }
+
 .sale-card {
   flex: 0 0 230px;
   scroll-snap-align: start;
@@ -1267,6 +1306,7 @@ body {
 
   padding: 5px 0 10px;
 }
+
 .discount-slider::-webkit-scrollbar {
   display: none;
 }
@@ -1378,6 +1418,7 @@ body {
   letter-spacing: 1px;
   margin-top: 2px;
 }
+
 /* textos */
 
 .discount-name {
@@ -1458,6 +1499,7 @@ body {
 }
 
 @keyframes floatPhone {
+
   0%,
   100% {
     transform: translateY(0px) rotate(-8deg);
@@ -1489,6 +1531,7 @@ body {
   line-height: 1.4;
   margin-bottom: 50px;
 }
+
 .instagram-image {
   position: relative;
 }
@@ -1507,11 +1550,9 @@ body {
 
   border-radius: 50%;
 
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.08) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 70%);
 
   filter: blur(40px);
 
@@ -1546,12 +1587,10 @@ body {
   height: 90px;
   border-radius: 50%;
 
-  background: radial-gradient(
-    circle,
-    rgba(255, 120, 180, 0.45) 0%,
-    rgba(255, 120, 180, 0.15) 40%,
-    transparent 75%
-  );
+  background: radial-gradient(circle,
+      rgba(255, 120, 180, 0.45) 0%,
+      rgba(255, 120, 180, 0.15) 40%,
+      transparent 75%);
 
   filter: blur(20px);
 
@@ -1574,6 +1613,7 @@ body {
 }
 
 @keyframes glowInstagram {
+
   0%,
   100% {
     transform: scale(0.95);

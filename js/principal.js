@@ -68,14 +68,12 @@ async function loadFeatured() {
     featuredSlider.innerHTML = "";
 
     products.forEach((product) => {
-      const oldPrice = product.cardPrice || product.oldPrice || null;
-      const newPrice = product.price;
-
-      const discount =
-        oldPrice && oldPrice > newPrice
-          ? Math.round(((oldPrice - newPrice) / oldPrice) * 100)
-          : null;
-
+      const cardPrice = product.cardPrice;
+      const price = product.price;
+      const discountedPrice = product.discountedPrice;
+      let discountPercentage = null
+      if (discountedPrice)
+        discountPercentage = (100 - ((product.discountedPrice * 100) / product.price))
       const card = document.createElement("div");
       card.className = "featured-card";
 
@@ -87,26 +85,42 @@ async function loadFeatured() {
 
       card.innerHTML = `
         <img src="${image}" alt="${product.name}">
-        ${discount
-          ? `<span class="featured-badge">
-                 <span class="featured-value">${discount}%</span>
-                 <span class="featured-text">OFF</span>
-               </span>`
-          : ""
-        }
         <h3 class="featured-name">${product.name}</h3>
-        <span class="featured-price">${formatPrice(newPrice)}</span>
-        ${oldPrice && oldPrice !== newPrice
-          ? `<span class="featured-old">${formatPrice(oldPrice)}</span>`
+        ${discountPercentage && discountedPrice ? `
+          <span class="featured-badge">
+            <span class="featured-value">${discountPercentage}%</span>
+            <span class="featured-text">OFF</span>
+          </span>
+          ` : ""}
+        <div class="prices-transfer-section">
+          <div class="prices-transfer-container">
+            ${Number(discountedPrice) > 0 ? `
+              <span class="featured-price">${formatPrice(discountedPrice)}</span>
+              ` : ""}
+            <span class="featured-price featured-price-transfer">${formatPrice(price)}</span>
+          </div>
+        </div>
+        ${cardPrice
+          ? `
+            <p class="featured-old">o 3 cuotas sin interés de ${formatPrice(cardPrice / 3)} c/u</p>
+          `
           : ""
         }
       `;
 
+      featuredSlider.appendChild(card);
+
+      const priceElement = card.querySelector(".featured-price-transfer");
+      if (priceElement && discountedPrice) {
+        priceElement.classList.replace(
+          "featured-price",
+          "featured-price-through"
+        )
+      }
       card.addEventListener("click", () => {
         window.location.href = `./producto-card.html?id=${product.id}`;
       });
 
-      featuredSlider.appendChild(card);
     });
 
     // Configurar botones cuando las tarjetas ya existen
@@ -169,39 +183,66 @@ async function loadSales() {
   promos
     .filter((p) => p.active)
     .forEach((promo) => {
-      const oldPrice = promo.cardPrice || promo.price;
-      const newPrice = promo.discountedPrice || promo.price;
-      const discount = calcDiscount(oldPrice, newPrice);
+      const cardPrice = promo.cardPrice;
+      const price = promo.price;
+      const discountedPrice = promo.discountedPrice;
+
+      let discountPercentage = null
+      if (discountedPrice)
+        discountPercentage = ((product.discountedPrice * 100) / product.price)
+
+      const image =
+        promo.images?.[0] ||
+        promo.image?.[0] ||
+        promo.image ||
+        "/img/placeholder.png";
 
       const card = document.createElement("div");
-      card.className = "sale-card";
+      card.className = "featured-card";
 
       card.innerHTML = `
-  <img src="${promo.image?.[0] || ""}" alt="${promo.name}">
-${discount
-          ? `<span class="sale-discount">
-         <span class="sale-value">${discount.replace("-", "")}</span>
-         <span class="sale-text">OFF</span>
-       </span>`
+        <img src="${image}" alt="${promo.name}">
+        <h3 class="featured-name">${promo.name}</h3>
+        ${discountPercentage && discountedPrice ? `
+          <span class="featured-badge">
+            <span class="featured-value">${discountPercentage}%</span>
+            <span class="featured-text">OFF</span>
+          </span>
+          ` : ""}
+        <div class="prices-transfer-section">
+          <div class="prices-transfer-container">
+            ${Number(discountedPrice) > 0 ? `
+              <span class="featured-price">${formatPrice(discountedPrice)}</span>
+              ` : ""}
+            <span class="featured-price featured-price-transfer">${formatPrice(price)}</span>
+          </div>
+        </div>
+        ${cardPrice
+          ? `
+            <p class="featured-old">o 3 cuotas sin interés de ${formatPrice(cardPrice / 3)} c/u</p>
+          `
           : ""
         }
-  <h3 class="sale-name">${promo.name}</h3>
-  <span class="sale-price">${formatPrice(newPrice)}</span>
-  ${oldPrice && oldPrice !== newPrice
-          ? `<span class="sale-old">${formatPrice(oldPrice)}</span>`
-          : ""
-        }
-`;
+      `;
+
+      slider.appendChild(card);
+
+      const priceElement = card.querySelector(".featured-price-transfer");
+      if (priceElement && discountedPrice) {
+        priceElement.classList.replace(
+          "featured-price",
+          "featured-price-through"
+        )
+      }
 
       card.addEventListener("click", () => {
         window.location.href = `./producto-card.html?id=${promo.id}&type=combo`;
       });
 
-      slider.appendChild(card);
     });
 
   // 🔥 activar drag después de renderizar
-  const card = slider.querySelector(".sale-card");
+  const card = slider.querySelector(".featured-card");
 
   if (card) {
     const distance = card.offsetWidth + 18;
