@@ -155,7 +155,7 @@ function getSubtotal() {
   let subtotal = 0;
 
   cart.forEach((item) => {
-    subtotal += item.price * item.qty;
+    subtotal += (item.discountedPrice || item.price) * item.qty;
   });
 
   return subtotal;
@@ -863,7 +863,7 @@ function renderProducts() {
   let subtotal = 0;
 
   cart.forEach((item) => {
-    subtotal += (paymentMethod != "card" ? item.price : item.cardPrice) * item.qty;
+    subtotal += (paymentMethod != "card" ? (item.discountedPrice || item.price) : item.cardPrice) * item.qty;
     summaryProducts.innerHTML += `
                     <div class="summary-item">
                       <img src="${item.image}" />
@@ -889,7 +889,7 @@ function renderProducts() {
                       </div>
 
                       <div class="summary-item-price">
-                        $${((paymentMethod != "card" ? item.price : item.cardPrice) * item.qty).toLocaleString("es-AR")}
+                        $${((paymentMethod != "card" ? (item.discountedPrice || item.price) : item.cardPrice) * item.qty).toLocaleString("es-AR")}
                       </div>
                     </div>
                     `;

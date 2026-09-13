@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let totalItems = 0;
 
     cart.forEach((item) => {
-      subtotal += item.price * item.qty;
+      subtotal += (item.discountedPrice || item.price) * item.qty;
       totalItems += item.qty;
 
       cartContent.innerHTML += `
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
               }</small>`
           )
           .join("")}
-              <p>$${item.price}</p>
+              <p>$${(item.discountedPrice || item.price)}</p>
 
               <div class="qty-controls">
                 <button onclick="changeQty('${item.cartKey}', -1)">-</button>
