@@ -17,6 +17,38 @@ const paymentConfirmed = localStorage.getItem("paymentConfirmed") === "true";
 const transferInfo = JSON.parse(localStorage.getItem("transferInfo"));
 
 /* =========================================================
+   SEGUIMIENTO DEL PAGO (CELULARES)
+========================================================= */
+
+/*
+ * En el celular la pestaña queda congelada mientras el usuario
+ * está en la billetera virtual: el socket se cae y el evento
+ * "order:payment-approved" se pierde.
+ *
+ * Por eso, además del socket, el estado del pago se vuelve a
+ * consultar al volver a la pestaña y cada POLL_INTERVAL_MS.
+ */
+
+const POLL_INTERVAL_MS = 10000;
+
+/*
+ * Clave nueva (no reemplaza ninguna de las que ya se guardan).
+ *
+ * Si el navegador descarta la pestaña y al recargar el backend
+ * no responde, esto permite seguir mostrando el pago confirmado.
+ */
+
+const APPROVED_ORDERS_KEY = "paymentApprovedOrders";
+
+let socket = null;
+
+let pollIntervalId = null;
+
+let pagoYaConfirmado = false;
+
+let revisandoEstado = false;
+
+/* =========================================================
    DEBUG
 ========================================================= */
 
@@ -100,15 +132,9 @@ async function iniciar() {
          ¿YA ESTÁ PAGADA?
       =================================================== */
 
-      if (
-        order.paymentStatus === "approved" ||
-        order.paymentStatus === "received"
-      ) {
+      if (esPagoAprobado(order.paymentStatus) || pagoAprobadoEnStorage()) {
 
-        mostrarPagoAprobado();
-
-        localStorage.removeItem("trackingToken");
-        localStorage.removeItem("transferInfo");
+        aplicarPagoAprobado();
 
         return;
       }
@@ -120,13 +146,10 @@ async function iniciar() {
       mostrarPagoPendiente();
 
       /* ===================================================
-         SOCKET
+         SOCKET + RECONSULTA
       =================================================== */
 
-      if (trackingToken) {
-        conectarSocket();
-      } else {
-      }
+      iniciarSeguimiento();
 
       return;
     }
@@ -487,6 +510,166 @@ function mostrarPagoPendiente() {
 }
 
 /* =========================================================
+   SEGUIMIENTO DEL PAGO
+========================================================= */
+
+function esPagoAprobado(status) {
+  return status === "approved" || status === "received";
+}
+
+/* ---------------------------------------------------------
+   MARCA LOCAL DE PAGO APROBADO
+--------------------------------------------------------- */
+
+function leerPagosAprobados() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(APPROVED_ORDERS_KEY));
+
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    /*
+     * Un JSON corrupto no puede romper la pantalla.
+     */
+
+    return [];
+  }
+}
+
+function pagoAprobadoEnStorage() {
+  return leerPagosAprobados().some(
+    (id) => String(id) === String(lastOrderId)
+  );
+}
+
+function marcarPagoAprobadoEnStorage() {
+  try {
+    const ids = leerPagosAprobados().filter(
+      (id) => String(id) !== String(lastOrderId)
+    );
+
+    ids.push(String(lastOrderId));
+
+    /*
+     * Guardamos solo las últimas órdenes para no
+     * dejar crecer la clave indefinidamente.
+     */
+
+    localStorage.setItem(APPROVED_ORDERS_KEY, JSON.stringify(ids.slice(-10)));
+  } catch (error) {
+    /*
+     * El modo privado de iOS puede rechazar la escritura.
+     */
+  }
+}
+
+/* ---------------------------------------------------------
+   APLICAR PAGO APROBADO
+--------------------------------------------------------- */
+
+function aplicarPagoAprobado() {
+  /*
+   * El aviso puede llegar por el socket y por la reconsulta
+   * a la vez: confirmamos una sola vez.
+   */
+
+  if (pagoYaConfirmado) return;
+
+  pagoYaConfirmado = true;
+
+  marcarPagoAprobadoEnStorage();
+
+  mostrarEstadoPago("approved");
+
+  mostrarPagoAprobado();
+
+  localStorage.removeItem("trackingToken");
+  localStorage.removeItem("transferInfo");
+
+  detenerSeguimiento();
+}
+
+/* ---------------------------------------------------------
+   RECONSULTA HTTP
+--------------------------------------------------------- */
+
+async function revisarEstadoPago() {
+  if (pagoYaConfirmado || revisandoEstado) return;
+
+  revisandoEstado = true;
+
+  try {
+    const order = await obtenerOrdenActualizada();
+
+    if (esPagoAprobado(order.paymentStatus)) {
+      localStorage.setItem("lastOrder", JSON.stringify(order));
+
+      aplicarPagoAprobado();
+    }
+  } catch (error) {
+    /*
+     * Es un chequeo de respaldo: si falla se reintenta
+     * en el próximo ciclo.
+     */
+  } finally {
+    revisandoEstado = false;
+  }
+}
+
+function revisarSiVisible() {
+  if (document.visibilityState === "visible") {
+    revisarEstadoPago();
+  }
+}
+
+/* ---------------------------------------------------------
+   INICIAR / DETENER
+--------------------------------------------------------- */
+
+function iniciarSeguimiento() {
+  if (trackingToken) {
+    conectarSocket();
+  }
+
+  /*
+   * El navegador congela los timers en segundo plano, así que
+   * el intervalo no corre mientras el usuario está en la
+   * billetera: al volver hay que consultar enseguida.
+   */
+
+  document.addEventListener("visibilitychange", revisarSiVisible);
+
+  window.addEventListener("focus", revisarSiVisible);
+
+  window.addEventListener("online", revisarSiVisible);
+
+  window.addEventListener("pageshow", revisarSiVisible);
+
+  pollIntervalId = setInterval(revisarSiVisible, POLL_INTERVAL_MS);
+}
+
+function detenerSeguimiento() {
+  if (pollIntervalId) {
+    clearInterval(pollIntervalId);
+
+    pollIntervalId = null;
+  }
+
+  document.removeEventListener("visibilitychange", revisarSiVisible);
+
+  window.removeEventListener("focus", revisarSiVisible);
+
+  window.removeEventListener("online", revisarSiVisible);
+
+  window.removeEventListener("pageshow", revisarSiVisible);
+
+  if (socket) {
+    socket.disconnect();
+
+    socket = null;
+  }
+}
+
+/* =========================================================
    SOCKET
 ========================================================= */
 
@@ -497,15 +680,26 @@ function conectarSocket() {
     return;
   }
 
-  const socket = io(`${API_BASE}/orders`, {
+  socket = io(`${API_BASE}/orders`, {
     auth: {
       trackingToken,
     },
 
-    transports: ["websocket"],
+    /*
+     * Sin "polling" de respaldo, las redes móviles que bloquean
+     * el upgrade a WebSocket se quedan directamente sin conexión.
+     */
+
+    transports: ["websocket", "polling"],
   });
 
   socket.on("connect", () => {
+    /*
+     * Puede ser una reconexión tras volver de la billetera:
+     * el evento ya pudo haberse emitido mientras estábamos caídos.
+     */
+
+    revisarEstadoPago();
   });
 
   socket.on("connect_error", (error) => {
@@ -514,7 +708,7 @@ function conectarSocket() {
   socket.on("disconnect", (reason) => {
   });
 
-  socket.on("order:payment-approved", async (event) => {
+  socket.on("order:payment-approved", (event) => {
     /*
      * Verificar que el evento
      * pertenece a esta orden.
@@ -524,37 +718,11 @@ function conectarSocket() {
       return;
     }
 
-    try {
-      /*
-       * Ahora sí consultamos nuevamente
-       * al backend.
-       */
+    /*
+     * Confirmamos siempre contra el backend.
+     */
 
-      const order = await obtenerOrdenActualizada();
-
-      localStorage.setItem("lastOrder", JSON.stringify(order));
-
-      /*
-       * Actualizar toda la pantalla.
-       */
-
-      mostrarOrden(order);
-
-      if (
-        order.paymentStatus === "approved" ||
-        order.paymentStatus === "received"
-      ) {
-
-        mostrarPagoAprobado();
-
-        localStorage.removeItem("trackingToken");
-
-        localStorage.removeItem("transferInfo");
-
-        socket.disconnect();
-      }
-    } catch (error) {
-    }
+    revisarEstadoPago();
   });
 }
 
