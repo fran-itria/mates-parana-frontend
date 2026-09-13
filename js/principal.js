@@ -73,7 +73,7 @@ async function loadFeatured() {
       const discountedPrice = product.discountedPrice;
       let discountPercentage = null
       if (discountedPrice)
-        discountPercentage = (100 - ((product.discountedPrice * 100) / product.price))
+        discountPercentage = Math.round(100 - ((product.discountedPrice * 100) / product.price))
       const card = document.createElement("div");
       card.className = "featured-card";
 
