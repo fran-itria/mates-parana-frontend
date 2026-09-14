@@ -57,7 +57,6 @@ let revisandoEstado = false;
 ========================================================= */
 
 if (!lastOrderId || !lastOrder) {
-
   window.location.href = "checkout.html";
 }
 
@@ -68,7 +67,6 @@ if (!lastOrderId || !lastOrder) {
 document.addEventListener("DOMContentLoaded", iniciar);
 
 async function iniciar() {
-
   try {
     /* =====================================================
        OBTENER ORDEN ACTUALIZADA DESDE EL BACKEND
@@ -78,10 +76,8 @@ async function iniciar() {
       .then((res) => {
         return res.text();
       })
-      .then((data) => {
-      })
-      .catch((error) => {
-      });
+      .then((data) => {})
+      .catch((error) => {});
 
     const order = await obtenerOrdenActualizada();
 
@@ -102,7 +98,6 @@ async function iniciar() {
     ===================================================== */
 
     if (order.paymentMethod === "card") {
-
       /*
        * El pago con tarjeta ya fue aprobado
        * antes de llegar a esta página.
@@ -121,7 +116,6 @@ async function iniciar() {
     ===================================================== */
 
     if (order.paymentMethod === "transfer") {
-
       /*
        * Mostrar datos bancarios.
        */
@@ -133,7 +127,6 @@ async function iniciar() {
       =================================================== */
 
       if (esPagoAprobado(order.paymentStatus) || pagoAprobadoEnStorage()) {
-
         aplicarPagoAprobado();
 
         return;
@@ -153,9 +146,7 @@ async function iniciar() {
 
       return;
     }
-
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
 /* =========================================================
@@ -181,15 +172,15 @@ function mostrarOrden(order) {
 
   if (paymentMethod) {
     if (order.paymentMethod === "card") {
-      const p = document.createElement("p")
-      const cuotes = document.createElement("p")
-      p.textContent = "3 cuotas sin interés"
-      p.style.marginTop = "10px"
-      cuotes.textContent = `$${(order.amount / 3).toLocaleString("es-Ar")} c/u`
-      cuotes.style.marginTop = "10px"
+      const p = document.createElement("p");
+      const cuotes = document.createElement("p");
+      p.textContent = "3 cuotas sin interés";
+      p.style.marginTop = "10px";
+      cuotes.textContent = `$${(order.amount / 3).toLocaleString("es-Ar")} c/u`;
+      cuotes.style.marginTop = "10px";
       paymentMethod.textContent = "Tarjeta";
-      paymentMethod.appendChild(p)
-      paymentMethod.appendChild(cuotes)
+      paymentMethod.appendChild(p);
+      paymentMethod.appendChild(cuotes);
     } else if (order.paymentMethod === "transfer") {
       paymentMethod.textContent = "Transferencia";
     } else {
@@ -204,17 +195,17 @@ function mostrarOrden(order) {
   const deliveryMethod = document.getElementById("deliveryMethod");
 
   if (order.delivered.method.includes("Correo Argentino")) {
-    const split = order.delivered.method.split("-")
-    const text1 = split[0].replace("Shipping", "")
-    const p1 = document.createElement("p")
-    p1.textContent = text1
-    const p2 = document.createElement("p")
-    p2.textContent = split[2]
-    p2.style.marginTop = "10px"
+    const split = order.delivered.method.split("-");
+    const text1 = split[0].replace("Shipping", "");
+    const p1 = document.createElement("p");
+    p1.textContent = text1;
+    const p2 = document.createElement("p");
+    p2.textContent = split[2];
+    p2.style.marginTop = "10px";
 
-    deliveryMethod.textContent = ""
-    deliveryMethod.appendChild(p1)
-    deliveryMethod.appendChild(p2)
+    deliveryMethod.textContent = "";
+    deliveryMethod.appendChild(p1);
+    deliveryMethod.appendChild(p2);
   } else {
     deliveryMethod.textContent = obtenerTextoEntrega(order);
   }
@@ -289,7 +280,6 @@ function mostrarDatosTransferencia(order) {
    */
 
   if (!transferInfo) {
-
     return;
   }
 
@@ -345,8 +335,7 @@ function mostrarDatosTransferencia(order) {
           button.textContent = originalContent;
           button.classList.remove("copied");
         }, 1500);
-      } catch (error) {
-      }
+      } catch (error) {}
     });
   });
 
@@ -536,9 +525,7 @@ function leerPagosAprobados() {
 }
 
 function pagoAprobadoEnStorage() {
-  return leerPagosAprobados().some(
-    (id) => String(id) === String(lastOrderId)
-  );
+  return leerPagosAprobados().some((id) => String(id) === String(lastOrderId));
 }
 
 function marcarPagoAprobadoEnStorage() {
@@ -674,9 +661,7 @@ function detenerSeguimiento() {
 ========================================================= */
 
 function conectarSocket() {
-
   if (typeof io !== "function") {
-
     return;
   }
 
@@ -702,11 +687,9 @@ function conectarSocket() {
     revisarEstadoPago();
   });
 
-  socket.on("connect_error", (error) => {
-  });
+  socket.on("connect_error", (error) => {});
 
-  socket.on("disconnect", (reason) => {
-  });
+  socket.on("disconnect", (reason) => {});
 
   socket.on("order:payment-approved", (event) => {
     /*
@@ -775,48 +758,47 @@ function mostrarProductos(products) {
     return;
   }
 
-  products.filter(p => !p.promotion).forEach((item) => {
-    const quantity = item.quantity || item.qty || 1;
+  products
+    .filter((p) => !p.promotion)
+    .forEach((item) => {
+      const quantity = item.quantity || item.qty || 1;
 
-    const product = item.product || item;
+      const product = item.product || item;
 
-    const name = product.name || item.name || item.productName || "Producto";
+      const name = product.name || item.name || item.productName || "Producto";
 
-    const price = Number(
-      item.cardPriceWhenOrderCreated
-      ??
-      item.discountedPriceWhenOrderCreated
-      ??
-      item.priceWhenOrderCreated
-      ??
-      0
-    );
+      const price = Number(
+        item.cardPriceWhenOrderCreated ??
+          item.discountedPriceWhenOrderCreated ??
+          item.priceWhenOrderCreated ??
+          0
+      );
 
-    let varietyHTML = "";
+      let varietyHTML = "";
 
-    if (item.varity) {
-      if (item.varity.type) {
-        varietyHTML += `
+      if (item.varity) {
+        if (item.varity.type) {
+          varietyHTML += `
             <span>
               Tipo: ${item.varity.type}
             </span>
           `;
-      }
+        }
 
-      if (item.varity.color) {
-        varietyHTML += `
+        if (item.varity.color) {
+          varietyHTML += `
             <span>
               Color: ${item.varity.color}
             </span>
           `;
+        }
       }
-    }
 
-    const productHTML = document.createElement("div");
+      const productHTML = document.createElement("div");
 
-    productHTML.className = "order-product";
+      productHTML.className = "order-product";
 
-    productHTML.innerHTML = `
+      productHTML.innerHTML = `
 
         <div class="product-info">
 
@@ -824,14 +806,15 @@ function mostrarProductos(products) {
             ${name}
           </strong>
 
-          ${varietyHTML
-        ? `
+          ${
+            varietyHTML
+              ? `
                 <div class="product-variety">
                   ${varietyHTML}
                 </div>
               `
-        : ""
-      }
+              : ""
+          }
 
           <span>
             Cantidad: ${quantity}
@@ -845,8 +828,8 @@ function mostrarProductos(products) {
 
       `;
 
-    container.appendChild(productHTML);
-  });
+      container.appendChild(productHTML);
+    });
 }
 
 function mostrarPromociones(promos) {
@@ -869,7 +852,7 @@ function mostrarPromociones(promos) {
 
     const name = product.name || item.name || item.productName || "Producto";
 
-    let price = 0
+    let price = 0;
     if (lastOrder.paymentMethod == "transfer")
       price = Number(item.discountedPrice ?? item.price ?? 0);
     else if (lastOrder.paymentMethod == "card") {
@@ -908,14 +891,15 @@ function mostrarPromociones(promos) {
             ${name}
           </strong>
 
-          ${varietyHTML
-        ? `
+          ${
+            varietyHTML
+              ? `
                 <div class="product-variety">
                   ${varietyHTML}
                 </div>
               `
-        : ""
-      }
+              : ""
+          }
 
           <span>
             Cantidad: ${quantity}
@@ -957,7 +941,8 @@ function mostrarTotales(order) {
   const subtotalElement = document.getElementById("orderSubtotal");
 
   const shippingElement = document.getElementById("orderShipping");
-  const shippingElementContainer = document.getElementsByClassName("summary-row");
+  const shippingElementContainer =
+    document.getElementsByClassName("summary-row");
 
   const totalElement = document.getElementById("orderTotal");
 
@@ -968,13 +953,13 @@ function mostrarTotales(order) {
   if (shippingElement && shippingPrice) {
     shippingElement.textContent = "$" + shippingPrice.toLocaleString("es-AR");
   } else {
-    shippingElementContainer[1].style.visibility = "hidden"
-    shippingElementContainer[1].remove()
+    shippingElementContainer[1].style.visibility = "hidden";
+    shippingElementContainer[1].remove();
   }
 
   if (totalElement) {
     totalElement.textContent = "$" + total.toLocaleString("es-AR");
-    totalElement.style.paddingBlock = "0px"
+    totalElement.style.paddingBlock = "0px";
   }
 }
 
@@ -1015,7 +1000,10 @@ function obtenerTextoEntrega(order) {
      * utiliza "method".
      */
 
-    if (delivered.method == "Sucursal Casa Central" || delivered.method == "Sucursal Urquiza") {
+    if (
+      delivered.method == "Sucursal Casa Central" ||
+      delivered.method == "Sucursal Urquiza"
+    ) {
       return `Retiro en ${delivered.method}`;
     }
 

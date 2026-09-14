@@ -522,46 +522,56 @@ body {
   .slider {
     width: 100%;
     height: 32rem;
-
     overflow: hidden;
   }
 
   .slider-track {
+    display: flex;
+
     width: 100%;
     height: 100%;
 
-    display: flex;
+    /* Scroll nativo */
+    overflow-x: auto;
+    overflow-y: hidden;
 
-    /*
-      El navegador permite el gesto vertical de la página,
-      mientras JavaScript controla el desplazamiento horizontal.
-    */
-    touch-action: pan-y;
+    /* Safari / iOS */
+    -webkit-overflow-scrolling: touch;
 
-    /*
-      Evita comportamientos de selección/arrastre.
-    */
+    /* El navegador controla el gesto horizontal */
+    touch-action: pan-x;
+
+    /* Snap */
+    scroll-snap-type: x mandatory;
+
+    scroll-behavior: smooth;
+
+    /* Ocultar scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    /* Evitar selección */
     user-select: none;
     -webkit-user-select: none;
 
-    /*
-      El movimiento sigue siendo realizado por JS.
-    */
-    transition: transform 0.5s ease-out;
+    /* MUY IMPORTANTE */
+    transform: none !important;
+  }
 
-    will-change: transform;
+  /* Chrome / Safari */
+  .slider-track::-webkit-scrollbar {
+    display: none;
   }
 
   .slider-track picture {
     flex: 0 0 100%;
 
     width: 100%;
+    min-width: 100%;
     height: 100%;
 
-    /*
-      Cada banner ocupa exactamente una pantalla.
-    */
-    min-width: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
   .slider-track picture img {
@@ -579,7 +589,6 @@ body {
     -webkit-user-drag: none;
   }
 }
-
 /* =============COLECCION====================*/
 .collection-section {
   padding: 60px 5%;
@@ -1499,7 +1508,6 @@ body {
 }
 
 @keyframes floatPhone {
-
   0%,
   100% {
     transform: translateY(0px) rotate(-8deg);
@@ -1550,9 +1558,11 @@ body {
 
   border-radius: 50%;
 
-  background: radial-gradient(circle,
-      rgba(255, 255, 255, 0.08) 0%,
-      transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 70%
+  );
 
   filter: blur(40px);
 
@@ -1587,10 +1597,12 @@ body {
   height: 90px;
   border-radius: 50%;
 
-  background: radial-gradient(circle,
-      rgba(255, 120, 180, 0.45) 0%,
-      rgba(255, 120, 180, 0.15) 40%,
-      transparent 75%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 120, 180, 0.45) 0%,
+    rgba(255, 120, 180, 0.15) 40%,
+    transparent 75%
+  );
 
   filter: blur(20px);
 
@@ -1613,7 +1625,6 @@ body {
 }
 
 @keyframes glowInstagram {
-
   0%,
   100% {
     transform: scale(0.95);

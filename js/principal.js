@@ -71,9 +71,11 @@ async function loadFeatured() {
       const cardPrice = product.cardPrice;
       const price = product.price;
       const discountedPrice = product.discountedPrice;
-      let discountPercentage = null
+      let discountPercentage = null;
       if (discountedPrice)
-        discountPercentage = Math.round(100 - ((product.discountedPrice * 100) / product.price))
+        discountPercentage = Math.round(
+          100 - (product.discountedPrice * 100) / product.price
+        );
       const card = document.createElement("div");
       card.className = "featured-card";
 
@@ -86,25 +88,40 @@ async function loadFeatured() {
       card.innerHTML = `
         <img src="${image}" alt="${product.name}">
         <h3 class="featured-name">${product.name}</h3>
-        ${discountPercentage && discountedPrice ? `
+        ${
+          discountPercentage && discountedPrice
+            ? `
           <span class="featured-badge">
             <span class="featured-value">${discountPercentage}%</span>
             <span class="featured-text">OFF</span>
           </span>
-          ` : ""}
+          `
+            : ""
+        }
         <div class="prices-transfer-section">
           <div class="prices-transfer-container">
-            ${Number(discountedPrice) > 0 ? `
-              <span class="featured-price">${formatPrice(discountedPrice)}</span>
-              ` : ""}
-            <span class="featured-price featured-price-transfer">${formatPrice(price)}</span>
+            ${
+              Number(discountedPrice) > 0
+                ? `
+              <span class="featured-price">${formatPrice(
+                discountedPrice
+              )}</span>
+              `
+                : ""
+            }
+            <span class="featured-price featured-price-transfer">${formatPrice(
+              price
+            )}</span>
           </div>
         </div>
-        ${cardPrice
-          ? `
-            <p class="featured-old">o 3 cuotas sin interés de ${formatPrice(cardPrice / 3)} c/u</p>
+        ${
+          cardPrice
+            ? `
+            <p class="featured-old">o 3 cuotas sin interés de ${formatPrice(
+              cardPrice / 3
+            )} c/u</p>
           `
-          : ""
+            : ""
         }
       `;
 
@@ -115,12 +132,11 @@ async function loadFeatured() {
         priceElement.classList.replace(
           "featured-price",
           "featured-price-through"
-        )
+        );
       }
       card.addEventListener("click", () => {
         window.location.href = `./producto-card.html?id=${product.id}`;
       });
-
     });
 
     // Configurar botones cuando las tarjetas ya existen
@@ -143,8 +159,7 @@ async function loadFeatured() {
         });
       });
     }
-  } catch (err) {
-  }
+  } catch (err) {}
 }
 
 loadFeatured();
@@ -187,9 +202,9 @@ async function loadSales() {
       const price = promo.price;
       const discountedPrice = promo.discountedPrice;
 
-      let discountPercentage = null
+      let discountPercentage = null;
       if (discountedPrice)
-        discountPercentage = ((product.discountedPrice * 100) / product.price)
+        discountPercentage = (product.discountedPrice * 100) / product.price;
 
       const image =
         promo.images?.[0] ||
@@ -203,25 +218,40 @@ async function loadSales() {
       card.innerHTML = `
         <img src="${image}" alt="${promo.name}">
         <h3 class="featured-name">${promo.name}</h3>
-        ${discountPercentage && discountedPrice ? `
+        ${
+          discountPercentage && discountedPrice
+            ? `
           <span class="featured-badge">
             <span class="featured-value">${discountPercentage}%</span>
             <span class="featured-text">OFF</span>
           </span>
-          ` : ""}
+          `
+            : ""
+        }
         <div class="prices-transfer-section">
           <div class="prices-transfer-container">
-            ${Number(discountedPrice) > 0 ? `
-              <span class="featured-price">${formatPrice(discountedPrice)}</span>
-              ` : ""}
-            <span class="featured-price featured-price-transfer">${formatPrice(price)}</span>
+            ${
+              Number(discountedPrice) > 0
+                ? `
+              <span class="featured-price">${formatPrice(
+                discountedPrice
+              )}</span>
+              `
+                : ""
+            }
+            <span class="featured-price featured-price-transfer">${formatPrice(
+              price
+            )}</span>
           </div>
         </div>
-        ${cardPrice
-          ? `
-            <p class="featured-old">o 3 cuotas sin interés de ${formatPrice(cardPrice / 3)} c/u</p>
+        ${
+          cardPrice
+            ? `
+            <p class="featured-old">o 3 cuotas sin interés de ${formatPrice(
+              cardPrice / 3
+            )} c/u</p>
           `
-          : ""
+            : ""
         }
       `;
 
@@ -232,13 +262,12 @@ async function loadSales() {
         priceElement.classList.replace(
           "featured-price",
           "featured-price-through"
-        )
+        );
       }
 
       card.addEventListener("click", () => {
         window.location.href = `./producto-card.html?id=${promo.id}&type=combo`;
       });
-
     });
 
   // 🔥 activar drag después de renderizar
@@ -264,7 +293,6 @@ async function loadSales() {
 }
 
 loadSales();
-
 /* ===== SLIDER BANNERS ===== */
 
 const bannerTrack = document.querySelector(".slider-track");
@@ -276,6 +304,14 @@ const dotsContainer = document.querySelector(".slider-dots");
 if (bannerTrack && bannerSlides.length > 0) {
   let bannerIndex = 0;
   let autoPlay;
+
+  // ==============================
+  // DETECTAR MOBILE
+  // ==============================
+
+  function isMobile() {
+    return window.innerWidth <= 768;
+  }
 
   // ==============================
   // CREAR DOTS
@@ -315,6 +351,27 @@ if (bannerTrack && bannerSlides.length > 0) {
   function goToSlide(index, animate = true) {
     bannerIndex = index;
 
+    // ==========================
+    // MOBILE
+    // ==========================
+
+    if (isMobile()) {
+      const slideWidth = bannerTrack.clientWidth;
+
+      bannerTrack.scrollTo({
+        left: slideWidth * bannerIndex,
+        behavior: animate ? "smooth" : "auto",
+      });
+
+      updateDots();
+
+      return;
+    }
+
+    // ==========================
+    // DESKTOP
+    // ==========================
+
     if (!animate) {
       bannerTrack.style.transition = "none";
     } else {
@@ -325,7 +382,6 @@ if (bannerTrack && bannerSlides.length > 0) {
 
     updateDots();
 
-    // Volver a activar transición después de un movimiento instantáneo
     if (!animate) {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -377,6 +433,7 @@ if (bannerTrack && bannerSlides.length > 0) {
 
   function resetAutoplay() {
     clearInterval(autoPlay);
+
     startAutoplay();
   }
 
@@ -403,57 +460,30 @@ if (bannerTrack && bannerSlides.length > 0) {
   }
 
   // ==============================
-  // SWIPE MOBILE
+  // ACTUALIZAR DOTS AL HACER SWIPE
   // ==============================
 
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchEndX = 0;
-  let touchEndY = 0;
+  if (isMobile()) {
+    bannerTrack.addEventListener(
+      "scroll",
+      () => {
+        const slideWidth = bannerTrack.clientWidth;
 
-  bannerTrack.addEventListener(
-    "touchstart",
-    (e) => {
-      if (window.innerWidth > 768) return;
+        if (slideWidth <= 0) return;
 
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
+        const newIndex = Math.round(bannerTrack.scrollLeft / slideWidth);
 
-      // Pausar mientras el usuario toca
-      clearInterval(autoPlay);
-    },
-    { passive: true }
-  );
+        if (newIndex !== bannerIndex) {
+          bannerIndex = newIndex;
 
-  bannerTrack.addEventListener(
-    "touchend",
-    (e) => {
-      if (window.innerWidth > 768) return;
+          updateDots();
 
-      touchEndX = e.changedTouches[0].clientX;
-      touchEndY = e.changedTouches[0].clientY;
-
-      const differenceX = touchStartX - touchEndX;
-      const differenceY = touchStartY - touchEndY;
-
-      // Solo consideramos swipe horizontal
-      if (
-        Math.abs(differenceX) > 50 &&
-        Math.abs(differenceX) > Math.abs(differenceY)
-      ) {
-        if (differenceX > 0) {
-          // Swipe hacia la izquierda
-          nextSlide();
-        } else {
-          // Swipe hacia la derecha
-          prevSlide();
+          resetAutoplay();
         }
-      }
-
-      resetAutoplay();
-    },
-    { passive: true }
-  );
+      },
+      { passive: true }
+    );
+  }
 
   // ==============================
   // RESIZE
@@ -468,6 +498,7 @@ if (bannerTrack && bannerSlides.length > 0) {
   // ==============================
 
   goToSlide(0, false);
+
   startAutoplay();
 }
 
@@ -534,8 +565,7 @@ async function loadDiscounts() {
 
       discountSlider.appendChild(card);
     });
-  } catch (err) {
-  }
+  } catch (err) {}
 }
 
 loadDiscounts();
