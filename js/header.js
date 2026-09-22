@@ -140,6 +140,9 @@ function buildMegaMenu() {
 
   menu.innerHTML = `
     <div class="mega-column">
+    <a class="menu-title" href="./productos.html">
+        Ver todos
+      </a>
       <a class="menu-title" href="./productos.html?category=Mates">
         MATES
       </a>

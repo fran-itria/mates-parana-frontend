@@ -1162,8 +1162,11 @@ body {
 /* Card */
 .review-card {
   flex: 0 0 calc(100% / 3);
-  padding: 20px;
+  padding: 10px;
   box-sizing: border-box;
+  border: solid 2px #2f4132;
+  border-radius: 15px;
+  margin: 5px;
 }
 
 .review-inner {
