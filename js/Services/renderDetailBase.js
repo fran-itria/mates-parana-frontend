@@ -52,13 +52,11 @@ export function renderDetailBase(item) {
 
     setGalleryImages(images);
 
-    const visibleImages = images.slice(0, 4);
-
     // imagen inicial
     updateGalleryImage(0);
 
     // thumbs
-    visibleImages.forEach((img, index) => {
+    images.forEach((img, index) => {
         const thumb = document.createElement("img");
         thumb.src = img;
 

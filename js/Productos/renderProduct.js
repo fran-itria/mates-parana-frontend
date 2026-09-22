@@ -27,9 +27,14 @@ export function renderProduct(
 
     // ✅ FUNCIÓN CORRECTA (UNA SOLA)
     function updateImageByVariant() {
-      const match = varities.find((v) => v.color === selectedColor);
-
+      const match = varities.find((v) => {
+        if (selectedColor)
+          return v.color === selectedColor
+        else if (selectedType)
+          return v.type === selectedType
+      });
       if (match?.image) {
+        console.log(images)
         const img = match.image.replace(/\s/g, "");
 
         const index = images.findIndex((i) => i === img);
@@ -57,17 +62,21 @@ export function renderProduct(
       selectedVariant = match || null;
       onVariantChange(selectedColor, selectedType, selectedVariant);
 
-      renderTypes(availableTypes, updateImageByVariant, typeWrapper, (type) => {
-        selectedType = type;
+      renderTypes(
+        availableTypes,
+        updateImageByVariant,
+        typeWrapper,
+        (type) => {
+          selectedType = type;
 
-        const match = varities.find((v) => v.type === selectedType);
+          const match = varities.find((v) => v.type === selectedType);
 
-        selectedVariant = match || null;
+          selectedVariant = match || null;
 
-        onVariantChange(selectedColor, selectedType, selectedVariant);
+          onVariantChange(selectedColor, selectedType, selectedVariant);
 
-        updateImageByVariant();
-      });
+          updateImageByVariant();
+        });
     }
 
     // ===== COLORES =====

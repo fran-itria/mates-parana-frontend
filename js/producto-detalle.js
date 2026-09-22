@@ -665,7 +665,6 @@ let modalImageIndex = 0;
 
 function updateModalImage(index) {
   const galleryImages = getGalleryImages();
-
   if (!galleryImages.length) return;
 
   modalImageIndex = index;
