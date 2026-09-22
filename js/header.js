@@ -72,8 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
           image: (p.image?.[0] || "").replace(/\s/g, ""),
           category: inferCategory(p), // 👈 CLAVE
         }));
-    } catch (err) {
-    }
+    } catch (err) {}
 
     buildMegaMenu(globalProducts);
   }
@@ -209,44 +208,26 @@ function inferCategory(p) {
 }
 
 /*=========================================================================
-Menu boton de productos (celular)
+Menu botón de productos (celular)
 ========================================================================== */
 const productosToggle = document.querySelector(".productos-toggle");
 const megaMenu = document.querySelector("#megaMenu");
-const nav = document.querySelector(".nav");
-
-let productosPrimerToque = false;
 
 if (productosToggle && megaMenu) {
-  productosToggle.addEventListener("click", function (e) {
-    if (window.innerWidth <= 768) {
-      // PRIMER TOQUE
-      if (!productosPrimerToque) {
+  productosToggle.addEventListener(
+    "click",
+    function (e) {
+      if (window.innerWidth <= 768) {
+        console.log("CLICK PRODUCTOS MOBILE");
+
         e.preventDefault();
+        e.stopPropagation();
 
-        megaMenu.classList.add("active");
+        megaMenu.classList.toggle("active");
 
-        productosPrimerToque = true;
-
-        return;
+        console.log("Mega menu:", megaMenu.classList.contains("active"));
       }
-
-      // SEGUNDO TOQUE
-      productosPrimerToque = false;
-    }
-  });
-
-  // Si se toca otro enlace del NAV,
-  // reiniciamos el comportamiento
-  if (nav) {
-    nav.querySelectorAll("a").forEach((link) => {
-      if (link !== productosToggle) {
-        link.addEventListener("click", function () {
-          productosPrimerToque = false;
-
-          megaMenu.classList.remove("active");
-        });
-      }
-    });
-  }
+    },
+    true
+  );
 }

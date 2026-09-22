@@ -539,7 +539,7 @@ body {
     -webkit-overflow-scrolling: touch;
 
     /* El navegador controla el gesto horizontal */
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
 
     /* Snap */
     scroll-snap-type: x mandatory;
@@ -1118,7 +1118,7 @@ body {
 
 /* =========================REVIEWS========================= */
 .reviews {
-  height: 21rem;
+  height: 25rem;
   border-radius: 20px;
   background-color: #2f4132;
   padding: 20px 40px;
@@ -1199,6 +1199,7 @@ body {
 /* Arrows */
 .reviews-arrow {
   position: absolute;
+  height: 29rem;
   top: 80%;
   transform: translateY(-50%);
   background: transparent;
@@ -1226,7 +1227,7 @@ body {
 /* Responsive */
 @media (max-width: 900px) {
   .reviews {
-    height: 20rem;
+    height: 25rem;
     border-radius: 20px;
     background-color: #2f4132;
     padding: 20px 40px;
