@@ -592,4 +592,88 @@ discountPrev.addEventListener("click", () => {
   scrollDiscount(-1);
 });
 
-/*========================================== */
+/*===================ACCESORIOS======================= */
+/* ===== ACCESORIOS ===== */
+
+const ACCESSORIES_URL =
+  "https://matesparana-backend-production.up.railway.app/products?sort=updatedAt_desc&visibility=visible&category=Accesorios";
+
+const accessoriesSlider = document.getElementById("accessoriesSlider");
+const accessoriesPrev = document.getElementById("accessoriesPrev");
+const accessoriesNext = document.getElementById("accessoriesNext");
+
+async function loadAccessories() {
+  try {
+    const res = await fetch(ACCESSORIES_URL);
+
+    if (!res.ok) {
+      throw new Error(`Error HTTP: ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    // Los productos vienen dentro de "products"
+    const products = data.products;
+
+    accessoriesSlider.innerHTML = "";
+
+    products.forEach((product) => {
+      const card = document.createElement("div");
+
+      card.className = "accessories-card";
+
+      card.innerHTML = `
+        <img
+          src="${product.image?.[0] || ""}"
+          alt="${product.name}"
+        >
+
+        <h3 class="accessories-name">
+          ${product.name}
+        </h3>
+
+        <span class="accessories-price">
+          ${formatPrice(product.price)}
+        </span>
+
+      `;
+
+      card.addEventListener("click", () => {
+        window.location.href = `./producto-card.html?id=${product.id}`;
+      });
+
+      accessoriesSlider.appendChild(card);
+    });
+  } catch (err) {
+    console.error("Error cargando accesorios:", err);
+  }
+}
+
+loadAccessories();
+
+/* ===== SCROLL ===== */
+
+function scrollAccessories(direction) {
+  const card = accessoriesSlider.querySelector(".accessories-card");
+
+  if (!card) return;
+
+  const gap = 18;
+
+  const distance = card.offsetWidth + gap;
+
+  accessoriesSlider.scrollBy({
+    left: direction * distance,
+    behavior: "smooth",
+  });
+}
+
+/* ===== BOTONES ===== */
+
+accessoriesNext.addEventListener("click", () => {
+  scrollAccessories(1);
+});
+
+accessoriesPrev.addEventListener("click", () => {
+  scrollAccessories(-1);
+});
