@@ -88,7 +88,27 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateReviewsSlider() {
     if (!cards.length) return;
 
+    const isMobile = window.innerWidth <= 900;
+
+    if (isMobile) {
+      const card = cards[index];
+
+      if (!card) return;
+
+      const scrollPosition =
+        card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2;
+
+      track.scrollTo({
+        left: scrollPosition,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+    // Desktop
     const cardWidth = cards[0].offsetWidth;
+
     track.style.transform = `translateX(-${index * cardWidth}px)`;
   }
 
@@ -104,6 +124,38 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ===================== INIT ===================== */
   renderReviews();
   initReviewsSlider();
+
+  /* ===================== MOBILE SWIPE ===================== */
+
+  let scrollTimeout;
+
+  track.addEventListener("scroll", () => {
+    if (window.innerWidth > 900) return;
+
+    clearTimeout(scrollTimeout);
+
+    scrollTimeout = setTimeout(() => {
+      if (!cards.length) return;
+
+      const trackCenter = track.scrollLeft + track.clientWidth / 2;
+
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+
+      cards.forEach((card, i) => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+
+        const distance = Math.abs(trackCenter - cardCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = i;
+        }
+      });
+
+      index = closestIndex;
+    }, 100);
+  });
 
   setInterval(nextReview, 4000);
   window.addEventListener("resize", updateReviewsSlider);

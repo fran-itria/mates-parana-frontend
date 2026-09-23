@@ -306,7 +306,7 @@ body {
 /*=========== INFORMACION ====================*/
 
 .informacion {
-  background: #050505;
+  background: #2f4132;
   padding: 70px 20px;
 }
 
@@ -779,7 +779,11 @@ body {
   max-width: 250px;
   background: #111;
   border-radius: 14px;
-  padding: 5px;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 8px;
+
   position: relative;
   border: 1px solid #b3b3b3;
   transition: 0.3s;
@@ -1040,7 +1044,12 @@ body {
   max-width: 230px;
   border: 1px solid #fff;
   border-radius: 16px;
-  padding: 12px;
+
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 8px;
+
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -1233,33 +1242,89 @@ body {
 /* Responsive */
 @media (max-width: 900px) {
   .reviews {
-    height: 25rem;
+    height: auto;
     border-radius: 20px;
-
-    padding: 20px 40px;
+    padding: 20px 0;
     text-align: center;
     color: #fff;
     margin-bottom: 1rem;
-    margin-top: 1rem;
+    margin-top: 2rem;
+    overflow: hidden;
   }
 
   .reviews h2 {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding: 0;
+    margin-top: 0;
+    margin-bottom: 25px;
+    padding: 0 20px;
   }
 
+  /* Contenedor visible del slider */
+  .reviews-slider {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  /* Carrusel táctil */
+  .reviews-track {
+    display: flex;
+    gap: 0;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+  }
+
+  /* Ocultar scrollbar en Chrome/Safari */
+  .reviews-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Cada tarjeta ocupa el espacio disponible */
   .review-card {
-    margin-top: 2px;
-    min-width: 100%;
+    flex: 0 0 calc(100% - 40px);
+
+    width: calc(100% - 40px);
+
+    margin: 5px 20px;
+
+    box-sizing: border-box;
+
+    scroll-snap-align: center;
   }
 
-  .reviews-arrow.left {
-    left: 10px;
+  .review-inner {
+    gap: 12px;
+    padding: 10px;
   }
 
-  .reviews-arrow.right {
-    right: 10px;
+  .review-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+
+  .review-text {
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 280px;
+  }
+
+  .review-name {
+    font-size: 11px;
+    margin-top: 10px;
+  }
+
+  /* Ocultamos las flechas en mobile */
+  .reviews-arrow {
+    display: none;
   }
 }
 
@@ -1865,4 +1930,13 @@ body {
 
 .accessories-add:hover {
   background: #d19d4c;
+}
+
+.accessories-installments {
+  font-family: var(--font-normal);
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-top: 0;
+  margin-bottom: 8px;
+  line-height: 1.3;
 }

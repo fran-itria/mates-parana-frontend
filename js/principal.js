@@ -622,21 +622,19 @@ async function loadAccessories() {
 
       card.className = "accessories-card";
 
-      card.innerHTML = `
-        <img
-          src="${product.image?.[0] || ""}"
-          alt="${product.name}"
-        >
-
-        <h3 class="accessories-name">
-          ${product.name}
-        </h3>
-
-        <span class="accessories-price">
-          ${formatPrice(product.price)}
-        </span>
-
-      `;
+      card.innerHTML = ` <img src="${product.image?.[0] || ""}" alt="${
+        product.name
+      }" > <h3 class="accessories-name"> ${
+        product.name
+      } </h3> <span class="accessories-price"> ${formatPrice(
+        product.price
+      )} </span> ${
+        Number(product.price) > 0
+          ? ` <p class="accessories-installments"> o 3 cuotas sin interés de ${formatPrice(
+              Number(product.price) / 3
+            )} c/u </p> `
+          : ""
+      } `;
 
       card.addEventListener("click", () => {
         window.location.href = `./producto-card.html?id=${product.id}`;
