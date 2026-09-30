@@ -67,7 +67,7 @@ async function loadFeatured() {
 
     featuredSlider.innerHTML = "";
 
-    products.forEach((product) => {
+    products.filter(p => p.active).forEach((product) => {
       const cardPrice = product.cardPrice;
       const price = product.price;
       const discountedPrice = product.discountedPrice;
@@ -132,7 +132,10 @@ async function loadFeatured() {
         );
       }
       card.addEventListener("click", () => {
-        window.location.href = `./producto-card.html?id=${product.id}`;
+        if (!product.defaultSelected)
+          window.location.href = `./producto-card.html?id=${product.id}`;
+        else
+          window.location.href = `./producto-card.html?id=${product.id}&type=combo`;
       });
     });
 
