@@ -67,7 +67,7 @@ async function loadFeatured() {
 
     featuredSlider.innerHTML = "";
 
-    products.forEach((product) => {
+    products.filter(p => p.active).forEach((product) => {
       const cardPrice = product.cardPrice;
       const price = product.price;
       const discountedPrice = product.discountedPrice;
