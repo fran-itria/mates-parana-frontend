@@ -168,7 +168,7 @@ const PROMOS_URL =
 const COMBOS_CATEGORY_ID = "d5308357-2ae0-4c7a-a83f-7cf7fc599a34";
 
 const SALE_URL =
-  "https://matesparana-backend-production.up.railway.app/promotions";
+  "http://matesparana-backend-production.up.railway.app/promotions?sort=updatedAt_desc";
 const slider = document.getElementById("saleSlider");
 const prevBtn = document.getElementById("salePrev");
 const nextBtn = document.getElementById("saleNext");
@@ -201,7 +201,7 @@ async function loadSales() {
 
       let discountPercentage = null;
       if (discountedPrice)
-        discountPercentage = (product.discountedPrice * 100) / product.price;
+        discountPercentage = Math.round((promo.discountedPrice * 100) / promo.price);
 
       const image =
         promo.images?.[0] ||
