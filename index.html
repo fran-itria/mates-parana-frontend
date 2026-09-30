@@ -11,6 +11,43 @@
     <link rel="stylesheet" href="./css/header.css" />
     <link rel="stylesheet" href="./css/burger.css" />
     <link rel="stylesheet" href="./css/fuentes.css" />
+
+    <!-- Meta Pixel Code -->
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        "script",
+        "https://connect.facebook.net/en_US/fbevents.js"
+      );
+      fbq("init", "1607225470866055");
+      fbq("track", "PageView");
+    </script>
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=1607225470866055&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
   </head>
   <body>
     <!--==========HEADER=========================================-->
@@ -101,6 +138,13 @@
     <!--==================================================================-->
     <section class="slider">
       <div class="slider-track">
+        <picture>
+          <source
+            media="(max-width: 768px)"
+            srcset="./css/img/baner_celu1.jpg"
+          />
+          <img src="./css/img/baner1.jpg" alt="Slide 1" />
+        </picture>
         <picture>
           <source
             media="(max-width: 768px)"
@@ -274,6 +318,25 @@
         </div>
       </section>
 
+      <!--====================ACCESORIOS=========-->
+      <section class="accessories-section">
+        <div class="accessories-header">
+          <h2 class="encabezados">Sección de Accesorios</h2>
+        </div>
+
+        <div class="accessories-wrapper">
+          <button id="accessoriesPrev" class="accessories-nav prev">
+            &#10094;
+          </button>
+
+          <div id="accessoriesSlider" class="accessories-slider"></div>
+
+          <button id="accessoriesNext" class="accessories-nav next">
+            &#10095;
+          </button>
+        </div>
+      </section>
+
       <!--======================NUESTRAS OFERTAS =========-->
       <section class="newsletter">
         <div class="newsletter__content">
@@ -314,7 +377,7 @@
       </section>
 
       <!--=================NAV INFERIOR=================-->
-      <section class="navegacion-inferior">
+      <section class="navegacion-inferior nav-inferior-principal">
         <div class="contenedor-inferior">
           <!-- SEGUINOS -->
           <div class="cubo-inferior acordeon">
