@@ -132,7 +132,10 @@ async function loadFeatured() {
         );
       }
       card.addEventListener("click", () => {
-        window.location.href = `./producto-card.html?id=${product.id}`;
+        if (!product.defaultSelected)
+          window.location.href = `./producto-card.html?id=${product.id}`;
+        else
+          window.location.href = `./producto-card.html?id=${product.id}&type=combo`;
       });
     });
 
