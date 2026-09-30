@@ -171,7 +171,7 @@ const PROMOS_URL =
 const COMBOS_CATEGORY_ID = "d5308357-2ae0-4c7a-a83f-7cf7fc599a34";
 
 const SALE_URL =
-  "https://matesparana-backend-production.up.railway.app/promotions?sort=updatedAt_desc";
+  `https://matesparana-backend-production.up.railway.app/products/find/category/Lo_más_pedido`;
 const slider = document.getElementById("saleSlider");
 const prevBtn = document.getElementById("salePrev");
 const nextBtn = document.getElementById("saleNext");
@@ -191,7 +191,7 @@ async function loadSales() {
   const res = await fetch(SALE_URL);
 
   const data = await res.json();
-  const promos = data.promotions || [];
+  const promos = data || [];
 
   slider.innerHTML = "";
 
