@@ -4,6 +4,7 @@ import { updateGalleryImage } from "../Services/updateGalleryImages.js";
 import { detectColor } from "../Services/detectColor.js";
 import { renderDetailBase } from "../Services/renderDetailBase.js";
 import { colorMap } from "../Const/const.js"
+import { hasCentralStock } from "../Services/hasCentralStock.js";
 
 /**
  * Normaliza las variedades de un producto del combo conservando el valor
@@ -192,37 +193,35 @@ export function renderComboDetail(combo, onSelectionChange) {
 
         variantsContainer.appendChild(productWrapper);
 
-        // ===== Tipos =====
-        if (availableTypes.length) {
-            const typeWrapper = document.createElement("div");
-            productWrapper.appendChild(typeWrapper);
+        const typeWrapper = document.createElement("div");
+        const colorWrapper = document.createElement("div");
 
-            s.selectedType = availableTypes[0];
-            syncVariant(s);
+        // Los colores dependen del tipo elegido, por eso se vuelven a dibujar
+        // cada vez que cambia el tipo
+        function renderColorOptions() {
+            if (!colorOptions.length) return;
 
-            renderTypes(
-                availableTypes,
-                () => updateImageByVariant(s),
-                typeWrapper,
-                (type) => {
-                    s.selectedType = type;
+            // Un color se puede elegir si hay stock en Casa Central de ese
+            // color para el tipo seleccionado (si el producto tiene tipos)
+            const disabledColors = colorOptions
+                .filter(
+                    (c) =>
+                        !s.varities.some(
+                            (v) =>
+                                v.color === c.key &&
+                                (!availableTypes.length || v.type === s.selectedType) &&
+                                hasCentralStock(v)
+                        )
+                )
+                .map((c) => c.key);
 
-                    syncVariant(s);
+            const currentKey = colorOptions.find((c) => c.raw === s.selectedColor)?.key;
 
-                    notify();
-
-                    updateImageByVariant(s);
-                }
-            );
-        }
-
-        // ===== COLORES =====
-        if (colorOptions.length) {
-            const colorWrapper = document.createElement("div");
-            productWrapper.appendChild(colorWrapper);
-
-            s.selectedColor = colorOptions[0].raw;
-            syncVariant(s);
+            // Si el color actual no tiene stock para este tipo, pasamos al primero disponible
+            if (!currentKey || disabledColors.includes(currentKey)) {
+                s.selectedColor =
+                    colorOptions.find((c) => !disabledColors.includes(c.key))?.raw || null;
+            }
 
             renderColors(
                 colorOptions.map((c) => c.key),
@@ -238,9 +237,51 @@ export function renderComboDetail(combo, onSelectionChange) {
                     notify();
 
                     updateImageByVariant(s);
-                }
+                },
+                disabledColors,
+                colorOptions.find((c) => c.raw === s.selectedColor)?.key || null
             );
         }
+
+        // ===== Tipos =====
+        if (availableTypes.length) {
+            productWrapper.appendChild(typeWrapper);
+
+            // Un tipo sin stock en Casa Central en ningún color no se puede elegir
+            const disabledTypes = availableTypes.filter(
+                (type) => !s.varities.some((v) => v.type === type && hasCentralStock(v))
+            );
+
+            s.selectedType =
+                availableTypes.find((type) => !disabledTypes.includes(type)) || null;
+
+            renderTypes(
+                availableTypes,
+                () => updateImageByVariant(s),
+                typeWrapper,
+                (type) => {
+                    s.selectedType = type;
+
+                    renderColorOptions();
+
+                    syncVariant(s);
+
+                    notify();
+
+                    updateImageByVariant(s);
+                },
+                disabledTypes
+            );
+        }
+
+        // ===== COLORES =====
+        if (colorOptions.length) {
+            productWrapper.appendChild(colorWrapper);
+
+            renderColorOptions();
+        }
+
+        syncVariant(s);
 
         updateImageByVariant(s);
     });

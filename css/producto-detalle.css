@@ -365,6 +365,17 @@ h3 {
   font-weight: bolder;
 }
 
+/* Variedades sin stock en Casa Central */
+.variant-type.disabled,
+.variant-color.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.variant-type.disabled {
+  text-decoration: line-through;
+}
+
 .gallery-main {
   position: relative;
 }

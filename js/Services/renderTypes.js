@@ -2,17 +2,27 @@ export function renderTypes(
     availableTypes,
     updateImageByVariant,
     typeWrapper,
-    onTypeChange
+    onTypeChange,
+    disabledOptions = []
 ) {
     typeWrapper.innerHTML = "<p>Tipo</p>";
 
-    availableTypes.forEach((type, i) => {
+    const firstEnabled = availableTypes.find((o) => !disabledOptions.includes(o));
+
+    availableTypes.forEach((type) => {
         const typeBtn = document.createElement("span");
 
         typeBtn.classList.add("variant-type");
         typeBtn.textContent = type;
 
-        if (i == 0) {
+        if (disabledOptions.includes(type)) {
+            typeBtn.classList.add("disabled");
+            typeBtn.title = "Sin stock";
+            typeWrapper.appendChild(typeBtn);
+            return;
+        }
+
+        if (type === firstEnabled) {
             typeBtn.classList.add("active");
         }
 

@@ -3,18 +3,34 @@ export function renderColors(
     updateImageByVariant,
     colorWrapper,
     colorMap,
-    onColorChange
+    onColorChange,
+    disabledOptions = [],
+    selectedOption = null
 ) {
     colorWrapper.innerHTML = "<p>Color</p>";
 
-    availableColors.forEach((color, i) => {
+    const firstEnabled = availableColors.find((o) => !disabledOptions.includes(o));
+
+    const activeColor =
+        selectedOption && !disabledOptions.includes(selectedOption)
+            ? selectedOption
+            : firstEnabled;
+
+    availableColors.forEach((color) => {
         const colorBtn = document.createElement("span");
 
         colorBtn.classList.add("variant-color");
 
         colorBtn.style.background = colorMap[color] || color;
 
-        if (i == 0) {
+        if (disabledOptions.includes(color)) {
+            colorBtn.classList.add("disabled");
+            colorBtn.title = "Sin stock";
+            colorWrapper.appendChild(colorBtn);
+            return;
+        }
+
+        if (color === activeColor) {
             colorBtn.classList.add("active");
         }
 

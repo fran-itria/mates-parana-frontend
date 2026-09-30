@@ -5,6 +5,7 @@ import { detectColor } from "../Services/detectColor.js";
 import { normalizeVarities } from "../Services/normalizeVarities.js";
 import { renderDetailBase } from "../Services/renderDetailBase.js";
 import { colorMap } from "../Const/const.js";
+import { hasCentralStock } from "../Services/hasCentralStock.js";
 
 export function renderProduct(
   p,
@@ -25,16 +26,45 @@ export function renderProduct(
   if (variantsContainer && varities) {
     variantsContainer.innerHTML = "";
 
-    // ✅ FUNCIÓN CORRECTA (UNA SOLA)
+    const isValid = (value) => value !== null && value !== undefined && value !== "";
+
+    const availableTypes = [...new Set(varities.map((v) => v.type))].filter(isValid);
+    const availableColors = [...new Set(varities.map((v) => v.color))].filter(isValid);
+
+    const hasTypes = availableTypes.length > 0;
+    const hasColors = availableColors.length > 0;
+
+    // Variedad que coincide con el tipo y color elegidos
+    function findVariant(type, color) {
+      return (
+        varities.find(
+          (v) => (!hasTypes || v.type === type) && (!hasColors || v.color === color)
+        ) || null
+      );
+    }
+
+    // Un color se puede elegir si hay stock en Casa Central de ese color
+    // para el tipo seleccionado (si el producto tiene tipos)
+    function getDisabledColors() {
+      return availableColors.filter(
+        (color) =>
+          !varities.some(
+            (v) =>
+              v.color === color &&
+              (!hasTypes || v.type === selectedType) &&
+              hasCentralStock(v)
+          )
+      );
+    }
+
     function updateImageByVariant() {
-      const match = varities.find((v) => {
-        if (selectedColor)
-          return v.color === selectedColor
-        else if (selectedType)
-          return v.type === selectedType
-      });
+      const match =
+        selectedVariant ||
+        varities.find((v) => {
+          if (selectedColor) return v.color === selectedColor;
+          else if (selectedType) return v.type === selectedType;
+        });
       if (match?.image) {
-        console.log(images)
         const img = match.image.replace(/\s/g, "");
 
         const index = images.findIndex((i) => i === img);
@@ -47,52 +77,27 @@ export function renderProduct(
       }
     }
 
-    // ===== Tipos =====
-    const availableTypes = [...new Set(varities.map((v) => v.type))];
-    if (
-      availableTypes.some(
-        (type) => type !== null && type !== undefined && type !== ""
-      )
-    ) {
-      const typeWrapper = document.createElement("div");
-      variantsContainer.appendChild(typeWrapper);
-
-      selectedType = availableTypes[0];
-      const match = varities.find((v) => v.type === selectedType);
-      selectedVariant = match || null;
+    function updateSelection() {
+      selectedVariant = findVariant(selectedType, selectedColor);
       onVariantChange(selectedColor, selectedType, selectedVariant);
-
-      renderTypes(
-        availableTypes,
-        updateImageByVariant,
-        typeWrapper,
-        (type) => {
-          selectedType = type;
-
-          const match = varities.find((v) => v.type === selectedType);
-
-          selectedVariant = match || null;
-
-          onVariantChange(selectedColor, selectedType, selectedVariant);
-
-          updateImageByVariant();
-        });
+      updateImageByVariant();
     }
 
-    // ===== COLORES =====
-    const availableColors = [...new Set(varities.map((v) => v.color))];
-    if (
-      availableColors.some(
-        (color) => color !== null && color !== undefined && color !== ""
-      )
-    ) {
-      const colorWrapper = document.createElement("div");
-      variantsContainer.appendChild(colorWrapper);
+    const typeWrapper = document.createElement("div");
+    const colorWrapper = document.createElement("div");
 
-      selectedColor = availableColors[0];
-      const match = varities.find((v) => v.color === selectedColor);
-      selectedVariant = match || null;
-      onVariantChange(selectedColor, selectedType, selectedVariant);
+    // Los colores dependen del tipo elegido, por eso se vuelven a dibujar
+    // cada vez que cambia el tipo
+    function renderColorOptions() {
+      if (!hasColors) return;
+
+      const disabledColors = getDisabledColors();
+
+      // Si el color actual no tiene stock para este tipo, pasamos al primero disponible
+      if (!selectedColor || disabledColors.includes(selectedColor)) {
+        selectedColor =
+          availableColors.find((color) => !disabledColors.includes(color)) || null;
+      }
 
       renderColors(
         availableColors,
@@ -101,18 +106,44 @@ export function renderProduct(
         colorMap,
         (color) => {
           selectedColor = color;
-
-          const match = varities.find((v) => v.color === selectedColor);
-
-          selectedVariant = match || null;
-
-          onVariantChange(selectedColor, selectedType, selectedVariant);
-
-          updateImageByVariant();
-        }
+          updateSelection();
+        },
+        disabledColors,
+        selectedColor
       );
     }
 
-    updateImageByVariant();
+    // ===== Tipos =====
+    if (hasTypes) {
+      variantsContainer.appendChild(typeWrapper);
+
+      // Un tipo sin stock en Casa Central en ningún color no se puede elegir
+      const disabledTypes = availableTypes.filter(
+        (type) => !varities.some((v) => v.type === type && hasCentralStock(v))
+      );
+
+      selectedType =
+        availableTypes.find((type) => !disabledTypes.includes(type)) || null;
+
+      renderTypes(
+        availableTypes,
+        updateImageByVariant,
+        typeWrapper,
+        (type) => {
+          selectedType = type;
+          renderColorOptions();
+          updateSelection();
+        },
+        disabledTypes
+      );
+    }
+
+    // ===== COLORES =====
+    if (hasColors) {
+      variantsContainer.appendChild(colorWrapper);
+      renderColorOptions();
+    }
+
+    updateSelection();
   }
 }
