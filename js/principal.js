@@ -67,8 +67,12 @@ async function loadFeatured() {
 
     featuredSlider.innerHTML = "";
 
-    const featuredList = products.filter(p => p.active);
-    window.MPTrack?.viewItemList("nos_volvimos_locos", "Nos volvimos locos", featuredList);
+    const featuredList = products.filter((p) => p.active);
+    window.MPTrack?.viewItemList(
+      "nos_volvimos_locos",
+      "Nos volvimos locos",
+      featuredList
+    );
 
     featuredList.forEach((product, featuredIndex) => {
       const cardPrice = product.cardPrice;
@@ -89,41 +93,63 @@ async function loadFeatured() {
         "/img/placeholder.png";
 
       card.innerHTML = `
-        <img src="${image}" alt="${product.name}">
-        <h3 class="featured-name">${product.name}</h3>
-        ${discountPercentage && discountedPrice
+  <img src="${image}" alt="${product.name}">
+
+  <h3 class="featured-name">${product.name}</h3>
+
+  <div class="prices-transfer-section">
+
+    <div class="featured-price-row">
+
+      ${
+        Number(discountedPrice) > 0
           ? `
-          <span class="featured-badge">
-            <span class="featured-value">${discountPercentage}%</span>
-            <span class="featured-text">OFF</span>
+            <span class="featured-price">
+              ${formatPrice(discountedPrice)}
+            </span>
+          `
+          : `
+            <span class="featured-price">
+              ${formatPrice(price)}
+            </span>
+          `
+      }
+
+      ${
+        discountPercentage && discountedPrice
+          ? `
+            <span class="featured-badge">
+              <span class="featured-value">${discountPercentage}%</span>
+              <span class="featured-text">OFF</span>
+            </span>
+          `
+          : ""
+      }
+
+    </div>
+
+    ${
+      Number(discountedPrice) > 0
+        ? `
+          <span class="featured-price-through">
+            ${formatPrice(price)}
           </span>
-          `
-          : ""
-        }
-        <div class="prices-transfer-section">
-          <div class="prices-transfer-container">
-            ${Number(discountedPrice) > 0
-          ? `
-              <span class="featured-price">${formatPrice(
-            discountedPrice
-          )}</span>
-              `
-          : ""
-        }
-            <span class="featured-price featured-price-transfer">${formatPrice(
-          price
-        )}</span>
-          </div>
-        </div>
-        ${cardPrice
-          ? `
-            <p class="featured-old">o 3 cuotas sin interés de ${formatPrice(
-            cardPrice / 3
-          )} c/u</p>
-          `
-          : ""
-        }
-      `;
+        `
+        : ""
+    }
+
+  </div>
+
+  ${
+    cardPrice
+      ? `
+        <p class="featured-old">
+          o 3 cuotas sin interés de ${formatPrice(cardPrice / 3)} c/u
+        </p>
+      `
+      : ""
+  }
+`;
 
       featuredSlider.appendChild(card);
 
@@ -135,7 +161,13 @@ async function loadFeatured() {
         );
       }
       card.addEventListener("click", () => {
-        window.MPTrack?.selectItem("nos_volvimos_locos", "Nos volvimos locos", product, featuredIndex, { isCombo: Boolean(product.defaultSelected) });
+        window.MPTrack?.selectItem(
+          "nos_volvimos_locos",
+          "Nos volvimos locos",
+          product,
+          featuredIndex,
+          { isCombo: Boolean(product.defaultSelected) }
+        );
         if (!product.defaultSelected)
           window.location.href = `./producto-card.html?id=${product.id}`;
         else
@@ -163,7 +195,7 @@ async function loadFeatured() {
         });
       });
     }
-  } catch (err) { }
+  } catch (err) {}
 }
 
 loadFeatured();
@@ -174,8 +206,7 @@ const PROMOS_URL =
 
 const COMBOS_CATEGORY_ID = "d5308357-2ae0-4c7a-a83f-7cf7fc599a34";
 
-const SALE_URL =
-  `https://matesparana-backend-production.up.railway.app/products/find/category/Lo_más_pedido`;
+const SALE_URL = `https://matesparana-backend-production.up.railway.app/products/find/category/Lo_más_pedido`;
 const slider = document.getElementById("saleSlider");
 const prevBtn = document.getElementById("salePrev");
 const nextBtn = document.getElementById("saleNext");
@@ -200,79 +231,91 @@ async function loadSales() {
   slider.innerHTML = "";
 
   const saleList = promos.filter((p) => p.active);
-  window.MPTrack?.viewItemList("lo_mas_pedido", "Lo más pedido", saleList, { isCombo: true });
+  window.MPTrack?.viewItemList("lo_mas_pedido", "Lo más pedido", saleList, {
+    isCombo: true,
+  });
 
-  saleList
-    .forEach((promo, saleIndex) => {
-      const cardPrice = promo.cardPrice;
-      const price = promo.price;
-      const discountedPrice = promo.discountedPrice;
+  saleList.forEach((promo, saleIndex) => {
+    const cardPrice = promo.cardPrice;
+    const price = promo.price;
+    const discountedPrice = promo.discountedPrice;
 
-      let discountPercentage = null;
-      if (discountedPrice)
-        discountPercentage = Math.round((promo.discountedPrice * 100) / promo.price);
+    let discountPercentage = null;
+    if (discountedPrice)
+      discountPercentage = Math.round(
+        (promo.discountedPrice * 100) / promo.price
+      );
 
-      const image =
-        promo.images?.[0] ||
-        promo.image?.[0] ||
-        promo.image ||
-        "/img/placeholder.png";
+    const image =
+      promo.images?.[0] ||
+      promo.image?.[0] ||
+      promo.image ||
+      "/img/placeholder.png";
 
-      const card = document.createElement("div");
-      card.className = "featured-card";
+    const card = document.createElement("div");
+    card.className = "featured-card";
 
-      card.innerHTML = `
+    card.innerHTML = `
         <img src="${image}" alt="${promo.name}">
         <h3 class="featured-name">${promo.name}</h3>
-        ${discountPercentage && discountedPrice
-          ? `
+        ${
+          discountPercentage && discountedPrice
+            ? `
           <span class="featured-badge">
             <span class="featured-value">${discountPercentage}%</span>
             <span class="featured-text">OFF</span>
           </span>
           `
-          : ""
+            : ""
         }
         <div class="prices-transfer-section">
           <div class="prices-transfer-container">
-            ${Number(discountedPrice) > 0
-          ? `
+            ${
+              Number(discountedPrice) > 0
+                ? `
               <span class="featured-price">${formatPrice(
-            discountedPrice
-          )}</span>
+                discountedPrice
+              )}</span>
               `
-          : ""
-        }
+                : ""
+            }
             <span class="featured-price featured-price-transfer">${formatPrice(
-          price
-        )}</span>
+              price
+            )}</span>
           </div>
         </div>
-        ${cardPrice
-          ? `
+        ${
+          cardPrice
+            ? `
             <p class="featured-old">o 3 cuotas sin interés de ${formatPrice(
-            cardPrice / 3
-          )} c/u</p>
+              cardPrice / 3
+            )} c/u</p>
           `
-          : ""
+            : ""
         }
       `;
 
-      slider.appendChild(card);
+    slider.appendChild(card);
 
-      const priceElement = card.querySelector(".featured-price-transfer");
-      if (priceElement && discountedPrice) {
-        priceElement.classList.replace(
-          "featured-price",
-          "featured-price-through"
-        );
-      }
+    const priceElement = card.querySelector(".featured-price-transfer");
+    if (priceElement && discountedPrice) {
+      priceElement.classList.replace(
+        "featured-price",
+        "featured-price-through"
+      );
+    }
 
-      card.addEventListener("click", () => {
-        window.MPTrack?.selectItem("lo_mas_pedido", "Lo más pedido", promo, saleIndex, { isCombo: true });
-        window.location.href = `./producto-card.html?id=${promo.id}&type=combo`;
-      });
+    card.addEventListener("click", () => {
+      window.MPTrack?.selectItem(
+        "lo_mas_pedido",
+        "Lo más pedido",
+        promo,
+        saleIndex,
+        { isCombo: true }
+      );
+      window.location.href = `./producto-card.html?id=${promo.id}&type=combo`;
     });
+  });
 
   // 🔥 activar drag después de renderizar
   const card = slider.querySelector(".featured-card");
@@ -586,13 +629,18 @@ async function loadDiscounts() {
       `;
 
       card.addEventListener("click", () => {
-        window.MPTrack?.selectItem("home_yerbas", "Yerbas", product, discountIndex);
+        window.MPTrack?.selectItem(
+          "home_yerbas",
+          "Yerbas",
+          product,
+          discountIndex
+        );
         window.location.href = `./producto-card.html?id=${product.id}`;
       });
 
       discountSlider.appendChild(card);
     });
-  } catch (err) { }
+  } catch (err) {}
 }
 
 loadDiscounts();
@@ -651,19 +699,27 @@ async function loadAccessories() {
 
       card.className = "accessories-card";
 
-      card.innerHTML = ` <img src="${product.image?.[0] || ""}" alt="${product.name
-        }" > <h3 class="accessories-name"> ${product.name
-        } </h3> <span class="accessories-price"> ${formatPrice(
-          product.price
-        )} </span> ${Number(product.price) > 0
+      card.innerHTML = ` <img src="${product.image?.[0] || ""}" alt="${
+        product.name
+      }" > <h3 class="accessories-name"> ${
+        product.name
+      } </h3> <span class="accessories-price"> ${formatPrice(
+        product.price
+      )} </span> ${
+        Number(product.price) > 0
           ? ` <p class="accessories-installments"> o 3 cuotas sin interés de ${formatPrice(
-            Number(product.price) / 3
-          )} c/u </p> `
+              Number(product.price) / 3
+            )} c/u </p> `
           : ""
-        } `;
+      } `;
 
       card.addEventListener("click", () => {
-        window.MPTrack?.selectItem("home_accesorios", "Accesorios", product, accessoriesIndex);
+        window.MPTrack?.selectItem(
+          "home_accesorios",
+          "Accesorios",
+          product,
+          accessoriesIndex
+        );
         window.location.href = `./producto-card.html?id=${product.id}`;
       });
 

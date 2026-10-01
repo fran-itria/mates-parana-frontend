@@ -812,25 +812,6 @@ body {
   gap: 0.5rem;
 }
 
-.featured-badge {
-  position: absolute;
-  bottom: 114px;
-  left: 16px;
-  background: #ff0000;
-  color: #fff;
-  padding: 10px 10px;
-  border-radius: 0.7rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: fit-content;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  line-height: 1;
-}
-
 .featured-value {
   font-size: 13px;
   font-weight: 700;
@@ -862,25 +843,71 @@ body {
   padding-inline: 5px;
 }
 
-.featured-price {
-  font-family: var(--font-normal);
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 10px;
+.prices-transfer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+  padding-inline: 5px;
 }
 
-.featured-price-transfer-text {
-  display: none;
-  font-size: 0.85rem;
-  color: #aaa;
+.featured-price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+
+.featured-price {
+  font-family: var(--font-normal);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* % OFF */
+
+.featured-badge {
+  position: static;
+
+  background: #ff0000;
+  color: #fff;
+
+  padding: 5px 8px;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+  width: fit-content;
+
+  line-height: 1;
+  flex-direction: row;
+}
+
+.featured-value {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.featured-text {
+  font-family: var(--font-normal);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Precio original tachado */
 
 .featured-price-through {
   font-family: var(--font-normal);
   font-size: 0.85rem;
   color: #aaa;
+
   text-decoration: line-through;
-  margin-top: 10px;
+
+  margin: 0;
 }
 
 .featured-old {
@@ -1034,49 +1061,6 @@ body {
     margin-top: 20px;
     background-color: #2f4132;
     border-radius: 15px;
-  }
-
-  .featured-badge {
-    position: absolute;
-    bottom: 130px;
-    left: 16px;
-    background: #ff0000;
-    color: #fff;
-    padding: 10px 10px;
-    border-radius: 0.7rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: fit-content;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    line-height: 1;
-  }
-}
-
-/* =====================================
-   NOTEBOOKS 13" (MacBook Air / Neo)
-===================================== */
-@media (min-width: 1025px) and (max-width: 1440px) {
-  .featured-badge {
-    position: absolute;
-    bottom: 135px;
-    left: 16px;
-    background: #ff0000;
-    color: #fff;
-    padding: 10px 10px;
-    border-radius: 0.7rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: fit-content;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    line-height: 1;
   }
 }
 
