@@ -67,7 +67,10 @@ async function loadFeatured() {
 
     featuredSlider.innerHTML = "";
 
-    products.filter(p => p.active).forEach((product) => {
+    const featuredList = products.filter(p => p.active);
+    window.MPTrack?.viewItemList("nos_volvimos_locos", "Nos volvimos locos", featuredList);
+
+    featuredList.forEach((product, featuredIndex) => {
       const cardPrice = product.cardPrice;
       const price = product.price;
       const discountedPrice = product.discountedPrice;
@@ -132,6 +135,7 @@ async function loadFeatured() {
         );
       }
       card.addEventListener("click", () => {
+        window.MPTrack?.selectItem("nos_volvimos_locos", "Nos volvimos locos", product, featuredIndex, { isCombo: Boolean(product.defaultSelected) });
         if (!product.defaultSelected)
           window.location.href = `./producto-card.html?id=${product.id}`;
         else
@@ -195,9 +199,11 @@ async function loadSales() {
 
   slider.innerHTML = "";
 
-  promos
-    .filter((p) => p.active)
-    .forEach((promo) => {
+  const saleList = promos.filter((p) => p.active);
+  window.MPTrack?.viewItemList("lo_mas_pedido", "Lo más pedido", saleList, { isCombo: true });
+
+  saleList
+    .forEach((promo, saleIndex) => {
       const cardPrice = promo.cardPrice;
       const price = promo.price;
       const discountedPrice = promo.discountedPrice;
@@ -263,6 +269,7 @@ async function loadSales() {
       }
 
       card.addEventListener("click", () => {
+        window.MPTrack?.selectItem("lo_mas_pedido", "Lo más pedido", promo, saleIndex, { isCombo: true });
         window.location.href = `./producto-card.html?id=${promo.id}&type=combo`;
       });
     });
@@ -338,6 +345,26 @@ if (bannerTrack && bannerSlides.length > 0) {
   function updateDots() {
     dots.forEach((dot, i) => {
       dot.classList.toggle("active", i === bannerIndex);
+    });
+
+    trackBannerView(bannerIndex);
+  }
+
+  // Tracking: view_promotion una sola vez por banner
+  const viewedBanners = new Set();
+
+  function trackBannerView(i) {
+    if (viewedBanners.has(i)) return;
+    viewedBanners.add(i);
+
+    const img = bannerSlides[i]?.querySelector("img");
+    const creative = (img?.getAttribute("src") || "").split("/").pop();
+
+    window.MPTrack?.viewPromotion({
+      promotion_id: `banner_home_${i + 1}`,
+      promotion_name: img?.getAttribute("alt") || `Banner ${i + 1}`,
+      creative_name: creative,
+      creative_slot: `home_slider_${i + 1}`,
     });
   }
 
@@ -533,7 +560,9 @@ async function loadDiscounts() {
 
     discountSlider.innerHTML = "";
 
-    products.forEach((product) => {
+    window.MPTrack?.viewItemList("home_yerbas", "Yerbas", products);
+
+    products.forEach((product, discountIndex) => {
       const card = document.createElement("div");
       card.className = "discount-card";
 
@@ -557,6 +586,7 @@ async function loadDiscounts() {
       `;
 
       card.addEventListener("click", () => {
+        window.MPTrack?.selectItem("home_yerbas", "Yerbas", product, discountIndex);
         window.location.href = `./producto-card.html?id=${product.id}`;
       });
 
@@ -614,7 +644,9 @@ async function loadAccessories() {
 
     accessoriesSlider.innerHTML = "";
 
-    products.forEach((product) => {
+    window.MPTrack?.viewItemList("home_accesorios", "Accesorios", products);
+
+    products.forEach((product, accessoriesIndex) => {
       const card = document.createElement("div");
 
       card.className = "accessories-card";
@@ -631,6 +663,7 @@ async function loadAccessories() {
         } `;
 
       card.addEventListener("click", () => {
+        window.MPTrack?.selectItem("home_accesorios", "Accesorios", product, accessoriesIndex);
         window.location.href = `./producto-card.html?id=${product.id}`;
       });
 

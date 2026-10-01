@@ -76,6 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         cartPanel.classList.add("active");
         cartOverlay.classList.add("active");
+
+        window.MPTrack?.viewCart(cart);
       }
     });
   }
@@ -200,6 +202,10 @@ document.addEventListener("DOMContentLoaded", () => {
     touchBackendCart();
     saveCart();
 
+    window.MPTrack?.addToCart(
+      cart.find((p) => p.cartKey === cartKey),
+      product.qty || 1
+    );
 
     cartPanel.classList.add("active");
     cartOverlay.classList.add("active");
@@ -227,13 +233,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     touchBackendCart();
     saveCart();
+
+    if (amount > 0) {
+      window.MPTrack?.addToCart(item, amount);
+    } else {
+      window.MPTrack?.removeFromCart(item, Math.abs(amount));
+    }
   };
 
   window.removeItem = function (cartKey) {
+    const removed = cart.find((p) => p.cartKey === cartKey);
+
     cart = cart.filter((p) => p.cartKey !== cartKey);
 
     touchBackendCart();
     saveCart();
+
+    if (removed) {
+      window.MPTrack?.removeFromCart(removed, removed.qty);
+    }
   };
 
   const checkoutBtn = document.querySelector(".checkout-btn");

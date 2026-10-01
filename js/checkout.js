@@ -82,6 +82,9 @@ let paymentMethod = "transfer";
 // Envío seleccionado durante el checkout
 let selectedShipping = null;
 
+// Total que se muestra en el resumen, como número
+let summaryTotalValue = 0;
+
 /* =========================
    USER DATA
 ========================= */
@@ -202,6 +205,8 @@ function updateSummary(subtotal) {
 
 
   const total = subtotal + shippingCost;
+
+  summaryTotalValue = total;
 
   summaryTotal.textContent = `$${total.toLocaleString("es-AR")}`;
 
@@ -333,7 +338,22 @@ function renderAgencyOptions(
   });
 }
 
-function setSelectedShipping({
+function setSelectedShipping(shippingData) {
+  // null limpia la selección (por ejemplo, al volver a "Seleccioná tu ciudad")
+  if (!shippingData) {
+    selectedShipping = null;
+
+    updateSummary(getSubtotal());
+
+    trackShippingInfo();
+
+    return;
+  }
+
+  applySelectedShipping(shippingData);
+}
+
+function applySelectedShipping({
   postalCode = "",
   province = "",
   type = null,
@@ -355,6 +375,67 @@ function setSelectedShipping({
   };
 
   updateSummary(getSubtotal());
+
+  trackShippingInfo();
+}
+
+/* =========================
+   TRACKING (GA4 / META)
+========================= */
+
+const SHIPPING_TIER_NAMES = {
+  home: "Envío a domicilio",
+  cadete: "Envío por cadete",
+  agency: "Retiro en Correo Argentino",
+  local: "Retiro en local",
+  "Casa Central": "Retiro en Casa Central",
+  "Sucursal Urquiza": "Retiro en Sucursal Urquiza",
+};
+
+const PAYMENT_TYPE_NAMES = {
+  transfer: "Transferencia",
+  card: "Tarjeta",
+};
+
+let lastTrackedShipping = null;
+let lastTrackedPayment = null;
+
+function trackShippingInfo() {
+  const type = selectedShipping?.type;
+
+  if (!type) {
+    lastTrackedShipping = null;
+    return;
+  }
+
+  if (type === lastTrackedShipping) return;
+  lastTrackedShipping = type;
+
+  window.MPTrack?.addShippingInfo(cart, SHIPPING_TIER_NAMES[type] || type, {
+    useCardPrice: paymentMethod === "card",
+  });
+}
+
+function trackPaymentInfo() {
+  if (!paymentMethod || paymentMethod === lastTrackedPayment) return;
+  lastTrackedPayment = paymentMethod;
+
+  window.MPTrack?.addPaymentInfo(
+    cart,
+    PAYMENT_TYPE_NAMES[paymentMethod] || paymentMethod,
+    { useCardPrice: paymentMethod === "card" }
+  );
+}
+
+// Costo de envío con la misma regla que updateSummary
+function getTrackedShippingCost() {
+  let shippingCost = selectedShipping ? selectedShipping.price || 0 : 0;
+
+  if (getSubtotal() >= 80000 && selectedShipping?.type !== "local") {
+    shippingCost = 0;
+  }
+
+  return shippingCost;
 }
 
 function renderPreShippingOptions() {
@@ -900,6 +981,8 @@ function renderProducts() {
 
 renderProducts();
 
+window.MPTrack?.beginCheckout(cart);
+
 /* =========================
    DELIVERY
 ========================= */
@@ -942,6 +1025,8 @@ paymentBtns.forEach((btn) => {
     }
 
     renderProducts()
+
+    trackPaymentInfo();
   });
 });
 
@@ -1260,7 +1345,7 @@ confirmOrderBtn.addEventListener("click", async () => {
       alert("Primero calculá y seleccioná un método de envío.");
       return;
     }
-    const totalValue = Number(summaryTotal.textContent.replace("$", ""))
+    const totalValue = summaryTotalValue;
 
     const orderBody = {
       userId: user?.id || null,
@@ -1289,6 +1374,9 @@ confirmOrderBtn.addEventListener("click", async () => {
       alert("Colocar dirección de envío");
     }
 
+    // Si el usuario no tocó el medio de pago (transferencia por defecto)
+    trackPaymentInfo();
+
     const res = await fetch(`${API_BASE_PRODUCCION}/orders`, {
       method: "POST",
 
@@ -1310,6 +1398,17 @@ confirmOrderBtn.addEventListener("click", async () => {
     localStorage.setItem("trackingToken", data.trackingToken);
 
     localStorage.setItem("lastOrderId", createdOrder.id);
+
+    // Datos para el evento "purchase" (se dispara en esperando-pago
+    // cuando el pago queda confirmado)
+    window.MPTrack?.savePendingPurchase({
+      transactionId: createdOrder.id,
+      cart,
+      useCardPrice: paymentMethod === "card",
+      shipping: getTrackedShippingCost(),
+      email,
+      phone,
+    });
 
     if (paymentMethod === "card") {
       const token = await createCardToken();
