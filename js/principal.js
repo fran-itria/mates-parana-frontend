@@ -582,7 +582,7 @@ document.querySelectorAll(".acordeon-btn").forEach((btn) => {
 
 /* ===== DESCUENTOS ===== */
 const DISCOUNT_URL =
-  "https://matesparana-backend-production.up.railway.app/products?sort=updatedAt_desc&visibility=visible&category=Yerbas";
+  "https://matesparana-backend-production.up.railway.app/products/find/category/Yerbas";
 
 const discountSlider = document.getElementById("discountSlider");
 const discountPrev = document.getElementById("discountPrev");
@@ -599,7 +599,7 @@ async function loadDiscounts() {
     const data = await res.json();
 
     // Los productos vienen dentro de "products"
-    const products = data.products;
+    const products = data;
 
     discountSlider.innerHTML = "";
 
