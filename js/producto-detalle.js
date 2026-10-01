@@ -35,6 +35,8 @@ async function getProductDetail() {
       comboSelections = selections;
     });
 
+    window.MPTrack?.viewItem(data, { isCombo: true });
+
     return;
   } else {
     const res = await fetch(
@@ -58,6 +60,8 @@ async function getProductDetail() {
         selectedVariant = variant;
       }
     );
+
+    window.MPTrack?.viewItem(data);
   }
   renderSimilar(data);
   renderComplementProducts(data);
@@ -79,6 +83,8 @@ function renderSimilar(p) {
     container.innerHTML = "";
     return;
   }
+
+  trackProductList(container, "productos_similares", "Productos similares", similares);
 
   container.innerHTML = similares
     .map((prod) => {
@@ -132,6 +138,8 @@ function renderComplementProducts(p) {
     return;
   }
 
+  trackProductList(container, "comprar_con_este_producto", "Para comprar con este producto", complementos);
+
   container.innerHTML = complementos
     .map((prod) => {
       const image = Array.isArray(prod.image)
@@ -165,6 +173,28 @@ function renderComplementProducts(p) {
     })
     .join("");
 }
+/* ================= TRACKING DE LISTADOS ================= */
+
+function trackProductList(container, listId, listName, list) {
+  window.MPTrack?.viewItemList(listId, listName, list);
+
+  // Se registra una sola vez por contenedor
+  if (container.dataset.trackSelect) return;
+  container.dataset.trackSelect = "1";
+
+  container.addEventListener("click", (e) => {
+    const card = e.target.closest(".product-card");
+    if (!card) return;
+
+    const cards = [...container.querySelectorAll(".product-card")];
+    const index = cards.indexOf(card);
+
+    if (list[index]) {
+      window.MPTrack?.selectItem(listId, listName, list[index], index);
+    }
+  });
+}
+
 /*=========================
 CALCULO DE ENVIO
 ==========================*/

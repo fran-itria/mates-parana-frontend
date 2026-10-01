@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
           price: p.discountedPrice ?? p.price,
           image: (p.image?.[0] || "").replace(/\s/g, ""),
           category: inferCategory(p), // 👈 CLAVE
+          raw: p,
         }));
     } catch (err) {}
 
@@ -81,6 +82,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const searchInput = document.getElementById("searchInput");
   const searchResults = document.getElementById("searchResults");
+
+  // Tracking: la búsqueda se registra cuando el usuario deja de escribir
+  let searchTrackTimeout = null;
+  let lastTrackedSearch = "";
+  let lastSearchResults = [];
+
+  function trackSearch(query, results) {
+    clearTimeout(searchTrackTimeout);
+
+    searchTrackTimeout = setTimeout(() => {
+      if (query.length < 3 || query === lastTrackedSearch) return;
+      lastTrackedSearch = query;
+
+      window.MPTrack?.search(query);
+      window.MPTrack?.viewItemList(
+        "resultados_busqueda",
+        "Resultados de búsqueda",
+        results.map((p) => p.raw || p)
+      );
+    }, 1000);
+  }
 
   if (searchInput) {
     searchInput.addEventListener("input", () => {
@@ -96,6 +118,26 @@ document.addEventListener("DOMContentLoaded", () => {
         .slice(0, 6);
 
       renderSearchResults(results);
+
+      lastSearchResults = results;
+      trackSearch(query, results);
+    });
+
+    searchResults?.addEventListener("click", (e) => {
+      const link = e.target.closest(".search-item");
+      if (!link) return;
+
+      const index = [...searchResults.querySelectorAll(".search-item")].indexOf(link);
+      const product = lastSearchResults[index];
+
+      if (product) {
+        window.MPTrack?.selectItem(
+          "resultados_busqueda",
+          "Resultados de búsqueda",
+          product.raw || product,
+          index
+        );
+      }
     });
 
     document.addEventListener("click", (e) => {

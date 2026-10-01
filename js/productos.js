@@ -167,9 +167,28 @@ function renderProducts(list, append = false) {
 
   const slice = list.slice(lastRenderedCount, visibleCount);
 
-  slice.forEach((p) => {
+  const trackList = getTrackingList();
+  const startIndex = lastRenderedCount;
+
+  window.MPTrack?.viewItemList(
+    trackList.id,
+    trackList.name,
+    slice.map((p) => p.raw || p),
+    { startIndex }
+  );
+
+  slice.forEach((p, i) => {
     const card = document.createElement("div");
     card.className = "product-card fade-in";
+
+    card.addEventListener("click", () => {
+      window.MPTrack?.selectItem(
+        trackList.id,
+        trackList.name,
+        p.raw || p,
+        startIndex + i
+      );
+    });
 
     card.innerHTML = `
       <a href="./producto-card.html?id=${p.id}" class="product-link">
@@ -206,6 +225,18 @@ function renderProducts(list, append = false) {
   });
 
   lastRenderedCount = visibleCount;
+}
+
+// Nombre del listado actual para el tracking (categoría o todos)
+function getTrackingList() {
+  if (currentCategory === "all") {
+    return { id: "todos_los_productos", name: "Todos los productos" };
+  }
+
+  return {
+    id: `categoria_${currentCategory.toLowerCase().replace(/\s+/g, "_")}`,
+    name: currentCategory,
+  };
 }
 
 window.addEventListener("scroll", () => {

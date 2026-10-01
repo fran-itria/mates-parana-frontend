@@ -414,6 +414,9 @@ function mostrarDatosTransferencia(order) {
 ========================================================= */
 
 function mostrarPagoAprobado() {
+  // Tracking: "purchase" una sola vez por orden
+  window.MPTrack?.purchaseFromPending(lastOrderId);
+
   const icon = document.getElementById("orderIcon");
 
   const title = document.getElementById("orderTitle");
