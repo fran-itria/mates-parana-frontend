@@ -101,8 +101,7 @@ async function loadFeatured() {
 
     <div class="featured-price-row">
 
-      ${
-        Number(discountedPrice) > 0
+      ${Number(discountedPrice) > 0
           ? `
             <span class="featured-price">
               ${formatPrice(discountedPrice)}
@@ -113,10 +112,9 @@ async function loadFeatured() {
               ${formatPrice(price)}
             </span>
           `
-      }
+        }
 
-      ${
-        discountPercentage && discountedPrice
+      ${discountPercentage && discountedPrice
           ? `
             <span class="featured-badge">
               <span class="featured-value">${discountPercentage}%</span>
@@ -124,31 +122,29 @@ async function loadFeatured() {
             </span>
           `
           : ""
-      }
+        }
 
     </div>
 
-    ${
-      Number(discountedPrice) > 0
-        ? `
+    ${Number(discountedPrice) > 0
+          ? `
           <span class="featured-price-through">
             ${formatPrice(price)}
           </span>
         `
-        : ""
-    }
+          : ""
+        }
 
   </div>
 
-  ${
-    cardPrice
-      ? `
+  ${cardPrice
+          ? `
         <p class="featured-old">
           o 3 cuotas sin interés de ${formatPrice(cardPrice / 3)} c/u
         </p>
       `
-      : ""
-  }
+          : ""
+        }
 `;
 
       featuredSlider.appendChild(card);
@@ -195,7 +191,7 @@ async function loadFeatured() {
         });
       });
     }
-  } catch (err) {}
+  } catch (err) { }
 }
 
 loadFeatured();
@@ -258,41 +254,38 @@ async function loadSales() {
     card.innerHTML = `
         <img src="${image}" alt="${promo.name}">
         <h3 class="featured-name">${promo.name}</h3>
-        ${
-          discountPercentage && discountedPrice
-            ? `
+        ${discountPercentage && discountedPrice
+        ? `
           <span class="featured-badge">
             <span class="featured-value">${discountPercentage}%</span>
             <span class="featured-text">OFF</span>
           </span>
           `
-            : ""
-        }
+        : ""
+      }
         <div class="prices-transfer-section">
           <div class="prices-transfer-container">
-            ${
-              Number(discountedPrice) > 0
-                ? `
+            ${Number(discountedPrice) > 0
+        ? `
               <span class="featured-price">${formatPrice(
-                discountedPrice
-              )}</span>
+          discountedPrice
+        )}</span>
               `
-                : ""
-            }
+        : ""
+      }
             <span class="featured-price featured-price-transfer">${formatPrice(
-              price
-            )}</span>
+        price
+      )}</span>
           </div>
         </div>
-        ${
-          cardPrice
-            ? `
+        ${cardPrice
+        ? `
             <p class="featured-old">o 3 cuotas sin interés de ${formatPrice(
-              cardPrice / 3
-            )} c/u</p>
+          cardPrice / 3
+        )} c/u</p>
           `
-            : ""
-        }
+        : ""
+      }
       `;
 
     slider.appendChild(card);
@@ -605,7 +598,7 @@ async function loadDiscounts() {
 
     window.MPTrack?.viewItemList("home_yerbas", "Yerbas", products);
 
-    products.forEach((product, discountIndex) => {
+    products.filter(p => p.active).forEach((product, discountIndex) => {
       const card = document.createElement("div");
       card.className = "discount-card";
 
@@ -640,7 +633,7 @@ async function loadDiscounts() {
 
       discountSlider.appendChild(card);
     });
-  } catch (err) {}
+  } catch (err) { }
 }
 
 loadDiscounts();
@@ -699,19 +692,16 @@ async function loadAccessories() {
 
       card.className = "accessories-card";
 
-      card.innerHTML = ` <img src="${product.image?.[0] || ""}" alt="${
-        product.name
-      }" > <h3 class="accessories-name"> ${
-        product.name
-      } </h3> <span class="accessories-price"> ${formatPrice(
-        product.price
-      )} </span> ${
-        Number(product.price) > 0
+      card.innerHTML = ` <img src="${product.image?.[0] || ""}" alt="${product.name
+        }" > <h3 class="accessories-name"> ${product.name
+        } </h3> <span class="accessories-price"> ${formatPrice(
+          product.price
+        )} </span> ${Number(product.price) > 0
           ? ` <p class="accessories-installments"> o 3 cuotas sin interés de ${formatPrice(
-              Number(product.price) / 3
-            )} c/u </p> `
+            Number(product.price) / 3
+          )} c/u </p> `
           : ""
-      } `;
+        } `;
 
       card.addEventListener("click", () => {
         window.MPTrack?.selectItem(
