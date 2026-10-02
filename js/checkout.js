@@ -1,6 +1,5 @@
 import {
-  API_BASE_PRODUCCION,
-  API_BASE_PRUEBA,
+  API_BASE,
   PAYWAY_API_KEY_PRODUCCION,
   PAYWAY_API_KEY_SANDBOX,
   PAYWAY_URL_PRODUCCION,
@@ -109,7 +108,7 @@ async function calculateShipping() {
 
   try {
     const response = await fetch(
-      `${API_BASE_PRODUCCION}/orders/delivered-price/${postalCode}`
+      `${API_BASE}/orders/delivered-price/${postalCode}`
     );
 
     if (!response.ok) {
@@ -154,11 +153,20 @@ if (calcShippingBtn) {
   calcShippingBtn.addEventListener("click", calculateShipping);
 }
 
+// Precio unitario según el medio de pago, sumando el grabado si corresponde
+// (con tarjeta el grabado también lleva el 15%, igual que en la ficha)
+function getItemUnitPrice(item, useCardPrice = false) {
+  const engraving = item.engravingPrice || 0;
+  if (useCardPrice) return item.cardPrice + Math.round(engraving * 1.15);
+  return (item.discountedPrice || item.price) + engraving;
+}
+
+// Subtotal de productos según el medio de pago elegido (el envío no lleva el 15%)
 function getSubtotal() {
   let subtotal = 0;
 
   cart.forEach((item) => {
-    subtotal += (item.discountedPrice || item.price) * item.qty;
+    subtotal += getItemUnitPrice(item, paymentMethod == "card") * item.qty;
   });
 
   return subtotal;
@@ -210,6 +218,10 @@ function updateSummary(subtotal) {
 
   summaryTotal.textContent = `$${total.toLocaleString("es-AR")}`;
 
+  // Se quita el texto de cuotas anterior para no duplicarlo
+  document.getElementById("card-text-element")?.remove();
+  document.getElementById("card-text-element-2")?.remove();
+
   if (paymentMethod == "card") {
     const containerResume = document.getElementsByClassName("summary-total")
     const cardTextElement = document.createElement("p")
@@ -221,13 +233,6 @@ function updateSummary(subtotal) {
     cardTextElement.classList.add("card-text-information")
     containerResume[0].appendChild(cardTextElement)
     containerResume[0].appendChild(strongText)
-  } else {
-    const removeElement = document.getElementById("card-text-element")
-    const removeElement2 = document.getElementById("card-text-element-2")
-    if (removeElement && removeElement2) {
-      removeElement.remove()
-      removeElement2.remove()
-    }
   }
 }
 
@@ -672,7 +677,7 @@ async function loadCadeteOptions() {
 
   try {
     const response = await fetch(
-      `${API_BASE_PRODUCCION}/orders/delivered-price/E3100`
+      `${API_BASE}/orders/delivered-price/E3100`
     );
 
     if (!response.ok) {
@@ -944,7 +949,8 @@ function renderProducts() {
   let subtotal = 0;
 
   cart.forEach((item) => {
-    subtotal += (paymentMethod != "card" ? (item.discountedPrice || item.price) : item.cardPrice) * item.qty;
+    const unitPrice = getItemUnitPrice(item, paymentMethod == "card");
+    subtotal += unitPrice * item.qty;
     summaryProducts.innerHTML += `
                     <div class="summary-item">
                       <img src="${item.image}" />
@@ -966,11 +972,12 @@ function renderProducts() {
             }`
         )
         .join("")}
+                          ${item.engraved ? "<br>Con grabado" : ""}
                         </p>
                       </div>
 
                       <div class="summary-item-price">
-                        $${((paymentMethod != "card" ? (item.discountedPrice || item.price) : item.cardPrice) * item.qty).toLocaleString("es-AR")}
+                        $${(unitPrice * item.qty).toLocaleString("es-AR")}
                       </div>
                     </div>
                     `;
@@ -1186,6 +1193,7 @@ confirmOrderBtn.addEventListener("click", async () => {
         const product = {
           quantity: item.qty,
           productId: item.id,
+          custom: item.engraved ? item.qty : null,
         };
 
         if (item.varity) {
@@ -1201,6 +1209,7 @@ confirmOrderBtn.addEventListener("click", async () => {
     const promotionId = cart.filter(isPromotion).map((item) => ({
       ...item.promotionData,
       quantity: item.qty,
+      custom: item.engraved ? item.qty : null,
     }));
 
     /* =========================
@@ -1377,7 +1386,7 @@ confirmOrderBtn.addEventListener("click", async () => {
     // Si el usuario no tocó el medio de pago (transferencia por defecto)
     trackPaymentInfo();
 
-    const res = await fetch(`${API_BASE_PRODUCCION}/orders`, {
+    const res = await fetch(`${API_BASE}/orders`, {
       method: "POST",
 
       headers: {
@@ -1422,7 +1431,7 @@ confirmOrderBtn.addEventListener("click", async () => {
       }
 
       const paymentRes = await fetch(
-        `${API_BASE_PRODUCCION}/orders/process-payment-card`,
+        `${API_BASE}/orders/process-payment-card`,
         {
           method: "POST",
           headers: {
@@ -1463,7 +1472,7 @@ confirmOrderBtn.addEventListener("click", async () => {
 
     if (paymentMethod === "transfer") {
       const aliasRes = await fetch(
-        `${API_BASE_PRODUCCION}/orders/create-alias-transfer`,
+        `${API_BASE}/orders/create-alias-transfer`,
         {
           method: "POST",
           headers: {

@@ -53,8 +53,11 @@ if (miCuentaBtn) {
 
 /* ===== DESTACADOS ===== */
 
+// Base de la API: cambiar a producción antes de subir
+const HOME_API_BASE = "https://matesparana-backend-production.up.railway.app";
+
 const FEATURED_URL =
-  "https://matesparana-backend-production.up.railway.app/products/find/category/Nos_volvimos_locos";
+  `${HOME_API_BASE}/products/find/category/Nos_volvimos_locos`;
 
 const featuredSlider = document.getElementById("featuredSlider");
 const featuredPrev = document.getElementById("featuredPrev");
@@ -67,6 +70,7 @@ async function loadFeatured() {
 
     featuredSlider.innerHTML = "";
 
+    // El backend ya los devuelve ordenados por sortedAt
     const featuredList = products.filter((p) => p.active);
     window.MPTrack?.viewItemList(
       "nos_volvimos_locos",
@@ -198,11 +202,11 @@ loadFeatured();
 /*==================LO MAS PEDIDO======================== */
 
 const PROMOS_URL =
-  "https://matesparana-backend-production.up.railway.app/promotions";
+  `${HOME_API_BASE}/promotions`;
 
 const COMBOS_CATEGORY_ID = "d5308357-2ae0-4c7a-a83f-7cf7fc599a34";
 
-const SALE_URL = `https://matesparana-backend-production.up.railway.app/products/find/category/Lo_más_pedido`;
+const SALE_URL = `${HOME_API_BASE}/products/find/category/Lo_más_pedido`;
 const slider = document.getElementById("saleSlider");
 const prevBtn = document.getElementById("salePrev");
 const nextBtn = document.getElementById("saleNext");
@@ -575,7 +579,7 @@ document.querySelectorAll(".acordeon-btn").forEach((btn) => {
 
 /* ===== DESCUENTOS ===== */
 const DISCOUNT_URL =
-  "https://matesparana-backend-production.up.railway.app/products/find/category/Yerbas";
+  `${HOME_API_BASE}/products/find/category/Yerbas`;
 
 const discountSlider = document.getElementById("discountSlider");
 const discountPrev = document.getElementById("discountPrev");
@@ -664,7 +668,7 @@ discountPrev.addEventListener("click", () => {
 /* ===== ACCESORIOS ===== */
 
 const ACCESSORIES_URL =
-  "https://matesparana-backend-production.up.railway.app/products?sort=updatedAt_desc&visibility=visible&category=Accesorios";
+  `${HOME_API_BASE}/products?sort=updatedAt_desc&visibility=visible&category=Accesorios`;
 
 const accessoriesSlider = document.getElementById("accessoriesSlider");
 const accessoriesPrev = document.getElementById("accessoriesPrev");

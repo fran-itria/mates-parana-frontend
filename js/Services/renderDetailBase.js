@@ -16,24 +16,7 @@ export function renderDetailBase(item) {
 
     document.getElementById("productName").textContent = item.name || "";
 
-    // Precio base (transferencia)
-    const transferPrice = item.discountedPrice ?? item.price;
-
-    // Precio con tarjeta (+15%)
-    const cardPrice = Math.round(transferPrice * 1.15);
-
-    document.getElementById("transferPrice").textContent =
-        "Precio con transferencia";
-
-    document.getElementById("productPrice").textContent = `$${transferPrice.toLocaleString("es-AR")}`;
-
-    const oldPriceEl = document.getElementById("oldPrice");
-    if (item.discountedPrice) {
-        oldPriceEl.textContent = `$${item.price.toLocaleString("es-AR")}`;
-        oldPriceEl.style.display = "block";
-    } else {
-        oldPriceEl.style.display = "none";
-    }
+    renderDetailPrices(item);
 
     document.getElementById("productDescription").innerText = item.description || "";
     document.getElementById("breadcrumbCategory").textContent = item.type || "";
@@ -92,6 +75,36 @@ export function renderDetailBase(item) {
         };
     }
 
+    document.getElementById("shippingText").textContent =
+        "Envío gratis superando los $80.000,00";
+
+    return images;
+}
+
+/**
+ * Pinta los precios de la ficha (transferencia, tachado, tarjeta y cuotas).
+ * extra se suma al precio unitario (por ejemplo, el grabado).
+ */
+export function renderDetailPrices(item, extra = 0) {
+    // Precio base (transferencia)
+    const transferPrice = (item.discountedPrice ?? item.price) + extra;
+
+    // Precio con tarjeta (+15%)
+    const cardPrice = Math.round(transferPrice * 1.15);
+
+    document.getElementById("transferPrice").textContent =
+        "Precio con transferencia";
+
+    document.getElementById("productPrice").textContent = `$${transferPrice.toLocaleString("es-AR")}`;
+
+    const oldPriceEl = document.getElementById("oldPrice");
+    if (item.discountedPrice) {
+        oldPriceEl.textContent = `$${(item.price + extra).toLocaleString("es-AR")}`;
+        oldPriceEl.style.display = "block";
+    } else {
+        oldPriceEl.style.display = "none";
+    }
+
     // MEDIOS DE PAGO dinámico
     const cuotas = Math.round(cardPrice / 3);
 
@@ -109,9 +122,4 @@ Precio con transferencia: $${transferPrice.toLocaleString("es-AR")}
     document.getElementById("installments").innerHTML = `Precio con tarjeta<br>
    $${cardPrice.toLocaleString("es-AR")}<br>
    3 x $${cuotas.toLocaleString("es-AR")} sin interés`;
-
-    document.getElementById("shippingText").textContent =
-        "Envío gratis superando los $80.000,00";
-
-    return images;
 }

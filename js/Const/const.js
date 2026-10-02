@@ -1,5 +1,7 @@
 export const API_BASE_PRODUCCION = "https://matesparana-backend-production.up.railway.app";
 export const API_BASE_PRUEBA = "http://localhost:3000";
+// Base usada por la web: cambiar a API_BASE_PRODUCCION antes de subir
+export const API_BASE = API_BASE_PRODUCCION;
 
 
 //  Credenciales de Payway

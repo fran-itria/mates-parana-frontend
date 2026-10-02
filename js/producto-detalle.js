@@ -4,7 +4,9 @@ import {
   getGalleryImages,
   getCurrentImageIndex,
 } from "./Services/updateGalleryImages.js";
-import { API_BASE_PRODUCCION, API_BASE_PRUEBA } from "./Const/const.js";
+import { API_BASE } from "./Const/const.js";
+import { renderEngraving } from "./Services/renderEngraving.js";
+import { renderDetailPrices } from "./Services/renderDetailBase.js";
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
@@ -20,10 +22,34 @@ let selectedVariant = null;
 // Variedades elegidas de cada producto del combo (defaultSelected)
 let comboSelections = [];
 
+// Grabado: lo tienen los mates y los combos (en los combos no se cobra)
+let hasEngraving = false;
+let engraved = false;
+let engravingPrice = 0;
+
+async function getEngravingPrice() {
+  try {
+    const res = await fetch(`${API_BASE}/orders/custom-price`);
+    const { price } = await res.json();
+    return Number(price) || 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+function setupEngraving(price) {
+  hasEngraving = true;
+  engravingPrice = price;
+  renderEngraving(document.getElementById("variants"), price, (value) => {
+    engraved = value;
+    renderDetailPrices(currentProduct, engraved ? price : 0);
+  });
+}
+
 let data;
 async function getProductDetail() {
   if (type === "combo") {
-    const res = await fetch(`${API_BASE_PRODUCCION}/promotions/${productId}`);
+    const res = await fetch(`${API_BASE}/promotions/${productId}`);
 
     data = await res.json();
 
@@ -35,12 +61,14 @@ async function getProductDetail() {
       comboSelections = selections;
     });
 
+    setupEngraving(0);
+
     window.MPTrack?.viewItem(data, { isCombo: true });
 
     return;
   } else {
     const res = await fetch(
-      `${API_BASE_PRODUCCION}/products/oneProduct/${productId}`
+      `${API_BASE}/products/oneProduct/${productId}`
     );
 
     data = await res.json();
@@ -60,6 +88,11 @@ async function getProductDetail() {
         selectedVariant = variant;
       }
     );
+
+    const isMate = (data.category || []).some(
+      (c) => c.name?.toLowerCase() === "mates"
+    );
+    if (isMate) setupEngraving(await getEngravingPrice());
 
     window.MPTrack?.viewItem(data);
   }
@@ -220,7 +253,7 @@ async function calculateShipping() {
 
   try {
     const response = await fetch(
-      `${API_BASE_PRODUCCION}/orders/delivered-price/${postalCode}`
+      `${API_BASE}/orders/delivered-price/${postalCode}`
     );
 
     if (!response.ok) {
@@ -604,15 +637,21 @@ if (addToCartBtn) {
         image: comboImage,
         qty,
         varity: null,
+        engraved: hasEngraving && engraved,
+        engravingPrice: 0,
         promotion: true,
         promotionData: {
           id: currentProduct.id,
           name: currentProduct.name,
           image: comboImage,
           price: currentProduct.price,
-          custom: 1,
+          custom: engraved ? qty : null,
           quantity: qty,
-          cardPrice: currentProduct.cardPrice ?? Math.round(price * 1.15),
+          cardPrice:
+            currentProduct.cardPrice ??
+            Math.round(
+              (currentProduct.discountedPrice ?? currentProduct.price) * 1.15
+            ),
           defaultSelected: comboSelections,
           discountedPrice: currentProduct.discountedPrice ?? null,
         },
@@ -627,6 +666,8 @@ if (addToCartBtn) {
         image: variantImage,
         qty,
         varity: Object.keys(selectedVarity).length > 0 ? selectedVarity : null,
+        engraved: hasEngraving && engraved,
+        engravingPrice: hasEngraving && engraved ? engravingPrice : 0,
         promotion: false,
       });
     }

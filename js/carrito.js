@@ -119,7 +119,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let totalItems = 0;
 
     cart.forEach((item) => {
-      subtotal += (item.discountedPrice || item.price) * item.qty;
+      const unitPrice =
+        (item.discountedPrice || item.price) + (item.engravingPrice || 0);
+      subtotal += unitPrice * item.qty;
       totalItems += item.qty;
 
       cartContent.innerHTML += `
@@ -139,7 +141,14 @@ document.addEventListener("DOMContentLoaded", () => {
               }</small>`
           )
           .join("")}
-              <p>$${(item.discountedPrice || item.price)}</p>
+    ${item.engraved
+          ? `<small>Con grabado${item.engravingPrice
+            ? ` (+$${item.engravingPrice.toLocaleString("es-AR")})`
+            : ""
+          }</small>`
+          : ""
+        }
+              <p>$${unitPrice.toLocaleString("es-AR")}</p>
 
               <div class="qty-controls">
                 <button onclick="changeQty('${item.cartKey}', -1)">-</button>
@@ -177,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("|");
 
     const cartKey = `${product.id}-${product.varity?.type || ""}-${product.varity?.color || ""
-      }${promotionKey ? `-${promotionKey}` : ""}`;
+      }${promotionKey ? `-${promotionKey}` : ""}${product.engraved ? "-grabado" : ""}`;
 
     const existing = cart.find((p) => p.cartKey === cartKey);
 
@@ -193,6 +202,8 @@ document.addEventListener("DOMContentLoaded", () => {
         cardPrice: product.cardPrice,
         image: product.image,
         varity: product.varity || null,
+        engraved: product.engraved || false,
+        engravingPrice: product.engravingPrice || 0,
         qty: product.qty || 1,
         promotion: product.promotion || false,
         promotionData: product.promotionData || null,
