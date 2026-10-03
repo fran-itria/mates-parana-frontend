@@ -1,6 +1,6 @@
 import { renderColors } from "../Services/renderColors.js";
 import { renderTypes } from "../Services/renderTypes.js";
-import { updateGalleryImage } from "../Services/updateGalleryImages.js";
+import { updateGalleryImage, showImage, preloadImages } from "../Services/updateGalleryImages.js";
 import { detectColor } from "../Services/detectColor.js";
 import { renderDetailBase } from "../Services/renderDetailBase.js";
 import { colorMap } from "../Const/const.js"
@@ -12,7 +12,7 @@ import { hasCentralStock } from "../Services/hasCentralStock.js";
  * normalizada que se usa para pintar el círculo de color.
  */
 function normalizeComboVarities(varities = []) {
-    return varities.map((v) => {
+    return varities.map((v, index) => {
         const rawColor = v.color || null;
 
         const detected = detectColor(
@@ -21,6 +21,8 @@ function normalizeComboVarities(varities = []) {
 
         return {
             ...v,
+            // Posición en el producto: se usa para elegir la foto del combo
+            index,
             rawColor,
             color: detected || rawColor,
             type: v.type || null,
@@ -76,6 +78,14 @@ function getSelectableVarities(item, product) {
     }
 
     return filtered;
+}
+
+/**
+ * Las promos se distinguen de los combos por el nombre ("Promo ...").
+ * En las promos el grabado no se cobra y se muestra la foto de la variante.
+ */
+export function isPromo(combo) {
+    return /^promo\b/i.test((combo?.name || "").trim());
 }
 
 export function renderComboDetail(combo, onSelectionChange) {
@@ -137,16 +147,30 @@ export function renderComboDetail(combo, onSelectionChange) {
         if (onSelectionChange) onSelectionChange(buildSelections());
     }
 
-    // Solo cambiamos la imagen del combo si la variedad elegida tiene una
-    // imagen que forma parte de la galería del combo.
+    const promo = isPromo(combo);
+
+    // En las promos se muestra la foto propia de la variedad elegida.
+    // En los combos, si la imagen de la variedad está en la galería se usa
+    // esa; si no, se relaciona por posición: la variedad N del producto se
+    // corresponde con la foto N + 1 del combo (la primera es la portada).
     function updateImageByVariant(s) {
-        if (!s.selectedVariant?.image) return;
+        const variant = s.selectedVariant;
 
-        const img = s.selectedVariant.image.replace(/\s/g, "");
+        if (!variant) return;
 
-        const index = images.findIndex((i) => i === img);
+        const img = variant.image?.replace(/\s/g, "");
 
-        if (index !== -1) updateGalleryImage(index);
+        if (promo && img) return showImage(img);
+
+        const imageIndex = img ? images.findIndex((i) => i === img) : -1;
+
+        if (imageIndex !== -1) return updateGalleryImage(imageIndex);
+
+        if (variant.index === undefined) return;
+
+        const positionIndex = variant.index + 1;
+
+        if (positionIndex < images.length) updateGalleryImage(positionIndex);
     }
 
     function syncVariant(s) {
@@ -281,10 +305,19 @@ export function renderComboDetail(combo, onSelectionChange) {
             renderColorOptions();
         }
 
+        // Al cargar se deja la portada; la foto cambia cuando se elige
         syncVariant(s);
-
-        updateImageByVariant(s);
     });
+
+    // En las promos se precargan las fotos de las variedades para que el
+    // cambio al elegir sea inmediato
+    if (promo) {
+        preloadImages(
+            state.flatMap((s) =>
+                s.varities.map((v) => v.image?.replace(/\s/g, ""))
+            )
+        );
+    }
 
     notify();
 }

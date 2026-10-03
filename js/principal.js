@@ -97,7 +97,7 @@ async function loadFeatured() {
         "/img/placeholder.png";
 
       card.innerHTML = `
-  <img src="${image}" alt="${product.name}">
+  <img src="${image}" alt="${product.name}" loading="lazy">
 
   <h3 class="featured-name">${product.name}</h3>
 
@@ -256,7 +256,7 @@ async function loadSales() {
     card.className = "featured-card";
 
     card.innerHTML = `
-        <img src="${image}" alt="${promo.name}">
+        <img src="${image}" alt="${promo.name}" loading="lazy">
         <h3 class="featured-name">${promo.name}</h3>
         ${discountPercentage && discountedPrice
         ? `
@@ -610,6 +610,7 @@ async function loadDiscounts() {
         <img
           src="${product.image?.[0] || ""}"
           alt="${product.name}"
+          loading="lazy"
         >
 
         <h3 class="discount-name">
@@ -696,7 +697,7 @@ async function loadAccessories() {
 
       card.className = "accessories-card";
 
-      card.innerHTML = ` <img src="${product.image?.[0] || ""}" alt="${product.name
+      card.innerHTML = ` <img loading="lazy" src="${product.image?.[0] || ""}" alt="${product.name
         }" > <h3 class="accessories-name"> ${product.name
         } </h3> <span class="accessories-price"> ${formatPrice(
           product.price

@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return `
           <div class="product-card">
-            <img src="${image}" alt="${p.name}">
+            <img src="${image}" alt="${p.name}" loading="lazy">
             <span class="badge-discount">-${percent}%</span>
             <h3>${p.name}</h3>
             <div class="price">

@@ -953,7 +953,7 @@ function renderProducts() {
     subtotal += unitPrice * item.qty;
     summaryProducts.innerHTML += `
                     <div class="summary-item">
-                      <img src="${item.image}" />
+                      <img src="${item.image}" loading="lazy" />
 
                       <div class="summary-item-info">
                         <h3>${item.name}</h3>

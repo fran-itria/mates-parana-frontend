@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .map(
         (p) => `
       <a href="./producto-card.html?id=${p.id}" class="search-item">
-        <img src="${p.image}">
+        <img src="${p.image}" loading="lazy">
         <div class="search-info">
           <div class="search-name">${p.name}</div>
           <div class="search-price">$${p.price.toLocaleString("es-AR")}</div>
@@ -189,9 +189,9 @@ function buildMegaMenu() {
         MATES
       </a>
 
-      <a href="./productos.html?category=Mates">Imperiales</a>
-      <a href="./productos.html?category=Mates">Camioneros</a>
-      <a href="./productos.html?category=Mates">Torpedos</a>
+      <a href="./productos.html?category=Mates&type=Imperial">Imperiales</a>
+      <a href="./productos.html?category=Mates&type=Camionero">Camioneros</a>
+      <a href="./productos.html?category=Mates&type=Torpedo">Torpedos</a>
     </div>
 
     <div class="mega-column">

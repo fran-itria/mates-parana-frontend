@@ -1,6 +1,6 @@
 /**
  * Renderiza la opción de grabado (con / sin) dentro del contenedor de
- * variantes. Por defecto queda seleccionado "Con grabado".
+ * variantes. Por defecto queda seleccionado "Sin grabado".
  *
  * - price: precio del grabado; si es 0 se muestra como sin cargo.
  * - onChange(engraved): se llama cada vez que cambia la opción.
@@ -27,7 +27,7 @@ export function renderEngraving(container, price, onChange) {
         btn.classList.add("variant-type");
         btn.textContent = label;
 
-        if (engraved) btn.classList.add("active");
+        if (!engraved) btn.classList.add("active");
 
         btn.addEventListener("click", () => {
             wrapper
@@ -43,5 +43,5 @@ export function renderEngraving(container, price, onChange) {
     });
 
     container.appendChild(wrapper);
-    onChange(true);
+    onChange(false);
 }

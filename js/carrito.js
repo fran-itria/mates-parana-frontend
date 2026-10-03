@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       cartContent.innerHTML += `
           <div class="cart-item">
-            <img src="${item.image}" />
+            <img src="${item.image}" loading="lazy" />
             <div class="cart-item-info">
               <strong>${item.name}</strong>
     ${item.varity

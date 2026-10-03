@@ -1,4 +1,4 @@
-import { renderComboDetail } from "./Combos/renderCombo.js";
+import { renderComboDetail, isPromo } from "./Combos/renderCombo.js";
 import { renderProduct } from "./Productos/renderProduct.js";
 import {
   getGalleryImages,
@@ -22,7 +22,7 @@ let selectedVariant = null;
 // Variedades elegidas de cada producto del combo (defaultSelected)
 let comboSelections = [];
 
-// Grabado: lo tienen los mates y los combos (en los combos no se cobra)
+// Grabado: lo tienen los mates, los combos y las promos (en las promos no se cobra)
 let hasEngraving = false;
 let engraved = false;
 let engravingPrice = 0;
@@ -61,7 +61,8 @@ async function getProductDetail() {
       comboSelections = selections;
     });
 
-    setupEngraving(0);
+    // Las promos llevan el grabado sin cargo
+    setupEngraving(isPromo(data) ? 0 : await getEngravingPrice());
 
     window.MPTrack?.viewItem(data, { isCombo: true });
 
@@ -137,6 +138,7 @@ function renderSimilar(p) {
           <img
             src="${image}"
             alt="${prod.name || "Producto"}"
+            loading="lazy"
           >
 
           <div class="product-name">
@@ -191,6 +193,7 @@ function renderComplementProducts(p) {
           <img
             src="${image}"
             alt="${prod.name || "Producto"}"
+            loading="lazy"
           >
 
           <div class="product-name">
@@ -638,7 +641,7 @@ if (addToCartBtn) {
         qty,
         varity: null,
         engraved: hasEngraving && engraved,
-        engravingPrice: 0,
+        engravingPrice: hasEngraving && engraved ? engravingPrice : 0,
         promotion: true,
         promotionData: {
           id: currentProduct.id,

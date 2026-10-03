@@ -12,12 +12,19 @@ let products = [];
 let filteredProducts = [];
 let currentCategory = "all";
 let currentProductName = null;
+// Tipo de mate (Imperial, Camionero, Torpedo); solo los mates tienen type
+let currentType = null;
 
 const urlParams = new URLSearchParams(window.location.search);
 const categoryFromURL = urlParams.get("category");
+const typeFromURL = urlParams.get("type");
 
 if (categoryFromURL) {
   currentCategory = categoryFromURL;
+}
+
+if (typeFromURL) {
+  currentType = typeFromURL;
 }
 
 /*===================================*/
@@ -69,7 +76,7 @@ async function getProducts() {
     buildCategoriesMenu(products);
     buildDynamicFilters(products);
 
-    if (categoryFromURL) {
+    if (categoryFromURL || typeFromURL) {
       applyFilters();
       closeSidebarMobile();
 
@@ -111,6 +118,8 @@ function mapBackendProducts(data) {
           /\s/g,
           ""
         ),
+
+        type: p.type || null,
 
         colors: extractColors(p),
 
@@ -299,6 +308,7 @@ function buildCategoriesMenu(products) {
       li.classList.add("active");
       currentCategory = category;
       currentProductName = null;
+      currentType = null;
       applyFilters();
       closeSidebarMobile();
       // 👇 agregar esto
@@ -328,6 +338,7 @@ function buildCategoriesMenu(products) {
     .addEventListener("click", () => {
       currentCategory = "all";
       currentProductName = null;
+      currentType = null;
       document
         .querySelectorAll(".variants")
         .forEach((v) => v.classList.add("hidden"));
@@ -401,8 +412,16 @@ ${Object.entries(colorCount)
 function applyFilters() {
   let filtered = [...products];
 
-  if (currentCategory !== "all") {
+  // Con tipo de mate elegido se muestran todos los de ese tipo,
+  // sin importar la categoría (algunos mates tienen otra categoría primero)
+  if (currentCategory !== "all" && !currentType) {
     filtered = filtered.filter((p) => p.category === currentCategory);
+  }
+
+  if (currentType) {
+    filtered = filtered.filter(
+      (p) => p.type?.toLowerCase() === currentType.toLowerCase()
+    );
   }
 
   if (currentProductName) {
