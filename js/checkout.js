@@ -1358,6 +1358,13 @@ confirmOrderBtn.addEventListener("click", async () => {
     }
     const totalValue = summaryTotalValue;
 
+    // Cantidad total de grabados de la orden: con esto aparece en la
+    // sección de grabados del admin
+    const totalCustom = cart.reduce(
+      (sum, item) => sum + (item.engraved ? item.qty : 0),
+      0
+    );
+
     const orderBody = {
       userId: user?.id || null,
       cartId: backendCartId,
@@ -1368,6 +1375,7 @@ confirmOrderBtn.addEventListener("click", async () => {
       paymentStatus: "pending",
       delivered,
       timeDelivered: "Una semana",
+      custom: totalCustom || null,
     };
 
     if (promotionId.length) {
