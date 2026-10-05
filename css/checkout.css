@@ -746,3 +746,14 @@ ENVÍOS
   width: 100%;
   margin-top: 15px;
 }
+
+.boton-codigo-postal {
+  width: 15rem;
+  padding: 15px 15px;
+  background-color: #2f4132;
+  color: white;
+  border-radius: 1rem;
+  margin-bottom: 15px;
+  font-family: var(--font-);
+  text-decoration: none;
+}
