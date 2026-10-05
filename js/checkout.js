@@ -443,6 +443,30 @@ function getTrackedShippingCost() {
   return shippingCost;
 }
 
+// Casa Central, Sucursal, cadete, domicilio y Correo Argentino son
+// excluyentes: al elegir una se desmarcan las demás y se limpian sus campos
+function clearOtherDeliveryOptions(selected) {
+  document
+    .querySelectorAll('input[name="localBranch"], input[name="shippingType"]')
+    .forEach((input) => {
+      if (input !== selected) input.checked = false;
+    });
+
+  if (selected.value !== "cadete") {
+    const cadeteOptions = document.getElementById("cadetePreOptions");
+    const cadeteFields = document.getElementById("cadeteExtraFields");
+
+    if (cadeteOptions) cadeteOptions.innerHTML = "";
+    if (cadeteFields) cadeteFields.innerHTML = "";
+  }
+
+  if (selected.value !== "home") {
+    const homeFields = document.getElementById("homeExtraFields");
+
+    if (homeFields) homeFields.innerHTML = "";
+  }
+}
+
 function renderPreShippingOptions() {
   const container = document.getElementById("preShippingOptions");
 
@@ -537,7 +561,7 @@ function renderPreShippingOptions() {
                         <div class="pickup-time">
 
                           <span class="pickup-badge">
-                            Retirás hoy
+                            Retirás desde el 2° día
                           </span>
 
                         </div>
@@ -623,22 +647,7 @@ function renderPreShippingOptions() {
     branch.addEventListener("change", () => {
       if (!branch.checked) return;
 
-      // DESMARCAR CADETE
-      if (cadeteRadio) {
-        cadeteRadio.checked = false;
-      }
-
-      // LIMPIAR CADETE
-      const cadeteOptions = document.getElementById("cadetePreOptions");
-      const cadeteFields = document.getElementById("cadeteExtraFields");
-
-      if (cadeteOptions) {
-        cadeteOptions.innerHTML = "";
-      }
-
-      if (cadeteFields) {
-        cadeteFields.innerHTML = "";
-      }
+      clearOtherDeliveryOptions(branch);
 
       setSelectedShipping({
         type: branch.value,
@@ -654,10 +663,10 @@ function renderPreShippingOptions() {
     cadeteRadio.addEventListener("change", () => {
       if (!cadeteRadio.checked) return;
 
-      // DESMARCAR TODAS LAS SUCURSALES
-      localBranches.forEach((branch) => {
-        branch.checked = false;
-      });
+      clearOtherDeliveryOptions(cadeteRadio);
+
+      // El costo se define recién al elegir la ciudad
+      setSelectedShipping(null);
 
       loadCadeteOptions();
     });
@@ -864,7 +873,7 @@ function renderShipping(data, postalCode) {
 
   const agencyContainer = document.getElementById("agencyContainer");
 
-  const shippingOptions = document.querySelectorAll(
+  const shippingOptions = shippingResult.querySelectorAll(
     'input[name="shippingType"]'
   );
 
@@ -878,13 +887,7 @@ function renderShipping(data, postalCode) {
         agencyContainer.innerHTML = "";
       }
 
-      const homeFields = document.getElementById("homeExtraFields");
-
-      if (homeFields) {
-        homeFields.innerHTML = "";
-      }
-
-      // clearCadeteOptions();
+      clearOtherDeliveryOptions(option);
 
       // =====================================
       // DOMICILIO
@@ -907,37 +910,36 @@ function renderShipping(data, postalCode) {
       // AGENCIA
       // =====================================
 
-      if (option.value != "home" && option.value != "cadete") {
-        setSelectedShipping({
-          agency: option.value,
-          type: "agency",
-          price: Number(data.price),
-        });
-
-        return;
-      }
-
-      // =====================================
-      // CADETE
-      // =====================================
-
-      if (option.value === "cadete") {
-        loadCadeteOptions();
-
-        return;
-      }
+      setSelectedShipping({
+        agency: option.value,
+        type: "agency",
+        price: Number(data.price),
+      });
     });
   });
 
   // =====================================
   // SELECCIÓN INICIAL DOMICILIO
+  // (solo si no eligió Casa Central, Sucursal o cadete)
   // =====================================
+
+  const alreadySelected = document.querySelector(
+    'input[name="localBranch"]:checked, input[name="shippingType"]:checked'
+  );
+
+  if (alreadySelected) return;
+
+  const homeRadio = shippingResult.querySelector(
+    'input[name="shippingType"][value="home"]'
+  );
+
+  homeRadio.checked = true;
 
   setSelectedShipping({
     postalCode,
     province: data.province,
     type: "home",
-    price: Number(data.price),
+    price: Number(data.homePrice),
   });
 
   renderHomeFields();
