@@ -561,7 +561,7 @@ function renderPreShippingOptions() {
                         <div class="pickup-time">
 
                           <span class="pickup-badge">
-                            Retirás hoy
+                            Retirás desde el 2° día
                           </span>
 
                         </div>
