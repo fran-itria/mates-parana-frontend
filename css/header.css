@@ -848,3 +848,13 @@
     height: 28px;
   }
 }
+
+/* WhatsApp en popup de Ayuda */
+.help-popup .whatsapp-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.help-popup .whatsapp-link:hover {
+  text-decoration: underline;
+}
