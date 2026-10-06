@@ -209,11 +209,6 @@
   transform: translateX(0);
 }
 
-/* sale hacia la izquierda */
-.topbar-item.exit {
-  opacity: 0;
-  transform: translateX(-100%);
-}
 /*====================================*/
 
 /* BUSCADOR */

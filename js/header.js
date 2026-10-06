@@ -127,7 +127,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const link = e.target.closest(".search-item");
       if (!link) return;
 
-      const index = [...searchResults.querySelectorAll(".search-item")].indexOf(link);
+      const index = [...searchResults.querySelectorAll(".search-item")].indexOf(
+        link
+      );
       const product = lastSearchResults[index];
 
       if (product) {
@@ -275,4 +277,37 @@ if (productosToggle && megaMenu) {
     },
     true
   );
+}
+
+const topbarItems = document.querySelectorAll(".topbar-item");
+
+if (topbarItems.length > 0) {
+  let currentIndex = 0;
+
+  function cambiarTopbar() {
+    const currentItem = topbarItems[currentIndex];
+
+    // La frase actual sale hacia la izquierda
+    currentItem.classList.remove("active");
+    currentItem.classList.add("exit");
+
+    // Siguiente frase
+    currentIndex = (currentIndex + 1) % topbarItems.length;
+
+    const nextItem = topbarItems[currentIndex];
+
+    // La colocamos nuevamente a la derecha
+    nextItem.classList.remove("active", "exit");
+
+    // Forzamos la posición inicial antes de mostrarla
+    nextItem.style.transform = "translateX(100%)";
+
+    setTimeout(() => {
+      // Entra desde la derecha hacia el centro
+      nextItem.style.transform = "translateX(0)";
+      nextItem.classList.add("active");
+    }, 100);
+  }
+
+  setInterval(cambiarTopbar, 3800);
 }
