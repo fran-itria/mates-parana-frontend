@@ -1,0 +1,104 @@
+/* =====================================================
+   ENTRADA DE PÁGINA
+   1) Toda la página aparece con un fundido corto (solo opacidad).
+   2) Cada bloque de contenido sube un poco y aparece, de forma escalonada.
+
+   Importante: un transform en un elemento rompe los position: fixed que tenga adentro
+   (carrito, modales, lightbox, sidebar, mega menú). Por eso:
+   - el header nunca se mueve (solo se funde con el body);
+   - un bloque que contiene algo fijo no se mueve: se animan sus hijos (caso <main> del index y productos).
+===================================================== */
+
+/* Retraso de cada bloque; no se hereda, así los hijos de <main> no toman el retraso del <main> */
+@property --page-delay {
+  syntax: "<time>";
+  inherits: false;
+  initial-value: 0.05s;
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pageRise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    animation: pageFade 0.35s ease-out both;
+  }
+
+  /* Bloques que se animan: hijos directos de body, o de un <main> que contiene elementos fijos */
+  :is(
+      body > :is(main, section, aside, footer, div),
+      main:has(.cart-panel, .cart-overlay, .sidebar, .sidebar-overlay) > *
+    ):not(
+      script,
+      noscript,
+      header,
+      .whatsapp-float,
+      .cart-overlay,
+      .cart-panel,
+      .sidebar,
+      .sidebar-overlay,
+      .lightbox,
+      .lightbox-mayorista,
+      .image-modal,
+      .export-modal,
+      .loading-overlay,
+      .toast-success
+    ):not(
+      :has(
+        .cart-panel,
+        .cart-overlay,
+        .sidebar,
+        .sidebar-overlay,
+        .lightbox,
+        .lightbox-mayorista,
+        .image-modal,
+        .export-modal,
+        .loading-overlay,
+        .toast-success,
+        .mega-menu
+      )
+    ) {
+    animation: pageRise 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--page-delay, 0.05s) both;
+  }
+
+  /* Escalonado: cada bloque arranca un poco después que el anterior (tope 0.4s para no hacer esperar).
+     Es una variable, así no afecta a otras animaciones que ya tengan esos elementos. */
+  :is(body, main) > :nth-child(3) {
+    --page-delay: 0.1s;
+  }
+  :is(body, main) > :nth-child(4) {
+    --page-delay: 0.15s;
+  }
+  :is(body, main) > :nth-child(5) {
+    --page-delay: 0.2s;
+  }
+  :is(body, main) > :nth-child(6) {
+    --page-delay: 0.25s;
+  }
+  :is(body, main) > :nth-child(7) {
+    --page-delay: 0.3s;
+  }
+  :is(body, main) > :nth-child(8) {
+    --page-delay: 0.35s;
+  }
+  :is(body, main) > :nth-child(n + 9) {
+    --page-delay: 0.4s;
+  }
+}

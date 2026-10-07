@@ -678,6 +678,23 @@ ENVÍOS
   border-radius: 20px;
 }
 
+/* Aviso que aparece al elegir Sucursal Urquiza */
+.local-card .pickup-note {
+  display: none;
+
+  margin-top: 10px;
+
+  font-size: 12px;
+
+  color: #fafafa;
+
+  opacity: 0.85;
+}
+
+input[name="localBranch"]:checked + .pickup-location-content .pickup-note {
+  display: block;
+}
+
 .pickup-schedule {
   margin-top: 15px;
 
