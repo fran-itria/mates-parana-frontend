@@ -741,6 +741,26 @@ input[name="localBranch"]:checked + .pickup-location-content .pickup-note {
   margin-bottom: 10px;
 }
 
+.shipping-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.shipping-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  font-size: 14px;
+}
+
+.shipping-loading .loader {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+  margin-bottom: 0;
+}
+
 @media (min-width: 992px) {
   .shipping-info {
     grid-template-columns: repeat(2, 1fr);

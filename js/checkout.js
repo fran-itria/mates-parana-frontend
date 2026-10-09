@@ -106,6 +106,16 @@ async function calculateShipping() {
     return;
   }
 
+  calcShippingBtn.disabled = true;
+  calcShippingBtn.textContent = "Calculando...";
+
+  shippingResult.innerHTML = `
+    <div class="shipping-loading">
+      <div class="loader"></div>
+      <p>Calculando envío...</p>
+    </div>
+  `;
+
   try {
     const response = await fetch(
       `${API_BASE}/orders/delivered-price/${postalCode}`
@@ -128,6 +138,9 @@ async function calculateShipping() {
         </p>
 
         `;
+  } finally {
+    calcShippingBtn.disabled = false;
+    calcShippingBtn.textContent = "Calcular envío";
   }
 }
 
@@ -241,8 +254,54 @@ loadUserData();
 /* =========================
    RENDER PRODUCTS
 ========================= */
-function renderHomeFields() {
+// Códigos de provincia que usa Correo Argentino
+const PROVINCES = [
+  { code: "C", name: "Ciudad Autónoma de Buenos Aires" },
+  { code: "B", name: "Buenos Aires" },
+  { code: "K", name: "Catamarca" },
+  { code: "H", name: "Chaco" },
+  { code: "U", name: "Chubut" },
+  { code: "X", name: "Córdoba" },
+  { code: "W", name: "Corrientes" },
+  { code: "E", name: "Entre Ríos" },
+  { code: "P", name: "Formosa" },
+  { code: "Y", name: "Jujuy" },
+  { code: "L", name: "La Pampa" },
+  { code: "F", name: "La Rioja" },
+  { code: "M", name: "Mendoza" },
+  { code: "N", name: "Misiones" },
+  { code: "Q", name: "Neuquén" },
+  { code: "R", name: "Río Negro" },
+  { code: "A", name: "Salta" },
+  { code: "J", name: "San Juan" },
+  { code: "D", name: "San Luis" },
+  { code: "Z", name: "Santa Cruz" },
+  { code: "S", name: "Santa Fe" },
+  { code: "G", name: "Santiago del Estero" },
+  { code: "V", name: "Tierra del Fuego" },
+  { code: "T", name: "Tucumán" },
+];
+
+function normalizeText(text = "") {
+  return text
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+function findProvince(name) {
+  const normalized = normalizeText(name);
+
+  if (!normalized) return null;
+
+  return PROVINCES.find((p) => normalizeText(p.name) === normalized) || null;
+}
+
+function renderHomeFields(defaultProvince = "") {
   const container = document.getElementById("homeExtraFields");
+
+  const initialProvince = findProvince(defaultProvince);
 
   container.innerHTML = `
         <div class="input-group extra-field">
@@ -250,8 +309,14 @@ function renderHomeFields() {
           <input
             type="text"
             id="shippingProvince"
-            placeholder="Provincia"
+            list="provinceList"
+            placeholder="Buscá tu provincia"
+            autocomplete="off"
+            value="${initialProvince ? initialProvince.name : ""}"
           >
+          <datalist id="provinceList">
+            ${PROVINCES.map((p) => `<option value="${p.name}"></option>`).join("")}
+          </datalist>
         </div>
 
         <div class="input-group extra-field">
@@ -272,6 +337,15 @@ function renderHomeFields() {
           >
         </div>
         `;
+
+  // Solo se aceptan provincias de la lista: si escribe otra cosa se borra
+  const provinceInput = document.getElementById("shippingProvince");
+
+  provinceInput.addEventListener("change", () => {
+    const province = findProvince(provinceInput.value);
+
+    provinceInput.value = province ? province.name : "";
+  });
 }
 
 function renderCadeteFields() {
@@ -901,7 +975,7 @@ function renderShipping(data, postalCode) {
           price: Number(data.homePrice),
         });
 
-        renderHomeFields();
+        renderHomeFields(data.province);
 
         return;
       }
@@ -942,7 +1016,7 @@ function renderShipping(data, postalCode) {
     price: Number(data.homePrice),
   });
 
-  renderHomeFields();
+  renderHomeFields(data.province);
 }
 
 function renderProducts() {
@@ -1153,6 +1227,14 @@ confirmOrderBtn.addEventListener("click", async () => {
       return;
     }
 
+    if (
+      selectedShipping?.type === "home" &&
+      !findProvince(document.getElementById("shippingProvince")?.value)
+    ) {
+      alert("Seleccioná una provincia de la lista.");
+      return;
+    }
+
     if (selectedShipping) {
       const provinceInput = document.getElementById("shippingProvince");
       const cityInput = document.getElementById("shippingCity");
@@ -1233,8 +1315,11 @@ confirmOrderBtn.addEventListener("click", async () => {
    ADDRESS
 ========================= */
 
-    const provinceName =
-      document.getElementById("shippingProvince")?.value.trim() || "";
+    const province = findProvince(
+      document.getElementById("shippingProvince")?.value
+    );
+
+    const provinceName = province?.name || "";
 
     const city =
       document.getElementById("shippingCity")?.value.trim() ||
@@ -1258,7 +1343,7 @@ confirmOrderBtn.addEventListener("click", async () => {
 
       streetName,
 
-      provinceCode: "",
+      provinceCode: province?.code || "",
 
       provinceName,
 
