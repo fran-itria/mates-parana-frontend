@@ -857,8 +857,13 @@ tipografias==============*/
 }
 
 .preview-container {
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   text-align: center;
+}
+
+.preview-container img {
+  width: 40%;
+  height: 40%;
 }
 
 .preview-title {
