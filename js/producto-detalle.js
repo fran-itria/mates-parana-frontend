@@ -40,10 +40,16 @@ async function getEngravingPrice() {
 function setupEngraving(price) {
   hasEngraving = true;
   engravingPrice = price;
-  renderEngraving(document.getElementById("variants"), price, (value) => {
-    engraved = value;
-    renderDetailPrices(currentProduct, engraved ? price : 0);
-  });
+
+  renderEngraving(
+    document.getElementById("variants"),
+    price,
+    (value) => {
+      engraved = value;
+      renderDetailPrices(currentProduct, engraved ? price : 0);
+    },
+    currentProduct
+  );
 }
 
 let data;
@@ -68,9 +74,7 @@ async function getProductDetail() {
 
     return;
   } else {
-    const res = await fetch(
-      `${API_BASE}/products/oneProduct/${productId}`
-    );
+    const res = await fetch(`${API_BASE}/products/oneProduct/${productId}`);
 
     data = await res.json();
 
@@ -93,7 +97,22 @@ async function getProductDetail() {
     const isMate = (data.category || []).some(
       (c) => c.name?.toLowerCase() === "mates"
     );
-    if (isMate) setupEngraving(await getEngravingPrice());
+
+    const excludedCategories = ["Materas y mochilas", "Bombillas"];
+
+    const hasExcludedCategory = (data.category || []).some((c) =>
+      excludedCategories.some(
+        (excluded) => c.name?.toLowerCase() === excluded.toLowerCase()
+      )
+    );
+
+    const isTorpedo = data.type?.toLowerCase() === "torpedo";
+
+    const isRanchero = data.name?.toLowerCase().includes("ranchero");
+
+    if (isMate && !hasExcludedCategory && !isTorpedo && !isRanchero) {
+      setupEngraving(await getEngravingPrice());
+    }
 
     window.MPTrack?.viewItem(data);
   }
@@ -118,15 +137,20 @@ function renderSimilar(p) {
     return;
   }
 
-  trackProductList(container, "productos_similares", "Productos similares", similares);
+  trackProductList(
+    container,
+    "productos_similares",
+    "Productos similares",
+    similares
+  );
 
   container.innerHTML = similares
     .map((prod) => {
       const image = Array.isArray(prod.image)
         ? prod.image.find((img) => typeof img === "string" && img.trim())
         : typeof prod.image === "string"
-          ? prod.image
-          : "";
+        ? prod.image
+        : "";
 
       const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
 
@@ -173,15 +197,20 @@ function renderComplementProducts(p) {
     return;
   }
 
-  trackProductList(container, "comprar_con_este_producto", "Para comprar con este producto", complementos);
+  trackProductList(
+    container,
+    "comprar_con_este_producto",
+    "Para comprar con este producto",
+    complementos
+  );
 
   container.innerHTML = complementos
     .map((prod) => {
       const image = Array.isArray(prod.image)
         ? prod.image.find((img) => typeof img === "string" && img.trim())
         : typeof prod.image === "string"
-          ? prod.image
-          : "";
+        ? prod.image
+        : "";
 
       const cleanImage = image ? image.trim().replace(/\s/g, "") : "";
 
@@ -309,8 +338,9 @@ function renderShipping(data, postalCode) {
 
   </div>
 
-${postalCode === "E3100"
-      ? `
+${
+  postalCode === "E3100"
+    ? `
 
 <div class="shipping-card local-card">
 
@@ -388,10 +418,11 @@ ${postalCode === "E3100"
 </div>
 
 `
-      : ""
-    }
-${data.cadete
-      ? `
+    : ""
+}
+${
+  data.cadete
+    ? `
 
 <div class="shipping-card">
 
@@ -416,8 +447,8 @@ ${data.cadete
             <select id="cadeteCity">
 
                 ${data.cadete
-        .map(
-          (city) => `
+                  .map(
+                    (city) => `
 
                     <option
                         value="${city.ciudad}"
@@ -429,8 +460,8 @@ ${data.cadete
                     </option>
 
                 `
-        )
-        .join("")}
+                  )
+                  .join("")}
 
             </select>
 
@@ -447,8 +478,8 @@ ${data.cadete
 </div>
 
 `
-      : ""
-    }
+    : ""
+}
 
 
 
@@ -528,9 +559,9 @@ ${data.cadete
           .map(
             (point) => `
             ${(() => {
-                const agency = formatAgencyName(point.agency);
+              const agency = formatAgencyName(point.agency);
 
-                return `
+              return `
 
 <label class="agency-option">
 
@@ -557,7 +588,7 @@ ${data.cadete
 </label>
 
 `;
-              })()}
+            })()}
             <br>
           `
           )

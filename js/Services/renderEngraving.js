@@ -5,43 +5,63 @@
  * - price: precio del grabado; si es 0 se muestra como sin cargo.
  * - onChange(engraved): se llama cada vez que cambia la opción.
  */
-export function renderEngraving(container, price, onChange) {
-    if (!container) return;
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "engraving-options";
-    wrapper.innerHTML = "<p>Grabado</p>";
+export function renderEngraving(container, price, onChange, product = {}) {
+  if (!container) return;
 
-    const priceLabel = price > 0
-        ? `(+$${price.toLocaleString("es-AR")})`
-        : "(sin cargo)";
+  // Categorías excluidas del grabado
+  const excludedCategories = ["Materas y mochilas", "Bombillas"];
 
-    const options = [
-        { engraved: true, label: `Con grabado ${priceLabel}` },
-        { engraved: false, label: "Sin grabado" },
-    ];
+  const categories = Array.isArray(product.category) ? product.category : [];
 
-    options.forEach(({ engraved, label }) => {
-        const btn = document.createElement("span");
+  const hasExcludedCategory = categories.some((category) =>
+    excludedCategories.some(
+      (excluded) => category.name?.toLowerCase() === excluded.toLowerCase()
+    )
+  );
 
-        btn.classList.add("variant-type");
-        btn.textContent = label;
+  const isTorpedo = product.type?.toLowerCase() === "torpedo";
 
-        if (!engraved) btn.classList.add("active");
+  const isRanchero = product.name?.toLowerCase().includes("ranchero");
 
-        btn.addEventListener("click", () => {
-            wrapper
-                .querySelectorAll(".variant-type")
-                .forEach((b) => b.classList.remove("active"));
+  // Si cumple alguna condición, no mostrar el grabado
+  if (hasExcludedCategory || isTorpedo || isRanchero) {
+    onChange(false);
+    return;
+  }
 
-            btn.classList.add("active");
+  const wrapper = document.createElement("div");
+  wrapper.className = "engraving-options";
+  wrapper.innerHTML = "<p>Grabado</p>";
 
-            onChange(engraved);
-        });
+  const priceLabel =
+    price > 0 ? ` (+$${price.toLocaleString("es-AR")})` : " (sin cargo)";
 
-        wrapper.appendChild(btn);
+  const options = [
+    { engraved: true, label: `Con grabado${priceLabel}` },
+    { engraved: false, label: "Sin grabado" },
+  ];
+
+  options.forEach(({ engraved, label }) => {
+    const btn = document.createElement("span");
+
+    btn.classList.add("variant-type");
+    btn.textContent = label;
+
+    if (!engraved) btn.classList.add("active");
+
+    btn.addEventListener("click", () => {
+      wrapper
+        .querySelectorAll(".variant-type")
+        .forEach((button) => button.classList.remove("active"));
+
+      btn.classList.add("active");
+      onChange(engraved);
     });
 
-    container.appendChild(wrapper);
-    onChange(false);
+    wrapper.appendChild(btn);
+  });
+
+  container.appendChild(wrapper);
+  onChange(false);
 }
