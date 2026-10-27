@@ -56,8 +56,7 @@ if (miCuentaBtn) {
 // Base de la API: cambiar a producción antes de subir
 const HOME_API_BASE = "https://matesparana-backend-production.up.railway.app";
 
-const FEATURED_URL =
-  `${HOME_API_BASE}/products/find/category/Nos_volvimos_locos`;
+const FEATURED_URL = `${HOME_API_BASE}/products/find/category/Nos_volvimos_locos`;
 
 const featuredSlider = document.getElementById("featuredSlider");
 const featuredPrev = document.getElementById("featuredPrev");
@@ -105,7 +104,8 @@ async function loadFeatured() {
 
     <div class="featured-price-row">
 
-      ${Number(discountedPrice) > 0
+      ${
+        Number(discountedPrice) > 0
           ? `
             <span class="featured-price">
               ${formatPrice(discountedPrice)}
@@ -116,9 +116,10 @@ async function loadFeatured() {
               ${formatPrice(price)}
             </span>
           `
-        }
+      }
 
-      ${discountPercentage && discountedPrice
+      ${
+        discountPercentage && discountedPrice
           ? `
             <span class="featured-badge">
               <span class="featured-value">${discountPercentage}%</span>
@@ -126,29 +127,31 @@ async function loadFeatured() {
             </span>
           `
           : ""
-        }
+      }
 
     </div>
 
-    ${Number(discountedPrice) > 0
-          ? `
+    ${
+      Number(discountedPrice) > 0
+        ? `
           <span class="featured-price-through">
             ${formatPrice(price)}
           </span>
         `
-          : ""
-        }
+        : ""
+    }
 
   </div>
 
-  ${cardPrice
-          ? `
+  ${
+    cardPrice
+      ? `
         <p class="featured-old">
           o 3 cuotas sin interés de ${formatPrice(cardPrice / 3)} c/u
         </p>
       `
-          : ""
-        }
+      : ""
+  }
 `;
 
       featuredSlider.appendChild(card);
@@ -195,14 +198,13 @@ async function loadFeatured() {
         });
       });
     }
-  } catch (err) { }
+  } catch (err) {}
 }
 
 loadFeatured();
 /*==================LO MAS PEDIDO======================== */
 
-const PROMOS_URL =
-  `${HOME_API_BASE}/promotions`;
+const PROMOS_URL = `${HOME_API_BASE}/promotions`;
 
 const COMBOS_CATEGORY_ID = "d5308357-2ae0-4c7a-a83f-7cf7fc599a34";
 
@@ -258,38 +260,41 @@ async function loadSales() {
     card.innerHTML = `
         <img src="${image}" alt="${promo.name}" loading="lazy">
         <h3 class="featured-name">${promo.name}</h3>
-        ${discountPercentage && discountedPrice
-        ? `
+        ${
+          discountPercentage && discountedPrice
+            ? `
           <span class="featured-badge">
             <span class="featured-value">${discountPercentage}%</span>
             <span class="featured-text">OFF</span>
           </span>
           `
-        : ""
-      }
+            : ""
+        }
         <div class="prices-transfer-section">
           <div class="prices-transfer-container">
-            ${Number(discountedPrice) > 0
-        ? `
+            ${
+              Number(discountedPrice) > 0
+                ? `
               <span class="featured-price">${formatPrice(
-          discountedPrice
-        )}</span>
+                discountedPrice
+              )}</span>
               `
-        : ""
-      }
+                : ""
+            }
             <span class="featured-price featured-price-transfer">${formatPrice(
-        price
-      )}</span>
+              price
+            )}</span>
           </div>
         </div>
-        ${cardPrice
-        ? `
+        ${
+          cardPrice
+            ? `
             <p class="featured-old">o 3 cuotas sin interés de ${formatPrice(
-          cardPrice / 3
-        )} c/u</p>
+              cardPrice / 3
+            )} c/u</p>
           `
-        : ""
-      }
+            : ""
+        }
       `;
 
     slider.appendChild(card);
@@ -578,8 +583,7 @@ document.querySelectorAll(".acordeon-btn").forEach((btn) => {
 });
 
 /* ===== DESCUENTOS ===== */
-const DISCOUNT_URL =
-  `${HOME_API_BASE}/products/find/category/Yerbas`;
+const DISCOUNT_URL = `${HOME_API_BASE}/products/find/category/Yerbas`;
 
 const discountSlider = document.getElementById("discountSlider");
 const discountPrev = document.getElementById("discountPrev");
@@ -602,11 +606,13 @@ async function loadDiscounts() {
 
     window.MPTrack?.viewItemList("home_yerbas", "Yerbas", products);
 
-    products.filter(p => p.active).forEach((product, discountIndex) => {
-      const card = document.createElement("div");
-      card.className = "discount-card";
+    products
+      .filter((p) => p.active)
+      .forEach((product, discountIndex) => {
+        const card = document.createElement("div");
+        card.className = "discount-card";
 
-      card.innerHTML = `
+        card.innerHTML = `
         <img
           src="${product.image?.[0] || ""}"
           alt="${product.name}"
@@ -626,19 +632,19 @@ async function loadDiscounts() {
         </button>
       `;
 
-      card.addEventListener("click", () => {
-        window.MPTrack?.selectItem(
-          "home_yerbas",
-          "Yerbas",
-          product,
-          discountIndex
-        );
-        window.location.href = `./producto-card.html?id=${product.id}`;
-      });
+        card.addEventListener("click", () => {
+          window.MPTrack?.selectItem(
+            "home_yerbas",
+            "Yerbas",
+            product,
+            discountIndex
+          );
+          window.location.href = `./producto-card.html?id=${product.id}`;
+        });
 
-      discountSlider.appendChild(card);
-    });
-  } catch (err) { }
+        discountSlider.appendChild(card);
+      });
+  } catch (err) {}
 }
 
 loadDiscounts();
@@ -668,8 +674,7 @@ discountPrev.addEventListener("click", () => {
 /*===================ACCESORIOS======================= */
 /* ===== ACCESORIOS ===== */
 
-const ACCESSORIES_URL =
-  `${HOME_API_BASE}/products?sort=updatedAt_desc&visibility=visible&category=Accesorios`;
+const ACCESSORIES_URL = `${HOME_API_BASE}/products?sort=updatedAt_desc&visibility=visible&category=Accesorios`;
 
 const accessoriesSlider = document.getElementById("accessoriesSlider");
 const accessoriesPrev = document.getElementById("accessoriesPrev");
@@ -697,16 +702,19 @@ async function loadAccessories() {
 
       card.className = "accessories-card";
 
-      card.innerHTML = ` <img loading="lazy" src="${product.image?.[0] || ""}" alt="${product.name
-        }" > <h3 class="accessories-name"> ${product.name
-        } </h3> <span class="accessories-price"> ${formatPrice(
-          product.price
-        )} </span> ${Number(product.price) > 0
+      card.innerHTML = ` <img loading="lazy" src="${
+        product.image?.[0] || ""
+      }" alt="${product.name}" > <h3 class="accessories-name"> ${
+        product.name
+      } </h3> <span class="accessories-price"> ${formatPrice(
+        product.price
+      )} </span> ${
+        Number(product.price) > 0
           ? ` <p class="accessories-installments"> o 3 cuotas sin interés de ${formatPrice(
-            Number(product.price) / 3
-          )} c/u </p> `
+              Number(product.price) / 3
+            )} c/u </p> `
           : ""
-        } `;
+      } `;
 
       card.addEventListener("click", () => {
         window.MPTrack?.selectItem(
@@ -753,3 +761,28 @@ accessoriesNext.addEventListener("click", () => {
 accessoriesPrev.addEventListener("click", () => {
   scrollAccessories(-1);
 });
+
+/**======================CONSULTA DE VISITA================================= */
+
+async function registrarVisita() {
+  try {
+    const respuesta = await fetch(
+      "https://matesparana-backend-production.up.railway.app/visits",
+      {
+        method: "POST",
+      }
+    );
+
+    if (!respuesta.ok) {
+      throw new Error(`Error HTTP: ${respuesta.status}`);
+    }
+
+    console.log("Visita registrada correctamente");
+  } catch (error) {
+    console.error("Error al registrar la visita:", error);
+  }
+}
+
+registrarVisita();
+
+/**======================================================= */
