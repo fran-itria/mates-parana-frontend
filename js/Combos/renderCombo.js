@@ -105,19 +105,36 @@ export function renderComboDetail(combo, onSelectionChange) {
 
     const products = combo.products || [];
 
-    const state = (combo.defaultSelected || []).map((item) => {
-        const product = products.find((p) => p.id === item.productId);
+    let state = [];
+    if (combo.name.includes("2x1")) {
+        state = ([...combo.defaultSelected, ...combo.defaultSelected] || []).map((item) => {
+            const product = products.find((p) => p.id === item.productId);
 
-        return {
-            item,
-            product,
-            productName: item.productName || product?.name || "",
-            varities: item.default ? [] : getSelectableVarities(item, product),
-            selectedType: null,
-            selectedColor: null,
-            selectedVariant: null,
-        };
-    });
+            return {
+                item,
+                product,
+                productName: item.productName || product?.name || "",
+                varities: item.default ? [] : getSelectableVarities(item, product),
+                selectedType: null,
+                selectedColor: null,
+                selectedVariant: null,
+            };
+        });
+    } else {
+        state = (combo.defaultSelected || []).map((item) => {
+            const product = products.find((p) => p.id === item.productId);
+
+            return {
+                item,
+                product,
+                productName: item.productName || product?.name || "",
+                varities: item.default ? [] : getSelectableVarities(item, product),
+                selectedType: null,
+                selectedColor: null,
+                selectedVariant: null,
+            };
+        });
+    }
 
     function buildSelections() {
         return state.map((s) => {
@@ -182,7 +199,7 @@ export function renderComboDetail(combo, onSelectionChange) {
             ) || null;
     }
 
-    state.forEach((s) => {
+    state.forEach((s, i) => {
         // Si el combo ya trae la variedad definida, no se muestra nada.
         if (s.item.default) return;
 
@@ -212,7 +229,11 @@ export function renderComboDetail(combo, onSelectionChange) {
             const title = document.createElement("p");
             title.classList.add("combo-variant-title");
             title.textContent = s.productName;
-            productWrapper.appendChild(title);
+            if (combo.name.includes("2x1")) {
+                title.textContent = `Variedad del producto ${i == 0 ? "1" : "2"}`;
+                productWrapper.appendChild(title);
+            } else
+                productWrapper.appendChild(title);
         }
 
         variantsContainer.appendChild(productWrapper);
@@ -220,13 +241,9 @@ export function renderComboDetail(combo, onSelectionChange) {
         const typeWrapper = document.createElement("div");
         const colorWrapper = document.createElement("div");
 
-        // Los colores dependen del tipo elegido, por eso se vuelven a dibujar
-        // cada vez que cambia el tipo
         function renderColorOptions() {
             if (!colorOptions.length) return;
 
-            // Un color se puede elegir si hay stock en Casa Central de ese
-            // color para el tipo seleccionado (si el producto tiene tipos)
             const disabledColors = colorOptions
                 .filter(
                     (c) =>
