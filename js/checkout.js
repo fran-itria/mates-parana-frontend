@@ -197,10 +197,10 @@ function updateSummary(subtotal) {
     shippingCost = 0;
   }
 
-  const finalSubtotal =
-    appliedCouponAmount !== null ? appliedCouponAmount : subtotal;
+  // const finalSubtotal =
+  //   appliedCouponAmount !== null ? appliedCouponAmount : subtotal;
 
-  summarySubtotal.textContent = `$${finalSubtotal.toLocaleString("es-AR")}`;
+  summarySubtotal.textContent = `$${subtotal.toLocaleString("es-AR")}`;
 
   if (!selectedShipping) {
     summaryShipping.style.visibility = "hidden";
@@ -276,6 +276,7 @@ applyCouponBtn.addEventListener("click", async () => {
   applyCouponBtn.textContent = "Validando...";
 
   try {
+    const subtotal = getSubtotal();
     const response = await fetch(`${API_BASE}/orders/validate-coupon`, {
       method: "PATCH",
       headers: {
@@ -284,7 +285,7 @@ applyCouponBtn.addEventListener("click", async () => {
       body: JSON.stringify({
         couponName,
         productsId: cart.map((item) => item.id),
-        amount: getSubtotal(),
+        amount: subtotal,
       }),
     });
 
@@ -294,10 +295,11 @@ applyCouponBtn.addEventListener("click", async () => {
       throw new Error(data.message || "No se pudo aplicar el cupón.");
     }
 
-    appliedCouponAmount = Number(data.amount);
-    appliedCouponId = data.couponId;
 
-    updateSummary(getSubtotal());
+    appliedCouponAmount = Number(data.ammount);
+    appliedCouponId = data.coupon.id;
+
+    updateSummary(subtotal - appliedCouponAmount);
 
     couponMessage.textContent = "¡Cupón aplicado correctamente!";
     couponCode.disabled = true;
@@ -306,7 +308,7 @@ applyCouponBtn.addEventListener("click", async () => {
   } catch (error) {
     appliedCouponAmount = null;
 
-    updateSummary(getSubtotal());
+    updateSummary(subtotal);
 
     couponMessage.textContent = error.message;
     applyCouponBtn.textContent = "Aplicar cupón";
@@ -378,8 +380,8 @@ function renderHomeFields(defaultProvince = "") {
           >
           <datalist id="provinceList">
             ${PROVINCES.map((p) => `<option value="${p.name}"></option>`).join(
-              ""
-            )}
+    ""
+  )}
           </datalist>
         </div>
 
@@ -856,8 +858,8 @@ async function loadCadeteOptions() {
                         </option>
 
                         ${data.cadete
-                          .map(
-                            (option) => `
+        .map(
+          (option) => `
                 <option
                   value="${option.ciudad}"
                   data-price="${option.price}"
@@ -866,8 +868,8 @@ async function loadCadeteOptions() {
                   $${Number(option.price).toLocaleString("es-AR")}
                 </option>
               `
-                          )
-                          .join("")}
+        )
+        .join("")}
 
                       </select>
 
@@ -975,8 +977,8 @@ function renderShipping(data, postalCode) {
 
       <div class="agency-list">
         ${data.retirePoints
-          .map(
-            (sucursal) => `
+      .map(
+        (sucursal) => `
           
           <label class="agency-option" for="agency-${sucursal.agency_id}">
             
@@ -992,8 +994,8 @@ function renderShipping(data, postalCode) {
           </label>
 
         `
-          )
-          .join("")}
+      )
+      .join("")}
       </div>
 
     </div>
@@ -1097,22 +1099,19 @@ function renderProducts() {
 
                         <p>
                           Cantidad: ${item.qty}
-                          ${
-                            item.varity
-                              ? `${item.varity.color || ""} ${
-                                  item.varity.type || ""
-                                }`
-                              : ""
-                          }
+                          ${item.varity
+        ? `${item.varity.color || ""} ${item.varity.type || ""
+        }`
+        : ""
+      }
                           ${(item.promotionData?.defaultSelected || [])
-                            .filter((d) => d.select)
-                            .map(
-                              (d) =>
-                                `<br>${d.productName || ""}: ${
-                                  d.select.color || ""
-                                } ${d.select.type || ""}`
-                            )
-                            .join("")}
+        .filter((d) => d.select)
+        .map(
+          (d) =>
+            `<br>${d.productName || ""}: ${d.select.color || ""
+            } ${d.select.type || ""}`
+        )
+        .join("")}
                           ${item.engraved ? "<br>Con grabado" : ""}
                         </p>
                       </div>
@@ -1231,7 +1230,7 @@ function createCardToken() {
           const validationErrors = response?.validation_errors;
 
           if (validationErrors?.length) {
-            validationErrors.forEach((err, index) => {});
+            validationErrors.forEach((err, index) => { });
           } else {
           }
 
@@ -1256,7 +1255,7 @@ function createCardToken() {
 
         resolve(response.id);
       });
-    } catch (error) {}
+    } catch (error) { }
   });
 }
 
@@ -1611,8 +1610,8 @@ confirmOrderBtn.addEventListener("click", async () => {
       if (!paymentRes.ok) {
         throw new Error(
           paymentResult.message ||
-            paymentResult.error ||
-            JSON.stringify(paymentResult)
+          paymentResult.error ||
+          JSON.stringify(paymentResult)
         );
       }
 
