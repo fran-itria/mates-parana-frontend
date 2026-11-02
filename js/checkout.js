@@ -27,14 +27,16 @@ const backendCartId = localStorage.getItem("backendCartId");
 /* =========================
    ELEMENTS
 ========================= */
+const couponCode = document.getElementById("couponCode");
+const applyCouponBtn = document.getElementById("applyCouponBtn");
+const couponMessage = document.getElementById("couponMessage");
 
 const summaryProducts = document.getElementById("summaryProducts");
-
 const summarySubtotal = document.getElementById("summarySubtotal");
 const summaryShippingText = document.getElementById("summaryShipping-text");
 const summaryShipping = document.getElementById("summaryShipping");
 const summaryTotal = document.getElementById("summaryTotal");
-const cardText = document.getElementById("card-text")
+const cardText = document.getElementById("card-text");
 
 const deliveryBtns = document.querySelectorAll(".delivery-btn");
 const paymentBtns = document.querySelectorAll(".payment-btn");
@@ -84,6 +86,8 @@ let selectedShipping = null;
 // Total que se muestra en el resumen, como número
 let summaryTotalValue = 0;
 
+let appliedCouponAmount = null;
+let appliedCouponId = null;
 /* =========================
    USER DATA
 ========================= */
@@ -193,7 +197,10 @@ function updateSummary(subtotal) {
     shippingCost = 0;
   }
 
-  summarySubtotal.textContent = `$${subtotal.toLocaleString("es-AR")}`;
+  const finalSubtotal =
+    appliedCouponAmount !== null ? appliedCouponAmount : subtotal;
+
+  summarySubtotal.textContent = `$${finalSubtotal.toLocaleString("es-AR")}`;
 
   if (!selectedShipping) {
     summaryShipping.style.visibility = "hidden";
@@ -212,18 +219,23 @@ function updateSummary(subtotal) {
         break;
       case "cadete":
         summaryShippingText.textContent = "Envío";
-        summaryShipping.textContent = `🛵 $${shippingCost.toLocaleString("es-AR")}`;
+        summaryShipping.textContent = `🛵 $${shippingCost.toLocaleString(
+          "es-AR"
+        )}`;
         break;
       case "agency":
         summaryShippingText.textContent = "Envío";
-        summaryShipping.textContent = `🏤 $${shippingCost.toLocaleString("es-AR")}`;
+        summaryShipping.textContent = `🏤 $${shippingCost.toLocaleString(
+          "es-AR"
+        )}`;
         break;
       default:
-        summaryShipping.textContent = `🚚 $${shippingCost.toLocaleString("es-AR")}`;
+        summaryShipping.textContent = `🚚 $${shippingCost.toLocaleString(
+          "es-AR"
+        )}`;
         break;
     }
   }
-
 
   const total = subtotal + shippingCost;
 
@@ -236,18 +248,72 @@ function updateSummary(subtotal) {
   document.getElementById("card-text-element-2")?.remove();
 
   if (paymentMethod == "card") {
-    const containerResume = document.getElementsByClassName("summary-total")
-    const cardTextElement = document.createElement("p")
-    cardTextElement.id = "card-text-element"
-    cardTextElement.textContent = "Abonando con tarjeta el pago se realiza en 3 cuotas sin interés"
-    const strongText = document.createElement("strong")
-    strongText.id = "card-text-element-2"
-    strongText.textContent = `3 cuotas de $${(total / 3).toLocaleString("es-AR")} c/u`
-    cardTextElement.classList.add("card-text-information")
-    containerResume[0].appendChild(cardTextElement)
-    containerResume[0].appendChild(strongText)
+    const containerResume = document.getElementsByClassName("summary-total");
+    const cardTextElement = document.createElement("p");
+    cardTextElement.id = "card-text-element";
+    cardTextElement.textContent =
+      "Abonando con tarjeta el pago se realiza en 3 cuotas sin interés";
+    const strongText = document.createElement("strong");
+    strongText.id = "card-text-element-2";
+    strongText.textContent = `3 cuotas de $${(total / 3).toLocaleString(
+      "es-AR"
+    )} c/u`;
+    cardTextElement.classList.add("card-text-information");
+    containerResume[0].appendChild(cardTextElement);
+    containerResume[0].appendChild(strongText);
   }
 }
+
+applyCouponBtn.addEventListener("click", async () => {
+  const couponName = couponCode.value.trim();
+
+  if (!couponName) {
+    couponMessage.textContent = "Ingresá un código de cupón.";
+    return;
+  }
+
+  applyCouponBtn.disabled = true;
+  applyCouponBtn.textContent = "Validando...";
+
+  try {
+    const response = await fetch(`${API_BASE}/orders/validate-coupon`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        couponName,
+        productsId: cart.map((item) => item.id),
+        amount: getSubtotal(),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "No se pudo aplicar el cupón.");
+    }
+
+    appliedCouponAmount = Number(data.amount);
+    appliedCouponId = data.couponId;
+
+    updateSummary(getSubtotal());
+
+    couponMessage.textContent = "¡Cupón aplicado correctamente!";
+    couponCode.disabled = true;
+
+    applyCouponBtn.textContent = "Aplicado";
+  } catch (error) {
+    appliedCouponAmount = null;
+
+    updateSummary(getSubtotal());
+
+    couponMessage.textContent = error.message;
+    applyCouponBtn.textContent = "Aplicar cupón";
+  } finally {
+    applyCouponBtn.disabled = false;
+  }
+});
 
 loadUserData();
 
@@ -283,11 +349,7 @@ const PROVINCES = [
 ];
 
 function normalizeText(text = "") {
-  return text
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .trim()
-    .toLowerCase();
+  return text.normalize("NFD").replace(/[̀-ͯ]/g, "").trim().toLowerCase();
 }
 
 function findProvince(name) {
@@ -315,7 +377,9 @@ function renderHomeFields(defaultProvince = "") {
             value="${initialProvince ? initialProvince.name : ""}"
           >
           <datalist id="provinceList">
-            ${PROVINCES.map((p) => `<option value="${p.name}"></option>`).join("")}
+            ${PROVINCES.map((p) => `<option value="${p.name}"></option>`).join(
+              ""
+            )}
           </datalist>
         </div>
 
@@ -759,9 +823,7 @@ async function loadCadeteOptions() {
                     `;
 
   try {
-    const response = await fetch(
-      `${API_BASE}/orders/delivered-price/E3100`
-    );
+    const response = await fetch(`${API_BASE}/orders/delivered-price/E3100`);
 
     if (!response.ok) {
       throw new Error("No se pudieron obtener las opciones de cadete");
@@ -794,8 +856,8 @@ async function loadCadeteOptions() {
                         </option>
 
                         ${data.cadete
-        .map(
-          (option) => `
+                          .map(
+                            (option) => `
                 <option
                   value="${option.ciudad}"
                   data-price="${option.price}"
@@ -804,8 +866,8 @@ async function loadCadeteOptions() {
                   $${Number(option.price).toLocaleString("es-AR")}
                 </option>
               `
-        )
-        .join("")}
+                          )
+                          .join("")}
 
                       </select>
 
@@ -842,7 +904,6 @@ async function loadCadeteOptions() {
       renderCadeteFields();
     });
   } catch (error) {
-
     container.innerHTML = `
                     <p>
                       No se pudieron cargar las opciones de cadete.
@@ -914,8 +975,8 @@ function renderShipping(data, postalCode) {
 
       <div class="agency-list">
         ${data.retirePoints
-      .map(
-        (sucursal) => `
+          .map(
+            (sucursal) => `
           
           <label class="agency-option" for="agency-${sucursal.agency_id}">
             
@@ -931,8 +992,8 @@ function renderShipping(data, postalCode) {
           </label>
 
         `
-      )
-      .join("")}
+          )
+          .join("")}
       </div>
 
     </div>
@@ -1036,18 +1097,22 @@ function renderProducts() {
 
                         <p>
                           Cantidad: ${item.qty}
-                          ${item.varity
-        ? `${item.varity.color || ""} ${item.varity.type || ""}`
-        : ""
-      }
+                          ${
+                            item.varity
+                              ? `${item.varity.color || ""} ${
+                                  item.varity.type || ""
+                                }`
+                              : ""
+                          }
                           ${(item.promotionData?.defaultSelected || [])
-        .filter((d) => d.select)
-        .map(
-          (d) =>
-            `<br>${d.productName || ""}: ${d.select.color || ""} ${d.select.type || ""
-            }`
-        )
-        .join("")}
+                            .filter((d) => d.select)
+                            .map(
+                              (d) =>
+                                `<br>${d.productName || ""}: ${
+                                  d.select.color || ""
+                                } ${d.select.type || ""}`
+                            )
+                            .join("")}
                           ${item.engraved ? "<br>Con grabado" : ""}
                         </p>
                       </div>
@@ -1107,7 +1172,7 @@ paymentBtns.forEach((btn) => {
       cardFields.classList.add("hidden");
     }
 
-    renderProducts()
+    renderProducts();
 
     trackPaymentInfo();
   });
@@ -1166,7 +1231,7 @@ function createCardToken() {
           const validationErrors = response?.validation_errors;
 
           if (validationErrors?.length) {
-            validationErrors.forEach((err, index) => { });
+            validationErrors.forEach((err, index) => {});
           } else {
           }
 
@@ -1191,8 +1256,7 @@ function createCardToken() {
 
         resolve(response.id);
       });
-    } catch (error) {
-    }
+    } catch (error) {}
   });
 }
 
@@ -1442,6 +1506,7 @@ confirmOrderBtn.addEventListener("click", async () => {
       return;
     }
     const totalValue = summaryTotalValue;
+    let appliedCouponAmount = null;
 
     // Cantidad total de grabados de la orden: con esto aparece en la
     // sección de grabados del admin
@@ -1456,6 +1521,7 @@ confirmOrderBtn.addEventListener("click", async () => {
       channel: "web",
       products,
       amount: totalValue,
+      couponId: appliedCouponId,
       paymentMethod: paymentMethod === "transfer" ? "transfer" : "card",
       paymentStatus: "pending",
       delivered,
@@ -1545,11 +1611,10 @@ confirmOrderBtn.addEventListener("click", async () => {
       if (!paymentRes.ok) {
         throw new Error(
           paymentResult.message ||
-          paymentResult.error ||
-          JSON.stringify(paymentResult)
+            paymentResult.error ||
+            JSON.stringify(paymentResult)
         );
       }
-
 
       localStorage.removeItem("cart");
 
@@ -1566,18 +1631,15 @@ confirmOrderBtn.addEventListener("click", async () => {
     ========================= */
 
     if (paymentMethod === "transfer") {
-      const aliasRes = await fetch(
-        `${API_BASE}/orders/create-alias-transfer`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            orderId: createdOrder.id,
-          }),
-        }
-      );
+      const aliasRes = await fetch(`${API_BASE}/orders/create-alias-transfer`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId: createdOrder.id,
+        }),
+      });
 
       const aliasData = await aliasRes.json();
       localStorage.setItem("transferInfo", JSON.stringify(aliasData));
