@@ -241,7 +241,7 @@ function updateSummary(subtotal) {
 
   summaryTotalValue = total;
 
-  summaryTotal.textContent = `$${total.toLocaleString("es-AR")}`;
+  summaryTotal.textContent = `$${summaryTotalValue.toLocaleString("es-AR")}`;
 
   // Se quita el texto de cuotas anterior para no duplicarlo
   document.getElementById("card-text-element")?.remove();
@@ -299,7 +299,7 @@ applyCouponBtn.addEventListener("click", async () => {
     appliedCouponAmount = Number(data.ammount);
     appliedCouponId = data.coupon.id;
 
-    updateSummary(subtotal - appliedCouponAmount);
+    updateSummary(appliedCouponAmount);
 
     couponMessage.textContent = "¡Cupón aplicado correctamente!";
     couponCode.disabled = true;
@@ -1546,6 +1546,7 @@ confirmOrderBtn.addEventListener("click", async () => {
     // Si el usuario no tocó el medio de pago (transferencia por defecto)
     trackPaymentInfo();
 
+    console.log("Creando orden con body:", orderBody);
     const res = await fetch(`${API_BASE}/orders`, {
       method: "POST",
 
