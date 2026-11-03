@@ -13,10 +13,10 @@ export function detectColor(text = "") {
     rosado: ["rosado"],
     azul: ["azul"],
     aqua: ["aqua"],
-    marronClaro: ["marron claro"],
-    marronOscuro: ["marron oscuro"],
+    marron_claro: ["marron claro"],
+    marron_oscuro: ["marron oscuro"],
     beige: ["beige"],
-    azulMarino: ["azul marino"],
+    azul_marino: ["azul marino"],
     cremita: ["cremita"],
     rojo: ["rojo"],
     bordo: ["bordo"],
@@ -25,7 +25,9 @@ export function detectColor(text = "") {
 
   for (const [key, aliases] of Object.entries(colors)) {
     if (aliases.some((alias) => text.includes(alias))) {
-      return key;
+      if (key.includes("_")) {
+        return key.split("_").join(" ");
+      } else return key;
     }
   }
 

@@ -21,7 +21,8 @@ export function renderColors(
 
         colorBtn.classList.add("variant-color");
 
-        colorBtn.style.background = colorMap[color] || color;
+        const colorName = color.includes(" ") ? color.split(" ").join("_") : color;
+        colorBtn.style.background = colorMap[colorName] || color;
 
         if (disabledOptions.includes(color)) {
             colorBtn.classList.add("disabled");
