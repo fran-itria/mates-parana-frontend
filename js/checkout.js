@@ -174,7 +174,7 @@ if (calcShippingBtn) {
 // (con tarjeta el grabado también lleva el 15%, igual que en la ficha)
 function getItemUnitPrice(item, useCardPrice = false) {
   const engraving = item.engravingPrice || 0;
-  if (useCardPrice) return item.cardPrice + Math.round(engraving * 1.15);
+  // if (useCardPrice) return item.cardPrice + Math.round(engraving * 1.15);
   return (item.discountedPrice || item.price) + engraving;
 }
 
@@ -379,8 +379,8 @@ function renderHomeFields(defaultProvince = "") {
           >
           <datalist id="provinceList">
             ${PROVINCES.map((p) => `<option value="${p.name}"></option>`).join(
-              ""
-            )}
+    ""
+  )}
           </datalist>
         </div>
 
@@ -857,8 +857,8 @@ async function loadCadeteOptions() {
                         </option>
 
                         ${data.cadete
-                          .map(
-                            (option) => `
+        .map(
+          (option) => `
                 <option
                   value="${option.ciudad}"
                   data-price="${option.price}"
@@ -867,8 +867,8 @@ async function loadCadeteOptions() {
                   $${Number(option.price).toLocaleString("es-AR")}
                 </option>
               `
-                          )
-                          .join("")}
+        )
+        .join("")}
 
                       </select>
 
@@ -976,8 +976,8 @@ function renderShipping(data, postalCode) {
 
       <div class="agency-list">
         ${data.retirePoints
-          .map(
-            (sucursal) => `
+      .map(
+        (sucursal) => `
           
           <label class="agency-option" for="agency-${sucursal.agency_id}">
             
@@ -993,8 +993,8 @@ function renderShipping(data, postalCode) {
           </label>
 
         `
-          )
-          .join("")}
+      )
+      .join("")}
       </div>
 
     </div>
@@ -1098,22 +1098,19 @@ function renderProducts() {
 
                         <p>
                           Cantidad: ${item.qty}
-                          ${
-                            item.varity
-                              ? `${item.varity.color || ""} ${
-                                  item.varity.type || ""
-                                }`
-                              : ""
-                          }
+                          ${item.varity
+        ? `${item.varity.color || ""} ${item.varity.type || ""
+        }`
+        : ""
+      }
                           ${(item.promotionData?.defaultSelected || [])
-                            .filter((d) => d.select)
-                            .map(
-                              (d) =>
-                                `<br>${d.productName || ""}: ${
-                                  d.select.color || ""
-                                } ${d.select.type || ""}`
-                            )
-                            .join("")}
+        .filter((d) => d.select)
+        .map(
+          (d) =>
+            `<br>${d.productName || ""}: ${d.select.color || ""
+            } ${d.select.type || ""}`
+        )
+        .join("")}
                           ${item.engraved ? "<br>Con grabado" : ""}
                         </p>
                       </div>
@@ -1232,7 +1229,7 @@ function createCardToken() {
           const validationErrors = response?.validation_errors;
 
           if (validationErrors?.length) {
-            validationErrors.forEach((err, index) => {});
+            validationErrors.forEach((err, index) => { });
           } else {
           }
 
@@ -1257,7 +1254,7 @@ function createCardToken() {
 
         resolve(response.id);
       });
-    } catch (error) {}
+    } catch (error) { }
   });
 }
 
@@ -1548,7 +1545,7 @@ confirmOrderBtn.addEventListener("click", async () => {
     // Si el usuario no tocó el medio de pago (transferencia por defecto)
     trackPaymentInfo();
 
-    console.log("Creando orden con body:", orderBody);
+    // console.log("Creando orden con body:", orderBody);
     const res = await fetch(`${API_BASE}/orders`, {
       method: "POST",
 
@@ -1613,8 +1610,8 @@ confirmOrderBtn.addEventListener("click", async () => {
       if (!paymentRes.ok) {
         throw new Error(
           paymentResult.message ||
-            paymentResult.error ||
-            JSON.stringify(paymentResult)
+          paymentResult.error ||
+          JSON.stringify(paymentResult)
         );
       }
 
