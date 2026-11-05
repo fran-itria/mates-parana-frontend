@@ -172,13 +172,35 @@ if (calcShippingBtn) {
 
 // Precio unitario según el medio de pago, sumando el grabado si corresponde
 // (con tarjeta el grabado también lleva el 15%, igual que en la ficha)
-function getItemUnitPrice(item, useCardPrice = false) {
+/*function getItemUnitPrice(item, useCardPrice = false) {
   const engraving = item.engravingPrice || 0;
   if (useCardPrice) return item.cardPrice + Math.round(engraving * 1.15);
   return (item.discountedPrice || item.price) + engraving;
 }
 
-// Subtotal de productos según el medio de pago elegido (el envío no lleva el 15%)
+
+/*==========================================================================================*/
+
+// Precio unitario para cualquier medio de pago
+function getItemUnitPrice(item) {
+  const engraving = item.engravingPrice || 0;
+
+  return (item.discountedPrice || item.price) + engraving;
+}
+
+function getSubtotal() {
+  let subtotal = 0;
+
+  cart.forEach((item) => {
+    subtotal += getItemUnitPrice(item) * item.qty;
+  });
+
+  return subtotal;
+}
+
+/*==========================================================================================*/
+
+/* Subtotal de productos según el medio de pago elegido (el envío no lleva el 15%)
 function getSubtotal() {
   let subtotal = 0;
 
@@ -188,6 +210,9 @@ function getSubtotal() {
 
   return subtotal;
 }
+
+
+/*==========================================================================================*/
 
 function updateSummary(subtotal) {
   let shippingCost = selectedShipping ? selectedShipping.price : 0;
