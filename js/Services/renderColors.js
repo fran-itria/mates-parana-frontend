@@ -1,53 +1,54 @@
 export function renderColors(
-    availableColors,
-    updateImageByVariant,
-    colorWrapper,
-    colorMap,
-    onColorChange,
-    disabledOptions = [],
-    selectedOption = null
+  availableColors,
+  updateImageByVariant,
+  colorWrapper,
+  colorMap,
+  onColorChange,
+  disabledOptions = [],
+  selectedOption = null
 ) {
-    colorWrapper.innerHTML = "<p>Color</p>";
+  colorWrapper.innerHTML = "<p>Color</p>";
 
-    const firstEnabled = availableColors.find((o) => !disabledOptions.includes(o));
+  const firstEnabled = availableColors.find(
+    (o) => !disabledOptions.includes(o)
+  );
 
-    const activeColor =
-        selectedOption && !disabledOptions.includes(selectedOption)
-            ? selectedOption
-            : firstEnabled;
+  const activeColor =
+    selectedOption && !disabledOptions.includes(selectedOption)
+      ? selectedOption
+      : firstEnabled;
 
-    availableColors.forEach((color) => {
-        const colorBtn = document.createElement("span");
+  availableColors.forEach((color) => {
+    const colorBtn = document.createElement("span");
 
-        colorBtn.classList.add("variant-color");
+    colorBtn.classList.add("variant-color");
 
-        const colorName = color.includes(" ") ? color.split(" ").join("_") : color;
-        colorBtn.style.background = colorMap[colorName] || color;
+    const colorName = color.includes(" ") ? color.split(" ").join("_") : color;
+    colorBtn.style.background = colorMap[colorName] || color;
 
-        if (disabledOptions.includes(color)) {
-            colorBtn.classList.add("disabled");
-            colorBtn.title = "Sin stock";
-            colorWrapper.appendChild(colorBtn);
-            return;
-        }
+    if (disabledOptions.includes(color)) {
+      colorBtn.classList.add("disabled");
+      colorBtn.title = "Sin stock";
+      colorWrapper.appendChild(colorBtn);
+      return;
+    }
 
-        if (color === activeColor) {
-            colorBtn.classList.add("active");
-        }
+    if (color === activeColor) {
+      colorBtn.classList.add("active");
+    }
 
-        colorBtn.addEventListener("click", () => {
+    colorBtn.addEventListener("click", () => {
+      // visualmente seleccionarlo
+      colorWrapper
+        .querySelectorAll(".variant-color")
+        .forEach((btn) => btn.classList.remove("active"));
 
-            // visualmente seleccionarlo
-            colorWrapper
-                .querySelectorAll(".variant-color")
-                .forEach(btn => btn.classList.remove("active"));
+      colorBtn.classList.add("active");
 
-            colorBtn.classList.add("active");
-
-            // 👇 ESTO ES LO IMPORTANTE
-            onColorChange(color);
-        });
-
-        colorWrapper.appendChild(colorBtn);
+      // 👇 ESTO ES LO IMPORTANTE
+      onColorChange(color);
     });
+
+    colorWrapper.appendChild(colorBtn);
+  });
 }

@@ -21,6 +21,7 @@ export function detectColor(text = "") {
     rojo: ["rojo"],
     bordo: ["bordo"],
     amarillo: ["amarillo"],
+    marron: ["marron"],
   };
 
   for (const [key, aliases] of Object.entries(colors)) {
